@@ -14,7 +14,7 @@ const persistCommonConfig = {
 
 const userPersistConfig = {
     ...persistCommonConfig,
-    key: 'user',
+    key: 'user_YourHome',
     whitelist: ['isLoggedIn', 'userInfor']
 };
 const reduxHistory = (history) => combineReducers({

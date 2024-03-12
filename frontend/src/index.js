@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './styles/index.css';
+import './styles/style.scss';
 import App from './containers/App';
 import reportWebVitals from './reportWebVitals';
 import reduxStore, { persistor } from './redux';
