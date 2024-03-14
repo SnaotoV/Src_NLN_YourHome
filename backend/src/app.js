@@ -2,7 +2,6 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import ApiError from './api-error';
-import userRouter from './routers/userRouter'
 import appRouter from './routers/appRouter'
 require('dotenv').config();
 let app = express();

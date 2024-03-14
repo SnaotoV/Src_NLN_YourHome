@@ -49,6 +49,13 @@ class UserModel {
         });
         return await cursor.toArray();
     }
+    async findByID(id) {
+        const filter = {
+            _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
+        };
+        const cursor = await this.User.find(filter);
+        return await cursor.toArray();
+    }
     async checkUserExist(user) {
         const cursor = await this.User.find({
             username: user.username
@@ -65,17 +72,18 @@ class UserModel {
         const cursor = await this.User.count();
         return cursor
     }
-    async upated(user) {
+    async updated(id, user) {
         const filter = {
-            _id: ObjectId.isValid(user._id) ? new ObjectId(user._id) : null,
+            _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
         };
         const cursor = await this.User.updateOne(filter, {
             $set: {
+                CICNumber: user.CICNumber,
                 fullName: user.fullName,
-                username: user.username,
-                password: user.password,
                 address: user.address,
-                phoneNumber: user.phoneNumber
+                phoneNumber: user.phoneNumber,
+                birthday: user.birthday,
+                update_at: new Date()
             }
         })
         return cursor

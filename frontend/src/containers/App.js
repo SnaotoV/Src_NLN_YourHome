@@ -17,7 +17,7 @@ function App(props) {
         <Header></Header>
         <Switch>
           <Route path={'/'} exact component={(Home)} />
-          <Route path={'/Infor'} exact component={(InforUser)} />
+          <Route path={'/Infor'} component={(InforUser)} />
           <Route path={'/InforRoom'} exact component={(InforRoom)} />
           <Route path={'/Motel'} exact component={(Motel)} />
           <Route path={'/News'} exact component={(News)} />
