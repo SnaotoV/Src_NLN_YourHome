@@ -156,7 +156,7 @@ let EditUser = (props) => {
                             <div className='text-center'>
                                 {genderList && genderList.map((item) => {
                                     return (
-                                        <Form.Check key={item.genderId} name='gender' id={`gender-${item.genderId}`} checked={gender == item.genderId} inline type='radio' label={item.gender} value={item.genderId} onChange={event => handleOnChangesValue(event, 'gender')} ></Form.Check>
+                                        <Form.Check key={item.genderId} name='gender' id={`gender-${item.genderId}`} checked={Number(gender) == item.genderId} inline type='radio' label={item.gender} value={item.genderId} onChange={event => handleOnChangesValue(event, 'gender')} ></Form.Check>
                                     )
 
                                 })}

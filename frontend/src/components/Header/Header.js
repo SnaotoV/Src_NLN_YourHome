@@ -25,7 +25,7 @@ let Header = (props) => {
                 <NavLink className='py-2 px-4 fs-5' activeClassName="active" to='/News' exact={true}>Tin tức</NavLink>
                 <NavLink className='py-2 px-4 fs-5' activeClassName="active" to='/Contact' exact={true}>Liên hệ</NavLink>
                 {props.isLoggedIn ?
-                    <NavLink className='py-2 px-4 fs-5' activeClassName="active" to='/Infor/Motel'>Cá nhân</NavLink>
+                    <NavLink className='py-2 px-4 fs-5' activeClassName="active" to='/Infor/Motel/1'>Cá nhân</NavLink>
                     :
                     <>
                         <button className='py-2 px-4 fs-5' onClick={() => handleButton('login')}>Đăng Nhập</button>

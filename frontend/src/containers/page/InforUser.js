@@ -8,6 +8,7 @@ import { withRouter, Switch, Route } from "react-router-dom";
 import MotelContent from "../../components/ContentInforUser/MotelContent";
 import NewsContent from "../../components/ContentInforUser/NewsContent";
 import AddMotelForm from "../../components/AddMotelForm/AddMotelForm";
+import { getGender } from "../../ultils/gender";
 let InforUser = (props) => {
     let [user, setUser] = useState({});
     let [handleEditInforModal, setHandleEditInforUser] = useState(false)
@@ -45,6 +46,10 @@ let InforUser = (props) => {
                             <tr>
                                 <td className="px-4">Số căn cước:</td>
                                 <td className="px-4">{user && user.CICNumber}</td>
+                            </tr>
+                            <tr>
+                                <td className="px-4">Giới tính  :</td>
+                                <td className="px-4">{user && getGender(user.gender)}</td>
                             </tr>
                             <tr>
                                 <td className="px-4">Ngày sinh:</td>
