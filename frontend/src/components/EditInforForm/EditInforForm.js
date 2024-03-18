@@ -123,7 +123,7 @@ let EditUser = (props) => {
                             <Form.Label htmlFor="address">
                                 Địa chỉ :
                             </Form.Label>
-                            <Form.Control id='address' placeholder="Địa chỉ" onChange={event => handleOnChangesValue(event, 'address')} vvalue={address}></Form.Control>
+                            <Form.Control id='address' placeholder="Địa chỉ" onChange={event => handleOnChangesValue(event, 'address')} value={address}></Form.Control>
                             {err['address'] && err['address'].errCode === 1 && <div className='text-danger'>Địa chỉ không được trống</div>}
                         </Form.Group>
                         <Form.Group>
