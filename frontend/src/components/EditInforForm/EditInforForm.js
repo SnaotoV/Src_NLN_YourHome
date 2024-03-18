@@ -5,6 +5,7 @@ import * as actions from '../../stores/actions'
 import { useEffect, useState } from 'react';
 import { checkvalid } from '../../ultils/checkValid';
 import { edit } from '../../services/userServices';
+import { genderList } from '../../ultils/gender';
 let EditUser = (props) => {
     let [user, setUser] = useState({});
     let [CICNumber, setCICNumber] = useState()
@@ -12,6 +13,7 @@ let EditUser = (props) => {
     let [address, setAddress] = useState()
     let [phoneNumber, setPhoneNumber] = useState()
     let [birthday, setBirthday] = useState()
+    let [gender, setGender] = useState(0)
     let [err, setErr] = useState({ sValid: false });
 
     let handleClickClose = async () => {
@@ -43,7 +45,7 @@ let EditUser = (props) => {
     }
     let checkValidForm = async () => {
         let cloneUser = user;
-        let positions = ['CICNumber', 'fullName', 'address', 'phoneNumber', 'birthday'];
+        let positions = ['CICNumber', 'fullName', 'address', 'phoneNumber', 'birthday', 'gender'];
         let arrErr = await checkvalid(cloneUser, positions);
         await setErr(arrErr);
         return arrErr;
@@ -65,6 +67,9 @@ let EditUser = (props) => {
         if (id === 'birthday') {
             setBirthday(event.target.value)
         }
+        if (id === 'gender') {
+            setGender(event.target.value)
+        }
 
     }
     let resetJS = () => {
@@ -74,6 +79,7 @@ let EditUser = (props) => {
         setAddress(props.userInfor.address)
         setCICNumber(props.userInfor.CICNumber)
         setFullName(props.userInfor.fullName)
+        setGender(props.userInfor.gender)
     }
     let creatUserJS = () => {
         let userClone = user;
@@ -82,6 +88,7 @@ let EditUser = (props) => {
         userClone.address = address;
         userClone.phoneNumber = phoneNumber;
         userClone.birthday = birthday;
+        userClone.gender = gender;
         setUser(userClone)
     }
     useEffect(() => {
@@ -92,6 +99,8 @@ let EditUser = (props) => {
             setAddress(props.userInfor.address)
             setCICNumber(props.userInfor.CICNumber)
             setFullName(props.userInfor.fullName)
+            setGender(props.userInfor.gender)
+
         }
     }, [props.userInfor])
 
@@ -139,6 +148,20 @@ let EditUser = (props) => {
                             </Form.Label>
                             <Form.Control id='birthday' type='date' placeholder="Ngày sinh" onChange={event => handleOnChangesValue(event, 'birthday')} value={birthday} ></Form.Control>
                             {err['birthday'] && err['birthday'].errCode === 1 && <div className='text-danger' >Ngày sinh không được trống</div>}
+                        </Form.Group>
+                        <Form.Group>
+                            <Form.Label htmlFor="gender">
+                                Giới tính:
+                            </Form.Label>
+                            <div className='text-center'>
+                                {genderList && genderList.map((item) => {
+                                    return (
+                                        <Form.Check key={item.genderId} name='gender' id={`gender-${item.genderId}`} checked={Number(gender) == item.genderId} inline type='radio' label={item.gender} value={item.genderId} onChange={event => handleOnChangesValue(event, 'gender')} ></Form.Check>
+                                    )
+
+                                })}
+                            </div>
+                            {err['gender'] && err['gender'].errCode === 1 && <div className='text-danger' >Giới tính không được trống</div>}
                         </Form.Group>
                     </Form>
                 </Modal.Body>

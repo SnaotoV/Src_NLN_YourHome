@@ -55,15 +55,14 @@ let LoginForm = (props) => {
                     <Form>
                         <Form.Group>
                             <Form.Label htmlFor="username">
-                                Username :
+                                Tài Khoản:
                             </Form.Label>
                             <Form.Control id='username' placeholder="Tài Khoản" onChange={event => handleOnChangesValue(event, 'username')}></Form.Control>
                             {err['username'] && err['username'].errCode === 1 && <div className='text-danger'>Tài khoản không được trống</div>}
                         </Form.Group>
-                        <>{console.log(user)}</>
                         <Form.Group>
                             <Form.Label htmlFor="password">
-                                Password :
+                                Mật khẩu:
                             </Form.Label>
                             <Form.Control id='password' autoComplete="on" type='password' placeholder="Mật khẩu" onChange={event => handleOnChangesValue(event, 'password')}></Form.Control>
                             {err['password'] && err['password'].errCode === 1 && <div className='text-danger'>Mật khẩu không được trống</div>}
