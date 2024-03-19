@@ -1,7 +1,7 @@
 let Motel = () => {
     return (
         <div>
-            Hello From Motel
+            Hello From Motel of you
         </div>
     )
 }
