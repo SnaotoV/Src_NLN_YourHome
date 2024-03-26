@@ -1,6 +1,7 @@
 import express from 'express';
 import app from '../controllers/appController'
 import user from '../controllers/userController'
+import motel from '../controllers/motelController';
 const router = express.Router();
 
 router.route('/login')
@@ -14,4 +15,18 @@ router.route('/user')
 router.route('/user/:id')
     .get(user.findOne)
     .put(user.update)
+
+router.route('/user/motel')
+    .get(motel.findAll)
+    .post(motel.create)
+router.route('/user/motel/:id')
+    .get(motel.findOne)
+    .put(motel.update)
+
+
+router.route('/app/all-page')
+    .post(app.allpage);
+router.route('/app/:type/:page')
+    .get(app.dataInPage)
+
 module.exports = router;

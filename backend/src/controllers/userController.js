@@ -1,5 +1,4 @@
 import ApiError from "../api-error";
-import MongoDB from "../config/mongo.config";
 import userServices from '../services/userServices'
 let findAll = (req, res) => {
     try {

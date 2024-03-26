@@ -1,5 +1,6 @@
 import MongoDB from '../config/mongo.config';
 import UserModel from '../models/usersModel';
+import MotelModel from '../models/motelModel';
 let registerService = async (user) => {
     let resData = {};
     if (user) {
@@ -40,7 +41,25 @@ let loginService = async (user) => {
     return resData
 }
 
+let getAllPage = async (type, limit) => {
+    let quantityPage = 1;
+    if (type = 'motel') {
+        let Motel = new MotelModel(MongoDB.client);
+        let quantityMotel = await Motel.countAll();
+        quantityPage = Math.ceil(quantityMotel / 10);
+    }
+    return quantityPage
+}
+let getDataInPage = async (type, page) => {
+    if (type = 'motel') {
+        let Motel = new MotelModel(MongoDB.client);
+        let quantityMotel = await Motel.findInPage(page, 10);
+        return quantityMotel
+    }
+}
 module.exports = {
-    registerService: registerService,
-    loginService: loginService
+    registerService,
+    loginService,
+    getAllPage,
+    getDataInPage
 }

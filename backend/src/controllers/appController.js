@@ -28,7 +28,35 @@ let login = async (req, res) => {
     }
 }
 
+let allpage = async (req, res) => {
+    try {
+        let type = req.body.type;
+        let limit = req.body.limit;
+
+        let resService = await appService.getAllPage(type, limit);
+        return res.status(200).json({
+            quantityPage: resService
+        })
+    } catch (error) {
+        new ApiError(500, "An error orrcured while retrieving the contacts")
+    }
+}
+let dataInPage = async (req, res) => {
+    try {
+
+        let type = req.params.type;
+        let page = req.params.page;
+        let resData = await appService.getDataInPage(type, page);
+        return res.status(200).json({
+            data: resData
+        })
+    } catch (error) {
+        new ApiError(500, "An error orrcured while retrieving the contacts")
+    }
+}
 module.exports = {
     register,
-    login
+    login,
+    allpage,
+    dataInPage
 }

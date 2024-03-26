@@ -8,17 +8,9 @@ import { edit } from '../../services/userServices';
 import { genderList } from '../../ultils/gender';
 let EditUser = (props) => {
     let [user, setUser] = useState({});
-    let [CICNumber, setCICNumber] = useState()
-    let [fullName, setFullName] = useState()
-    let [address, setAddress] = useState()
-    let [phoneNumber, setPhoneNumber] = useState()
-    let [birthday, setBirthday] = useState()
-    let [gender, setGender] = useState(0)
     let [err, setErr] = useState({ sValid: false });
 
     let handleClickClose = async () => {
-
-        await resetJS();
 
         setUser(props.userInfor);
         setErr({ sValid: false });
@@ -26,7 +18,6 @@ let EditUser = (props) => {
 
     }
     let handleClickChanges = async () => {
-        await creatUserJS()
         if (props.isLoggedIn) {
             let arrErr = await checkValidForm();
             if (arrErr.isValid) {
@@ -51,56 +42,15 @@ let EditUser = (props) => {
         return arrErr;
     }
     let handleOnChangesValue = (event, id) => {
-
-        if (id === 'CICNumber') {
-            setCICNumber(event.target.value)
-        }
-        if (id === 'fullName') {
-            setFullName(event.target.value)
-        }
-        if (id === 'address') {
-            setAddress(event.target.value)
-        }
-        if (id === 'phoneNumber') {
-            setPhoneNumber(event.target.value)
-        }
-        if (id === 'birthday') {
-            setBirthday(event.target.value)
-        }
-        if (id === 'gender') {
-            setGender(event.target.value)
-        }
+        let userClone = { ...user };
+        userClone[id] = event.target.value;
+        setUser(userClone);
 
     }
-    let resetJS = () => {
-        setUser(props.userInfor);
-        setBirthday(props.userInfor.birthday)
-        setPhoneNumber(props.userInfor.phoneNumber)
-        setAddress(props.userInfor.address)
-        setCICNumber(props.userInfor.CICNumber)
-        setFullName(props.userInfor.fullName)
-        setGender(props.userInfor.gender)
-    }
-    let creatUserJS = () => {
-        let userClone = user;
-        userClone.CICNumber = CICNumber;
-        userClone.fullName = fullName;
-        userClone.address = address;
-        userClone.phoneNumber = phoneNumber;
-        userClone.birthday = birthday;
-        userClone.gender = gender;
-        setUser(userClone)
-    }
+
     useEffect(() => {
         if (props.userInfor) {
             setUser(props.userInfor);
-            setBirthday(props.userInfor.birthday)
-            setPhoneNumber(props.userInfor.phoneNumber)
-            setAddress(props.userInfor.address)
-            setCICNumber(props.userInfor.CICNumber)
-            setFullName(props.userInfor.fullName)
-            setGender(props.userInfor.gender)
-
         }
     }, [props.userInfor])
 
@@ -118,35 +68,35 @@ let EditUser = (props) => {
                             <Form.Label htmlFor="CICNumber">
                                 Căn cước công dân :
                             </Form.Label>
-                            <Form.Control id='CICNumber' placeholder="Căn cước công dân" onChange={event => handleOnChangesValue(event, 'CICNumber')} value={CICNumber} ></Form.Control>
+                            <Form.Control id='CICNumber' placeholder="Căn cước công dân" onChange={event => handleOnChangesValue(event, 'CICNumber')} value={user.CICNumber} ></Form.Control>
                             {err['CICNumber'] && err['CICNumber'].errCode === 1 && <div className='text-danger'>Căn cước không được trống</div>}
                         </Form.Group>
                         <Form.Group>
                             <Form.Label htmlFor="fullName">
                                 Họ và tên :
                             </Form.Label>
-                            <Form.Control id='fullName' placeholder="Họ và tên người dùng" onChange={event => handleOnChangesValue(event, 'fullName')} value={fullName}></Form.Control>
+                            <Form.Control id='fullName' placeholder="Họ và tên người dùng" onChange={event => handleOnChangesValue(event, 'fullName')} value={user.fullName}></Form.Control>
                             {err['fullName'] && err['fullName'].errCode === 1 && <div className='text-danger'>Họ và tên không được trống</div>}
                         </Form.Group>
                         <Form.Group>
                             <Form.Label htmlFor="address">
                                 Địa chỉ :
                             </Form.Label>
-                            <Form.Control id='address' placeholder="Địa chỉ" onChange={event => handleOnChangesValue(event, 'address')} value={address}></Form.Control>
+                            <Form.Control id='address' placeholder="Địa chỉ" onChange={event => handleOnChangesValue(event, 'address')} value={user.address}></Form.Control>
                             {err['address'] && err['address'].errCode === 1 && <div className='text-danger'>Địa chỉ không được trống</div>}
                         </Form.Group>
                         <Form.Group>
                             <Form.Label htmlFor="phoneNumber">
                                 Số điện thoại :
                             </Form.Label>
-                            <Form.Control id='phoneNumber' type='number' placeholder="Số điện thoại" onChange={event => handleOnChangesValue(event, 'phoneNumber')} value={phoneNumber} ></Form.Control>
+                            <Form.Control id='phoneNumber' type='number' placeholder="Số điện thoại" onChange={event => handleOnChangesValue(event, 'phoneNumber')} value={user.phoneNumber} ></Form.Control>
                             {err['phoneNumber'] && err['phoneNumber'].errCode === 1 && <div className='text-danger' >Số điện thoại không được trống</div>}
                         </Form.Group>
                         <Form.Group>
                             <Form.Label htmlFor="birthday">
                                 Ngày sinh :
                             </Form.Label>
-                            <Form.Control id='birthday' type='date' placeholder="Ngày sinh" onChange={event => handleOnChangesValue(event, 'birthday')} value={birthday} ></Form.Control>
+                            <Form.Control id='birthday' type='date' placeholder="Ngày sinh" onChange={event => handleOnChangesValue(event, 'birthday')} value={user.birthday} ></Form.Control>
                             {err['birthday'] && err['birthday'].errCode === 1 && <div className='text-danger' >Ngày sinh không được trống</div>}
                         </Form.Group>
                         <Form.Group>
@@ -156,7 +106,7 @@ let EditUser = (props) => {
                             <div className='text-center'>
                                 {genderList && genderList.map((item) => {
                                     return (
-                                        <Form.Check key={item.genderId} name='gender' id={`gender-${item.genderId}`} checked={Number(gender) == item.genderId} inline type='radio' label={item.gender} value={item.genderId} onChange={event => handleOnChangesValue(event, 'gender')} ></Form.Check>
+                                        <Form.Check key={item.genderId} name='gender' id={`gender-${item.genderId}`} checked={Number(user.gender) === item.genderId} inline type='radio' label={item.gender} value={item.genderId} onChange={event => handleOnChangesValue(event, 'gender')} ></Form.Check>
                                     )
 
                                 })}

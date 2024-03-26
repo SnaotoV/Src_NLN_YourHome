@@ -13,7 +13,7 @@ class UserModel {
             address: payload.address,
             phoneNumber: payload.phoneNumber,
             birthday: payload.birthday,
-            gender: user.gender,
+            gender: payload.gender,
             create_at: null,
             update_at: null
         };

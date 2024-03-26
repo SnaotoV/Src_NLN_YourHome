@@ -34,8 +34,8 @@ let InforUser = (props) => {
                 <div className="h2 my-4 mx-2 col row align-items-center">{user && user.fullName}</div>
             </div>
             <div className="row p-4">
-                <div className="col-3 row">
-                    <table className="fs-5 border infor-box col-12">
+                <div className="col-2 p-4 row">
+                    {/* <table className="fs-5 border infor-box col-12">
                         <thead>
                             <tr>
                                 <td colSpan={2} className="text-center py-2 fs-3 main-title">Thông tin</td>
@@ -64,15 +64,16 @@ let InforUser = (props) => {
                                 <td className="px-4">{user && user.phoneNumber}</td>
                             </tr>
                         </tbody>
-                    </table>
+                    </table> */}
                     <button className=" btn-infor text-center col-12 fs-5 my-1" onClick={() => handleButton('edit')}>Chỉnh sửa<i class="fas fa-user-edit mx-2 "></i></button>
                     <button className=" btn-infor text-center col-12 fs-5 my-1" onClick={() => handleButton('add-motel')}>Thêm dãy trọ<i class="fas fa-plus mx-2 "></i></button>
                     <button className=" btn-infor text-center col-12 fs-5 my-1">Thêm bài viết<i class="fas fa-pencil-alt mx-2"></i></button>
                 </div>
-                <div className="col-9 p-4 border">
+                <div className="col-10 p-4 border">
                     <div className="row">
-                        <NavLink to='/Infor/Motel/1' activeClassName='active-infor' className="col-5 btn-infor text-center mx-4">Dãy trọ</NavLink>
-                        <NavLink to='/Infor/News/1' activeClassName='active-infor' className="col-5 btn-infor text-center mx-4">Bài viết</NavLink>
+                        <NavLink to='/Infor/User' activeClassName='active-infor' className="col-3 btn-infor text-center mx-1">Người dùng</NavLink>
+                        <NavLink to='/Infor/Motel/1' activeClassName='active-infor' className="col-3 btn-infor text-center mx-1">Dãy trọ</NavLink>
+                        <NavLink to='/Infor/News/1' activeClassName='active-infor' className="col-3 btn-infor text-center mx-1">Bài viết</NavLink>
                     </div>
                     <div className="m-4">
                         <Switch>
