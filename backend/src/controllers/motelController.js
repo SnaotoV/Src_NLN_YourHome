@@ -3,8 +3,16 @@ import motelService from '../services/motelServices';
 let findAll = (req, res) => {
     console.log('hello');
 }
-let findOne = (req, res) => {
-    console.log('hello');
+let findOneFromUser = async (req, res) => {
+    try {
+        let id = req.params.id;
+        let resData = await motelService.findOneMotel(id);
+        return res.status(200).json({
+            data: resData
+        })
+    } catch (error) {
+        new ApiError(500, "An error orrcured while retrieving the contacts")
+    }
 }
 
 
@@ -28,7 +36,7 @@ let update = (req, res) => {
 
 module.exports = {
     findAll,
-    findOne,
+    findOneFromUser,
     create,
     update
 }

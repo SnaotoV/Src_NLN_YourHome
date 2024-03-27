@@ -4,11 +4,11 @@ class ImageModel {
     constructor(client) {
         this.Image = client.db().collection("image");
     };
-    tranformImageData(idParent, payload, type) {
+    tranformImageData(payload, type) {
         const image = {
-            IdParent: idParent,
+            IdParent: payload.idParent,
             type: type,
-            image: payload.listImage,
+            image: payload.image,
             create_at: null,
             update_at: null
         };
@@ -17,8 +17,8 @@ class ImageModel {
         )
         return image
     }
-    async create(idParent, payload, type) {
-        const item = this.tranformImageData(idParent, payload, type);
+    async create(payload, type) {
+        const item = this.tranformImageData(payload, type);
         item.create_at = new Date();
         const resImage = await this.Image.insertOne(
             item

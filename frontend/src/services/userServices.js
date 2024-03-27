@@ -8,7 +8,12 @@ let addMotel = (data) => {
     return axios.post('/user/motel', { data });
 }
 
+let getMotel = (id) => {
+    return axios.get(`/user/motel/${id}`);
+}
+
 export {
     edit,
-    addMotel
+    addMotel,
+    getMotel
 }

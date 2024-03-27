@@ -3,9 +3,9 @@ import { Form, Button, Modal } from "react-bootstrap";
 import '../../styles/AddMotelForm/AddMotelForm.scss';
 import { Autocomplete, TextField } from '@mui/material';
 import { tinh } from "../../ultils/tinh_tp";
-import handleImgType from "../../ultils/getImgFromBase64";
 import classPhuongXa from "../../ultils/xa_phuong";
 import classHuyenQuan from "../../ultils/quan_huyen";
+import handleImgType from "../../ultils/getImgFromBase64";
 import { checkvalid } from "../../ultils/checkValid";
 import { addMotel } from "../../services/userServices";
 import { connect } from "react-redux";
@@ -29,7 +29,7 @@ let AddMotelForm = (props) => {
             if (data && data.errCode === 0) {
                 toast.success(data.value, { position: toast.POSITION.TOP_RIGHT });
                 console.log(data);
-                props.handleClickClose('add-motel');
+                props.handleClickChanges('add-motel');
                 setMotel({ userId: props.userInfor._id });
                 setErr({ sValid: false });
                 setImages([]);
@@ -41,17 +41,14 @@ let AddMotelForm = (props) => {
     }
     let checkValidForm = async () => {
         let cloneMotel = motel;
-        let positions = ['name', 'quantity', 'price', 'priceE', 'priceW', 'vertical', 'horizontal'];
-        let addressPositions = ['address', 'province', 'district', 'ward'];
-        let addressErr = await checkvalid(cloneMotel.address ? cloneMotel.address : {}, addressPositions)
+        let positions = ['name', 'quantity', 'price', 'priceE', 'priceW', 'vertical', 'horizontal', 'province', 'district', 'ward', 'address'];
         let arrErr = await checkvalid(cloneMotel, positions);
-        arrErr['address'] = addressErr
         await setErr(arrErr);
         return arrErr;
     }
     let handleOnChangesValue = async (event, id, values) => {
-        if (!values && id !== 'address') {
-            let cloneMotel = motel;
+        if (!values) {
+            let cloneMotel = { ...motel };
             cloneMotel[id] = event.target.value;
             setMotel(cloneMotel);
         }
@@ -64,10 +61,8 @@ let AddMotelForm = (props) => {
                 let data = await classPhuongXa.getXaPhuong(values)
                 setXaPhuong(data)
             }
-            let cloneMotel = motel;
-            let addressClone = motel.address ? motel.address : {};
-            addressClone[id] = values ? values : event.target.value;
-            cloneMotel.address = addressClone;
+            let cloneMotel = { ...motel };
+            cloneMotel[id] = values ? values : event.target.value;
             setMotel(cloneMotel);
         }
     }
@@ -127,7 +122,7 @@ let AddMotelForm = (props) => {
                                         Địa chỉ:
                                     </Form.Label>
                                     <Form.Control id='address' autoComplete="on" type='text' placeholder="Địa chỉ" onChange={event => handleOnChangesValue(event, 'address')}></Form.Control>
-                                    {err.address && err.address.address.errCode === 1 && <div className='text-danger'>Địa chỉ không được trống</div>}
+                                    {err.address && err.address.errCode === 1 && <div className='text-danger'>Địa chỉ không được trống</div>}
                                 </Form.Group>
                             </div>
                             <div className="row">
@@ -144,7 +139,7 @@ let AddMotelForm = (props) => {
                                         sx={{ width: 300 }} options={tinh ? tinh : []}
                                         getOptionLabel={(option) => option.name_with_type}
                                         renderInput={(params) => <TextField {...params} label="Tỉnh" />}></Autocomplete>
-                                    {err.address && err.address.province.errCode === 1 && <div className='text-danger'>Tỉnh không được trống</div>}
+                                    {err.province && err.province.errCode === 1 && <div className='text-danger'>Tỉnh không được trống</div>}
                                 </Form.Group>
                                 <Form.Group className="col-4">
                                     <Form.Label htmlFor="district">
@@ -159,7 +154,7 @@ let AddMotelForm = (props) => {
                                         sx={{ width: 300 }} options={QuanHuyen ? QuanHuyen : []}
                                         getOptionLabel={(option) => option.name_with_type}
                                         renderInput={(params) => <TextField {...params} label="Quận hoặc Huyện:" />}></Autocomplete>
-                                    {err.address && err.address.district.errCode === 1 && <div className='text-danger'>Quận hoặc Huyện không được trống</div>}
+                                    {err.district && err.district.errCode === 1 && <div className='text-danger'>Quận hoặc Huyện không được trống</div>}
                                 </Form.Group >
                                 <Form.Group className="col-4">
                                     <Form.Label htmlFor="ward">
@@ -174,7 +169,7 @@ let AddMotelForm = (props) => {
                                         sx={{ width: 300 }} options={XaPhuong ? XaPhuong : []}
                                         getOptionLabel={(option) => option.name_with_type}
                                         renderInput={(params) => <TextField {...params} label="Xã hoặc Phường:" />}></Autocomplete>
-                                    {err.address && err.address.ward.errCode === 1 && <div className='text-danger'>Xã hoặc Phường không được trống</div>}
+                                    {err.ward && err.ward.errCode === 1 && <div className='text-danger'>Xã hoặc Phường không được trống</div>}
                                 </Form.Group>
                             </div>
                             <Form.Group>

@@ -7,6 +7,7 @@ import InforUser from './page/InforUser';
 import InforRoom from './page/InforRoom';
 import Motel from './page/Motels';
 import News from './page/News';
+import InforMotel from './page/InforMotel';
 import Contact from './page/Contact';
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
@@ -22,6 +23,7 @@ function App(props) {
           <Route path={'/Motel'} exact component={(Motel)} />
           <Route path={'/News'} exact component={(News)} />
           <Route path={'/Contact'} exact component={(Contact)} />
+          <Route path={'/User/Motel/:id'} exact component={(InforMotel)} />
         </Switch>
         <Footer></Footer>
       </div>

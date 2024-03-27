@@ -9,8 +9,8 @@ let login = (user) => {
 let getQuantityPage = (type, limit) => {
     return axios.post('/app/all-page', { type, limit });
 }
-let getDataInPage = (type, page) => {
-    return axios.get(`app/${type}/${page}`);
+let getDataInPage = (type, page, filter) => {
+    return axios.put(`app/${type}/${page}`, { filter });
 }
 export {
     register,

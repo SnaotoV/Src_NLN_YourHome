@@ -50,11 +50,11 @@ let getAllPage = async (type, limit) => {
     }
     return quantityPage
 }
-let getDataInPage = async (type, page) => {
+let getDataInPage = async (type, page, filter) => {
     if (type = 'motel') {
         let Motel = new MotelModel(MongoDB.client);
-        let quantityMotel = await Motel.findInPage(page, 10);
-        return quantityMotel
+        let quantityMotel = await Motel.findInPage(page, 10, filter);
+        return quantityMotel;
     }
 }
 module.exports = {

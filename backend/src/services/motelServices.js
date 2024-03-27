@@ -17,6 +17,23 @@ let createMotel = async (data) => {
     }
     return resData;
 }
+let findOneMotel = async (id) => {
+    if (id) {
+        let Motel = new MotelModel(MongoDB.client);
+        let motelData = MotelModel.findByID(id);
+    }
+    const filter = {
+        _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
+    };
+}
+let findAllOneMotel = async (id) => {
+    if (id) {
+        let Motel = new MotelModel(MongoDB.client);
+        let motelData = MotelModel.findByID(id);
+    }
+    const filter = {
+        _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
+    };
+}
 
-
-module.exports = { createMotel }
+module.exports = { createMotel, findOneMotel }

@@ -20,13 +20,13 @@ router.route('/user/motel')
     .get(motel.findAll)
     .post(motel.create)
 router.route('/user/motel/:id')
-    .get(motel.findOne)
+    .get(motel.findOneFromUser)
     .put(motel.update)
 
 
 router.route('/app/all-page')
     .post(app.allpage);
 router.route('/app/:type/:page')
-    .get(app.dataInPage)
+    .put(app.dataInPage)
 
 module.exports = router;

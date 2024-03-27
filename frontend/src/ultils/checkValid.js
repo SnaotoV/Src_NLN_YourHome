@@ -4,12 +4,6 @@ export const checkvalid = (data, arrPosition) => {
         err[arrPosition[i]] = {
             errCode: 0,
         };
-        if (!data[arrPosition[i]]) {
-            err[arrPosition[i]] = {
-                errCode: 1,
-            };
-            err.isValid = false;
-        }
     }
 
     return err;

@@ -13,13 +13,17 @@ let InforUser = (props) => {
     let [user, setUser] = useState({});
     let [handleEditInforModal, setHandleEditInforUser] = useState(false)
     let [handleAddMotelModal, setHandleAddMotelModel] = useState(false)
-
+    let [checkGetData, setCheckGetData] = useState(true);
+    let checkFetchData = () => {
+        setCheckGetData(!checkGetData);
+    }
     let handleButton = (type) => {
         if (type === 'edit') {
             setHandleEditInforUser(!handleEditInforModal);
         }
         if (type === 'add-motel') {
             setHandleAddMotelModel(!handleAddMotelModal);
+            checkFetchData();
         }
     }
     useEffect(() => {
@@ -77,7 +81,7 @@ let InforUser = (props) => {
                     </div>
                     <div className="m-4">
                         <Switch>
-                            <Route path={'/Infor/Motel/:page'}><MotelContent /></Route>
+                            <Route path={'/Infor/Motel/:page'}><MotelContent checkGetData={checkGetData} /></Route>
                             <Route path={'/Infor/News/:page'}><NewsContent /></Route>
                         </Switch>
                     </div>
