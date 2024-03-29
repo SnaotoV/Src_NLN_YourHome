@@ -28,7 +28,6 @@ let AddMotelForm = (props) => {
             let data = await addMotel(motel);
             if (data && data.errCode === 0) {
                 toast.success(data.value, { position: toast.POSITION.TOP_RIGHT });
-                console.log(data);
                 props.handleClickChanges('add-motel');
                 setMotel({ userId: props.userInfor._id });
                 setErr({ sValid: false });
@@ -40,7 +39,7 @@ let AddMotelForm = (props) => {
         }
     }
     let checkValidForm = async () => {
-        let cloneMotel = motel;
+        let cloneMotel = { ...motel };
         let positions = ['name', 'quantity', 'price', 'priceE', 'priceW', 'vertical', 'horizontal', 'province', 'district', 'ward', 'address'];
         let arrErr = await checkvalid(cloneMotel, positions);
         await setErr(arrErr);
@@ -98,6 +97,10 @@ let AddMotelForm = (props) => {
 
         }
     }
+    useEffect(() => {
+        let userId = props.userInfor !== null ? props.userInfor._id : ''
+        setMotel({ userId: userId })
+    }, [props.userInfor])
     let { show, modalName, modalBtnClose, modalBtnChanges, modalClose, modalChanges } = props
     return (
         <div>

@@ -16,7 +16,6 @@ let Pagenated = (props) => {
     }
     let createListItem = async (lengthPage) => {
         let list = [];
-        console.log(lengthPage);
         if (lengthPage < 6) {
             for (let i = 1; i <= lengthPage; i++) {
                 let item = {
@@ -50,7 +49,6 @@ let Pagenated = (props) => {
                 },
             ]
         }
-        console.log(list);
         return list;
     }
     useEffect(() => {

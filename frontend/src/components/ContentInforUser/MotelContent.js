@@ -3,17 +3,21 @@ import { Table } from "react-bootstrap";
 import { withRouter } from "react-router-dom";
 import { getQuantityPage, getDataInPage } from "../../services/appServices";
 import Pagenated from "../Pagenated/Pagenated";
+import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 let MotelContent = (props) => {
     let [listMotel, setListMotel] = useState([]);
     let [page, setPage] = useState(1);
     let [quantityPage, setQuantityPage] = useState(1);
-
+    let [user, setUser] = useState({ ...props.userInfor });
 
     useEffect(() => {
         let getData = async () => {
-            let clonePage = page
-            let cloneListMotel = await getDataInPage('motel', clonePage);
+            let clonePage = page;
+            let filter = {
+                userId: user ? user._id : ''
+            }
+            let cloneListMotel = await getDataInPage('motel', clonePage, filter);
             let quantityPageFromBE = await getQuantityPage('motel', 10);
             setListMotel(cloneListMotel.data);
             setQuantityPage(quantityPageFromBE);
@@ -23,17 +27,26 @@ let MotelContent = (props) => {
     useEffect(() => {
         let getData = async () => {
             let clonePage = page
-            let cloneListMotel = await getDataInPage('motel', clonePage);
+            let filter = {
+                userId: user ? user._id : ''
+            }
+            let cloneListMotel = await getDataInPage('motel', clonePage, filter);
             let quantityPageFromBE = await getQuantityPage('motel', 10);
-            setListMotel(cloneListMotel.data);
+            if (cloneListMotel) {
+
+                setListMotel(cloneListMotel.data);
+            }
             setQuantityPage(quantityPageFromBE);
         }
         getData()
-    }, [props.checkGetData]);
+    }, [props.checkGetData, user]);
+
     useEffect(() => {
         let clonePage = props.match.params.page;
-        setPage(clonePage)
-    }, [props.match.params.page])
+        setUser(props.userInfor);
+        setPage(clonePage);
+    }, [props.match.params.page, props.userInfor])
+
     return (
         <div>
             <div>Danh sách nhà trọ</div>
@@ -56,7 +69,6 @@ let MotelContent = (props) => {
                     <tbody>
                         {
                             listMotel && listMotel.length > 0 && listMotel.map((item, index) => {
-                                { console.log(item) }
                                 return (
                                     <tr className="text-center" key={index}>
                                         <td >{index + 1}</td>
@@ -90,4 +102,15 @@ let MotelContent = (props) => {
     )
 }
 
-export default withRouter(MotelContent);
+const mapStatetoProps = state => {
+    return {
+        userInfor: state.user.userInfor
+    }
+}
+const mapDispatchToProps = dispatch => {
+    return {
+    }
+}
+
+
+export default withRouter(connect(mapStatetoProps, mapDispatchToProps)(MotelContent));

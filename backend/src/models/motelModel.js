@@ -12,7 +12,7 @@ class MotelModel {
     };
     tranformMotelData(payload) {
         const motel = {
-            IDUser: payload.IDUser,
+            userId: ObjectId.isValid(payload.userId) ? new ObjectId(payload.userId) : null,
             name: payload.name,
             quantity: payload.quantity,
             address: payload.address,
@@ -34,7 +34,6 @@ class MotelModel {
         const motel = this.tranformMotelData(payload);
         motel.create_at = new Date();
 
-        let resData = {};
         const resMotel = await this.Motel.insertOne(motel);
         if (resMotel) {
             for (let i = 0; i < payload.listImage.length; i++) {
@@ -66,6 +65,10 @@ class MotelModel {
             if (filter.name) {
                 filter.name = { $regex: new RegExp(filterClone.name), $options: "i" };
             }
+            if (filter.userId) {
+                filter.userId = ObjectId.isValid(filterClone.userId) ? new ObjectId(filterClone.userId) : null;
+            }
+
             cursor = await this.Motel.aggregate([{
                 $match: filter
             }, {
