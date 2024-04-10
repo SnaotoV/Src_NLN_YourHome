@@ -5,21 +5,35 @@ import { useEffect, useState } from "react";
 import { getMotel } from '../../services/userServices';
 
 let InforMotel = (props) => {
-    let [motel, setMotel] = useState({});
 
+    let [dataMotel, setDataMotel] = useState({});
     useEffect(() => {
-        let getData = async () => {
-            let data = await getMotel(props.match.params.id);
-            console.log(data);
-            setMotel(data);
+        let idMotel = props.match.params.id;
+        let idUser = props.userInfor ? props.userInfor._id : null
+        if (idUser) {
+            let getData = async () => {
+                let data = await getMotel(idMotel, idUser)
+                setDataMotel(data);
+            }
+            getData();
         }
-        getData()
-    }, [props.match.params.id])
-
+    }, [])
+    useEffect(() => {
+        let idMotel = props.match.params.id;
+        let idUser = props.userInfor ? props.userInfor._id : null
+        if (idUser) {
+            let getData = async () => {
+                let data = await getMotel(idMotel, idUser)
+                setDataMotel(data);
+            }
+            getData();
+        }
+    }, [props.userInfor])
 
     return (
         <div className='infor-motel-box'>
             <div>
+                {console.log(dataMotel)}
                 hello
             </div>
         </div>
@@ -27,5 +41,13 @@ let InforMotel = (props) => {
 
 }
 
-
-export default InforMotel;
+const mapStatetoProps = state => {
+    return {
+        userInfor: state.user.userInfor
+    }
+}
+const mapDispatchToProps = dispatch => {
+    return {
+    }
+}
+export default withRouter(connect(mapStatetoProps, mapDispatchToProps)(InforMotel));

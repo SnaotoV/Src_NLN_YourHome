@@ -6,9 +6,10 @@ let findAll = (req, res) => {
 let findOneFromUser = async (req, res) => {
     try {
         let id = req.params.id;
-        let resData = await motelService.findOneMotel(id);
+        let user = req.params.user;
+        let resData = await motelService.findOneMotel(id, user);
         return res.status(200).json({
-            data: resData
+            data: resData[0]
         })
     } catch (error) {
         new ApiError(500, "An error orrcured while retrieving the contacts")

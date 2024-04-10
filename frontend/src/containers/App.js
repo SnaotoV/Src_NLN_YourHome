@@ -5,6 +5,7 @@ import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
 import InforUser from './page/InforUser';
 import InforRoom from './page/InforRoom';
+import DetailMotel from './page/DetailMotel';
 import Motel from './page/Motels';
 import News from './page/News';
 import InforMotel from './page/InforMotel';
@@ -16,15 +17,18 @@ function App(props) {
     <BrowserRouter>
       <div className="container-fluid">
         <Header></Header>
-        <Switch>
-          <Route path={'/'} exact component={(Home)} />
-          <Route path={'/Infor'} component={(InforUser)} />
-          <Route path={'/InforRoom'} exact component={(InforRoom)} />
-          <Route path={'/Motel'} exact component={(Motel)} />
-          <Route path={'/News'} exact component={(News)} />
-          <Route path={'/Contact'} exact component={(Contact)} />
-          <Route path={'/User/Motel/:id'} exact component={(InforMotel)} />
-        </Switch>
+        <div className='body-content p-4 main-bg'>
+          <Switch>
+            <Route path={'/'} exact component={(Home)} />
+            <Route path={'/Infor'} component={(InforUser)} />
+            <Route path={'/InforRoom'} exact component={(InforRoom)} />
+            <Route path={'/Motel'} exact component={(Motel)} />
+            <Route path={'/Motel/:id'} component={(DetailMotel)} />
+            <Route path={'/News'} exact component={(News)} />
+            <Route path={'/Contact'} exact component={(Contact)} />
+            <Route path={'/User/Motel/:id'} exact component={(InforMotel)} />
+          </Switch>
+        </div>
         <Footer></Footer>
       </div>
       <ToastContainer></ToastContainer>

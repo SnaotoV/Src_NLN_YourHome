@@ -8,8 +8,8 @@ let addMotel = (data) => {
     return axios.post('/user/motel', { data });
 }
 
-let getMotel = (id) => {
-    return axios.get(`/user/motel/${id}`);
+let getMotel = (id, idUser) => {
+    return axios.get(`/user/motel/${idUser}/${id}`);
 }
 
 export {

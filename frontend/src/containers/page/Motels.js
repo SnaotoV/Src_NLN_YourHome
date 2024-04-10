@@ -44,11 +44,9 @@ let Motel = () => {
     }
     let handleClick = async (type) => {
         if (type === 'search') {
-            console.log(filter);
-            console.log(listMotel);
-            await fetchData()
+            await fetchData();
         }
-        if (type = 'reset') {
+        if (type === 'reset') {
             setFilter({});
             setXaPhuong([]);
             setQuanHuyen([]);
@@ -149,7 +147,7 @@ let Motel = () => {
                                             <br />
                                             {item.price} VND/tháng
                                         </Card.Text>
-                                        <Link className='btn btn-dark text-white' to={'/'}>Xem chi tiết</Link>
+                                        <Link className='btn btn-dark text-white' to={`/Motel/${item._id}`}>Xem chi tiết</Link>
                                     </Card.Body>
                                 </Card>
                             </div>

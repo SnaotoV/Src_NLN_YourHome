@@ -76,7 +76,7 @@ let MotelContent = (props) => {
                                         <td>{item.quantity}</td>
                                         <td>{item.horizontal} m</td>
                                         <td>{item.vertical}m</td>
-                                        <td>{item.price.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</td>
+                                        <td>{item.price.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}</td>
                                         <td>{item.address.address}</td>
                                         <td>{item.ward.type === 'phuong' ? item.ward.name_with_type : item.ward.name}</td>
                                         <td>{item.district.name}</td>

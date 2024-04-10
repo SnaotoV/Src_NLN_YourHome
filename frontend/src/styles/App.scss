@@ -20,6 +20,10 @@ button {
     background-color: white;
 }
 
+.body-content {
+    margin: 0 -12px;
+}
+
 .main-text {
     color: #35bf76;
 }
@@ -36,4 +40,8 @@ button {
 .card-img {
     width: 420px;
     height: 220px;
+}
+
+.main-bg {
+    background-color: rgb(245, 245, 245);
 }

@@ -103,9 +103,56 @@ class MotelModel {
         return await cursor.toArray();
     }
     async findById(id) {
-    }
-    async findallById(id) {
+        const filter = {
+            _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
+        };
+        const cursor = await this.Motel.aggregate([{
+            $match: filter
+        }, {
+            $lookup:
+            {
+                from: 'image',
+                localField: '_id',
+                foreignField: 'IdParent',
+                as: 'image'
+            }
+        },
+        {
+            $lookup:
+            {
+                from: 'room',
+                localField: '_id',
+                foreignField: 'idMotel',
+                pipeline: [
+                    {
+                        $match: {
+                            statusCode: 1
+                        }
+                    }
+                ],
+                as: 'listRoom'
+            }
+        },
+        {
 
+            $lookup:
+            {
+                from: 'priceEW',
+                localField: '_id',
+                foreignField: 'IdMotel',
+                pipeline: [
+                    {
+                        $match: {
+                            statusCode: 4
+                        }
+                    }
+                ],
+                as: 'priceEW',
+            }
+        },
+        ]);
+        return await cursor.toArray();
     }
+
 }
 module.exports = MotelModel;

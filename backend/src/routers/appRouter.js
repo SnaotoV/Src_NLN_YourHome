@@ -19,7 +19,7 @@ router.route('/user/:id')
 router.route('/user/motel')
     .get(motel.findAll)
     .post(motel.create)
-router.route('/user/motel/:id')
+router.route('/user/motel/:user/:id')
     .get(motel.findOneFromUser)
     .put(motel.update)
 
