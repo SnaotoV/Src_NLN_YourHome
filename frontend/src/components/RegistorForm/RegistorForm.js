@@ -8,7 +8,7 @@ import { checkvalid } from '../../ultils/checkValid';
 
 let RegistorForm = (props) => {
     let [user, setUser] = useState({});
-    let [err, setErr] = useState({ sValid: false });
+    let [err, setErr] = useState({ isValid: false });
     let handleClickClose = () => {
         setUser({});
         setErr({});
@@ -22,7 +22,7 @@ let RegistorForm = (props) => {
                 toast.success(data.value, { position: toast.POSITION.TOP_RIGHT });
                 props.handleClickClose('register')
                 setUser({});
-                setErr({ sValid: false });
+                setErr({ isValid: false });
             } else
                 toast.error(data.value, { position: toast.POSITION.TOP_RIGHT });
         }

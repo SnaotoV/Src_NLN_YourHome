@@ -6,8 +6,8 @@ let register = (user) => {
 let login = (user) => {
     return axios.post('/login', { user });
 }
-let getQuantityPage = (type, limit) => {
-    return axios.post('/app/all-page', { type, limit });
+let getQuantityPage = (type, limit, filter) => {
+    return axios.post('/app/all-page', { type, limit, filter });
 }
 let getDataInPage = (type, page, filter) => {
     return axios.put(`app/${type}/${page}`, { filter });

@@ -3,6 +3,9 @@ const { ObjectId } = require("mongodb");
 class RoomModel {
     constructor(client) {
         this.Room = client.db().collection("room");
+        this.dateHire = client.db().collection("dateHire");
+        this.inforHire = client.db().collection("inforHire");
+        this.inforRegisterHire = client.db().collection("inforRegisterHire");
     };
     tranformRoomEWData(idMotel) {
         const room = {
@@ -28,6 +31,84 @@ class RoomModel {
     };
     async fetchPage(type, page, quantityPage) {
         const cursor = await this.Status.find
+    }
+    async findRegisterHire(room, idUser) {
+        let filter = {
+            userId: ObjectId.isValid(idUser) ? new ObjectId(idUser) : null,
+            motelId: ObjectId.isValid(room.idMotel) ? new ObjectId(room.idMotel) : null,
+            statusCode: 9,
+        };
+        const cursor = await this.inforRegisterHire.find(filter);
+        return cursor.toArray();
+
+    }
+    async addRegister(room, idUser) {
+        let dataInforRegisterHire = {
+            userId: ObjectId.isValid(idUser) ? new ObjectId(idUser) : null,
+            roomId: ObjectId.isValid(room._id) ? new ObjectId(room._id) : null,
+            motelId: ObjectId.isValid(room.idMotel) ? new ObjectId(room.idMotel) : null,
+            statusCode: 9,
+            indexRoom: room.index,
+            data_Date: null,
+            data_Time: null,
+            create_at: new Date(),
+            update_at: null
+        }
+        const resData = await this.inforRegisterHire.insertOne(
+            dataInforRegisterHire
+        );
+        return resData;
+    }
+    async countAllRegisterHire(filter) {
+        let filterUser = {};
+        if (filter && filter.motelId) {
+            filterUser = {
+                motelId: ObjectId.isValid(filter.motelId) ? new ObjectId(filter.motelId) : null
+            }
+        }
+        const cursor = await this.inforRegisterHire.count(filterUser);
+        return cursor
+    }
+    async findInPageRegisterHire(page, quantityPage, filter) {
+        let filterUser = {};
+        let start = (page - 1) * quantityPage;
+        let quantity = quantityPage
+        if (filter && filter.motelId) {
+            filterUser = {
+                motelId: ObjectId.isValid(filter.motelId) ? new ObjectId(filter.motelId) : null
+            }
+        }
+        const cursor = await this.inforRegisterHire.aggregate([
+            {
+                $match: filterUser
+            },
+            {
+                $lookup:
+                {
+                    from: 'user',
+                    localField: 'userId',
+                    foreignField: '_id',
+                    as: 'user'
+                }
+            }], {
+            skip: start,
+            limit: quantity,
+        });
+        return cursor.toArray();
+    }
+    async updateSchedule(id, data, statusCode) {
+        let filter = {
+            _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
+        }
+        const cursor = await this.inforRegisterHire.updateOne(filter, {
+            $set: {
+                statusCode: statusCode,
+                data_Date: data.data_Date,
+                data_Time: data.data_Time,
+                update_at: new Date()
+            }
+        })
+        return cursor
     }
 }
 module.exports = RoomModel;

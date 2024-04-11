@@ -1,3 +1,4 @@
+import { connect } from 'react-redux';
 import { useEffect, useState } from "react";
 import { Form, Button, Modal, Card } from "react-bootstrap";
 import { Autocomplete, TextField } from '@mui/material';
@@ -6,14 +7,16 @@ import classPhuongXa from "../../ultils/xa_phuong";
 import classHuyenQuan from "../../ultils/quan_huyen";
 import { getQuantityPage, getDataInPage } from "../../services/appServices";
 import { Link, withRouter } from 'react-router-dom';
+import Pagenated from '../../components/Pagenated/Pagenated';
 import '../../styles/Motel/Motel.scss';
-let Motel = () => {
+let Motel = (props) => {
     let [filter, setFilter] = useState({});
     let [QuanHuyen, setQuanHuyen] = useState([]);
     let [XaPhuong, setXaPhuong] = useState([]);
     let [page, setPage] = useState(1);
     let [listMotel, setListMotel] = useState([]);
     let [quantityPage, setQuantityPage] = useState(1);
+    let [user, setUser] = useState({});
     let handleOnChangesValue = async (event, id, values) => {
         if (!values) {
             let cloneMotel = { ...filter };
@@ -63,6 +66,9 @@ let Motel = () => {
         }
         getData()
     }, [])
+    useEffect(() => {
+        setUser(props.userInfor)
+    }, [props.userInfor])
     return (
         <div>
             <div className="">
@@ -147,7 +153,7 @@ let Motel = () => {
                                             <br />
                                             {item.price} VND/tháng
                                         </Card.Text>
-                                        <Link className='btn btn-dark text-white' to={`/Motel/${item._id}`}>Xem chi tiết</Link>
+                                        <Link className='btn btn-dark text-white' to={user._id === item.userId ? `/User/Motel/${item._id}/1` : `/Detail/Motel/${item._id}`}>Xem chi tiết</Link>
                                     </Card.Body>
                                 </Card>
                             </div>
@@ -156,8 +162,20 @@ let Motel = () => {
                     )}
                 </div>
             </div>
+            <Pagenated
+                quantityPage={quantityPage}
+                className="d-flex justify-content-center"
+            ></Pagenated>
         </div >
     )
 }
-
-export default Motel;
+const mapStatetoProps = state => {
+    return {
+        userInfor: state.user.userInfor
+    }
+}
+const mapDispatchToProps = dispatch => {
+    return {
+    }
+}
+export default connect(mapStatetoProps, mapDispatchToProps)(Motel);

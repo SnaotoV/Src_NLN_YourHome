@@ -1,6 +1,7 @@
 import MongoDB from '../config/mongo.config';
 import UserModel from '../models/usersModel';
 import MotelModel from '../models/motelModel';
+import RoomModel from '../models/RoomModel';
 let registerService = async (user) => {
     let resData = {};
     if (user) {
@@ -41,19 +42,29 @@ let loginService = async (user) => {
     return resData
 }
 
-let getAllPage = async (type, limit) => {
+let getAllPage = async (type, limit, filter) => {
     let quantityPage = 1;
-    if (type = 'motel') {
+    if (type == 'motel') {
         let Motel = new MotelModel(MongoDB.client);
-        let quantityMotel = await Motel.countAll();
-        quantityPage = Math.ceil(quantityMotel / 10);
+        let quantityMotel = await Motel.countAll(filter);
+        quantityPage = Math.ceil(quantityMotel / limit);
+    }
+    if (type == 'registerHire') {
+        let Room = new RoomModel(MongoDB.client);
+        let quantityMotel = await Room.countAllRegisterHire(filter);
+        quantityPage = Math.ceil(quantityMotel / limit);
     }
     return quantityPage
 }
 let getDataInPage = async (type, page, filter) => {
-    if (type = 'motel') {
+    if (type == 'motel') {
         let Motel = new MotelModel(MongoDB.client);
         let quantityMotel = await Motel.findInPage(page, 10, filter);
+        return quantityMotel;
+    }
+    if (type == 'registerHire') {
+        let Room = new RoomModel(MongoDB.client);
+        let quantityMotel = await Room.findInPageRegisterHire(page, 10, filter);
         return quantityMotel;
     }
 }

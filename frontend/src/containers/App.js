@@ -22,11 +22,11 @@ function App(props) {
             <Route path={'/'} exact component={(Home)} />
             <Route path={'/Infor'} component={(InforUser)} />
             <Route path={'/InforRoom'} exact component={(InforRoom)} />
-            <Route path={'/Motel'} exact component={(Motel)} />
-            <Route path={'/Motel/:id'} component={(DetailMotel)} />
+            <Route path={'/Motel/:page'} component={(Motel)} />
+            <Route path={'/Detail/Motel/:id'} component={(DetailMotel)} />
             <Route path={'/News'} exact component={(News)} />
             <Route path={'/Contact'} exact component={(Contact)} />
-            <Route path={'/User/Motel/:id'} exact component={(InforMotel)} />
+            <Route path={'/User/Motel/:id/:page'} component={(InforMotel)} />
           </Switch>
         </div>
         <Footer></Footer>

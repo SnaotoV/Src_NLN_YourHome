@@ -52,8 +52,14 @@ class MotelModel {
 
         return resMotel;
     };
-    async countAll() {
-        const cursor = await this.Motel.count();
+    async countAll(filter) {
+        let filterUser = {};
+        if (filter && filter.userId) {
+            filterUser = {
+                userId: ObjectId.isValid(filter.userId) ? new ObjectId(filter.userId) : null
+            }
+        }
+        const cursor = await this.Motel.count(filterUser);
         return cursor
     }
     async findInPage(page, quantityPage, filter) {
@@ -102,7 +108,7 @@ class MotelModel {
         }
         return await cursor.toArray();
     }
-    async findById(id) {
+    async findById(id, user, type) {
         const filter = {
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
         };
@@ -152,6 +158,7 @@ class MotelModel {
         },
         ]);
         return await cursor.toArray();
+
     }
 
 }

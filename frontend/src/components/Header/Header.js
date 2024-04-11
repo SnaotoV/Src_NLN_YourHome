@@ -21,7 +21,7 @@ let Header = (props) => {
             <div className='col-3 p-2'>logo</div>
             <div className='nav header-nav col-9'>
                 <NavLink className='py-2 px-4 fs-5' activeClassName="active" to='/' exact={true}>Trang chủ</NavLink>
-                <NavLink className='py-2 px-4 fs-5' activeClassName="active" to='/Motel' exact={true}>Dãy trọ</NavLink>
+                <NavLink className='py-2 px-4 fs-5' activeClassName="active" to='/Motel/1' exact={true}>Dãy trọ</NavLink>
                 <NavLink className='py-2 px-4 fs-5' activeClassName="active" to='/News' exact={true}>Tin tức</NavLink>
                 <NavLink className='py-2 px-4 fs-5' activeClassName="active" to='/Contact' exact={true}>Liên hệ</NavLink>
                 {props.isLoggedIn ?

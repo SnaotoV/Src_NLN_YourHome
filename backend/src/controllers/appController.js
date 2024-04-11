@@ -1,6 +1,5 @@
 import ApiError from "../api-error";
 import appService from '../services/appService';
-
 let register = async (req, res) => {
     try {
         let user = req.body.user;
@@ -32,8 +31,8 @@ let allpage = async (req, res) => {
     try {
         let type = req.body.type;
         let limit = req.body.limit;
-
-        let resService = await appService.getAllPage(type, limit);
+        let filter = req.body.filter;
+        let resService = await appService.getAllPage(type, limit, filter);
         return res.status(200).json({
             quantityPage: resService
         })

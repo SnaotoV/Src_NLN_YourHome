@@ -7,7 +7,8 @@ let findOneFromUser = async (req, res) => {
     try {
         let id = req.params.id;
         let user = req.params.user;
-        let resData = await motelService.findOneMotel(id, user);
+        let type = req.params.type;
+        let resData = await motelService.findOneMotel(id, user, type);
         return res.status(200).json({
             data: resData[0]
         })
