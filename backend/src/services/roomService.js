@@ -70,8 +70,18 @@ let createHireInfor = async (motel, user) => {
     }
     return resData;
 }
+
+let findInforHire = async (filter) => {
+    let resData = {}
+    let Room = new RoomModel(MongoDB.client);
+    if (filter) {
+        resData = await Room.findInforHire(filter);
+    }
+    return resData;
+}
 module.exports = {
     addHire,
     editSchedule,
-    createHireInfor
+    createHireInfor,
+    findInforHire
 }

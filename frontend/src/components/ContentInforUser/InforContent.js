@@ -7,7 +7,8 @@ import { Button, Table } from "react-bootstrap";
 import { toast } from 'react-toastify';
 import Pagenated from '../../components/Pagenated/Pagenated';
 import EditSchedule from "../ContactRoom/editSchedule";
-import { updateSchedule, hireRoom } from "../../services/userServices";
+import { updateSchedule, hireRoom, findInforHire } from "../../services/userServices";
+import { getFullDate } from "../../ultils/getFullDate";
 let InforContent = (props) => {
     let [user, setUser] = useState({});
     let [listRegisterHire, setListRegisterHire] = useState([]);
@@ -15,7 +16,7 @@ let InforContent = (props) => {
     let [page, setPage] = useState(1);
     let [handleSchedule, setHandleSchedule] = useState(false);
     let [activeSchedule, setActiceSchedule] = useState({})
-
+    let [inforHire, setInforHire] = useState({});
     let handleModal = async (type, motel) => {
         if (type === 'success') {
             let resData = await updateSchedule(motel, type);
@@ -64,6 +65,23 @@ let InforContent = (props) => {
     }, [props.userInfor])
     useEffect(() => {
         let getData = async () => {
+            let filter = {
+                userId: user ? user._id : ''
+            }
+            if (user && user._id) {
+                let data = await findInforHire(filter);
+                if (data.resData.length > 0) {
+                    let cloneData = data.resData ? data.resData[0] : {};
+                    let date = data.resData ? data.resData[0]?.create_at : new Date();
+                    cloneData.dataDate = await getFullDate(date)
+                    setInforHire(cloneData);
+                }
+            }
+        }
+        getData()
+    }, [user])
+    useEffect(() => {
+        let getData = async () => {
             let clonePage = page;
             let filter = {
                 userId: user ? user._id : ''
@@ -82,7 +100,6 @@ let InforContent = (props) => {
         setUser(props.userInfor);
         setPage(clonePage);
     }, [props.match.params.page, props.userInfor])
-    console.log(listRegisterHire);
     return (
         <div className="container">
             <div className="row">
@@ -122,15 +139,51 @@ let InforContent = (props) => {
                             </table>
                         </div>
                     }
-                    <div className="col-6">hello</div>
+                    {inforHire &&
+                        <div className="col-6">
+                            <table className="fs-5 border infor-box ">
+                                <thead>
+                                    <tr>
+                                        <td colSpan={2} className="text-center py-2 fs-3 main-title">Thông tin thuê phòng</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    <tr>
+                                        <td className="px-4">Ngày bắt đầu thuê:</td>
+                                        <td className="px-4">{inforHire?.dataDate}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="px-4">Giá:</td>
+                                        <td className="px-4">{inforHire?.motel && inforHire?.motel[0].price.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ</td>
+                                    </tr>
+                                    <tr>
+                                        {console.log(inforHire)}
+                                        <td className="px-4">Giá điện:</td>
+                                        <td className="px-4">{inforHire?.motel && inforHire?.motel[0].priceEW.length > 0 && inforHire?.motel[0].priceEW[0].priceE.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="px-4">Giá nước:</td>
+                                        <td className="px-4">{inforHire?.motel && inforHire?.motel[0].priceEW.length > 0 && inforHire?.motel[0].priceEW[0].priceW.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}</td>
+                                    </tr>
+                                    <tr >
+                                        <td colspan="2">
+                                            <Button className="w-100">Xem chi tiết</Button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+
                 </div>
             </div>
-            <div className="row m-2">
-                <div className="row">
-                    Danh sách đã đăng ký thuê
-                </div>
-                <div className="row">
-                    {listRegisterHire && listRegisterHire.length > 0 &&
+            {listRegisterHire && listRegisterHire.length > 0 &&
+                <div className="row m-2">
+                    <div className="row">
+                        Danh sách đã đăng ký thuê
+                    </div>
+                    <div className="row">
                         < Table >
                             <thead>
                                 <tr>
@@ -184,9 +237,9 @@ let InforContent = (props) => {
                                 </tr>
                             </tfoot>
                         </Table>
-                    }
+                    </div>
                 </div>
-            </div>
+            }
             <EditSchedule
                 inforRegisterHire={activeSchedule}
                 motel={activeSchedule?.motel}

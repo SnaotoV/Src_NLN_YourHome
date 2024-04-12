@@ -23,11 +23,15 @@ let updateSchedule = (data, type) => {
 let hireRoom = (motel, user) => {
     return axios.post('/user/hire', { motel, user });
 }
+let findInforHire = (filter) => {
+    return axios.post(`/hire`, { filter });
+}
 export {
     edit,
     addMotel,
     getMotel,
     registerRoom,
     updateSchedule,
-    hireRoom
+    hireRoom,
+    findInforHire
 }

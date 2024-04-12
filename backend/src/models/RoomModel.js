@@ -152,6 +152,21 @@ class RoomModel {
         })
         return cursor
     }
+    async addHire(room, idUser) {
+        let dataInforRegisterHire = {
+            userId: ObjectId.isValid(idUser) ? new ObjectId(idUser) : null,
+            roomId: ObjectId.isValid(room._id) ? new ObjectId(room._id) : null,
+            motelId: ObjectId.isValid(room.motelId) ? new ObjectId(room.motelId) : null,
+            statusCode: 4,
+            indexRoom: room.index,
+            create_at: new Date(),
+            update_at: null
+        }
+        const resData = await this.inforHire.insertOne(
+            dataInforRegisterHire
+        );
+        return resData;
+    }
     async findInforHire(filter) {
         let filterUser = {};
         if (filter && filter.userId) {
@@ -163,8 +178,43 @@ class RoomModel {
         const cursor = await this.inforHire.aggregate([
             {
                 $match: filterUser
-            },
-        ])
+            }, {
+                $lookup:
+                {
+                    from: 'motel',
+                    localField: 'motelId',
+                    foreignField: '_id',
+                    pipeline: [
+                        {
+                            $lookup:
+                            {
+                                from: 'priceEW',
+                                localField: '_id',
+                                foreignField: 'IdMotel',
+                                pipeline: [
+                                    {
+                                        $match: {
+                                            statusCode: 4
+                                        }
+                                    },
+                                ],
+                                as: 'priceEW',
+                            }
+                        },
+                        {
+                            $lookup:
+                            {
+                                from: 'user',
+                                localField: 'userId',
+                                foreignField: '_id',
+                                as: 'user'
+                            }
+                        }
+                    ],
+                    as: 'motel'
+                }
+            }
+        ]);
         return cursor.toArray();
     }
 }

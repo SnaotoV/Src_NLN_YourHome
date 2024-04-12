@@ -27,9 +27,12 @@ router.route('/user/motel/:type/:user/:id')
 router.route('/user/room')
     .post(room.registerRoom)
 router.route('/user/room/:id')
+    .get(room.findOneRoom)
     .put(room.editRegisterRoom);
 router.route('/user/hire')
     .post(room.createHire)
+router.route('/hire')
+    .post(room.findOneRoom)
 
 
 router.route('/app/all-page')

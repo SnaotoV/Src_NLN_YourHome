@@ -139,7 +139,8 @@ let InforMotel = (props) => {
                                     })}
                                 </div>
                             </div>
-                            <div className='row'><button className='btn btn-primary' onClick={() => { handleButtonModal('edit') }}>Chỉnh sửa</button> </div>
+                            <div className='row'><button className='btn btn-primary my-2' onClick={() => { handleButtonModal('edit') }}>Chỉnh sửa</button> </div>
+                            <div className='row'><button className='btn btn-primary my-2'>Xem chi tiết thuê phòng</button> </div>
                         </div>
                         <div className="col-8 px-4">
                             <div className=" px-4">

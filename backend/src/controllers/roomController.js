@@ -42,8 +42,20 @@ let createHire = async (req, res) => {
         new ApiError(500, "An error orrcured while retrieving the contacts")
     }
 }
+let findOneRoom = async (req, res) => {
+    try {
+        let filter = req.body.filter;
+        let resData = await roomService.findInforHire(filter);
+        return res.status(200).json({
+            resData
+        })
+    } catch (error) {
+        new ApiError(500, "An error orrcured while retrieving the contacts")
+    }
+}
 module.exports = {
     registerRoom,
     editRegisterRoom,
-    createHire
+    createHire,
+    findOneRoom
 }

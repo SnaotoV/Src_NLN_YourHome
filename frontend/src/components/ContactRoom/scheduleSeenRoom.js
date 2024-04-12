@@ -28,10 +28,10 @@ let ScheduleSeenRoom = (props) => {
             let resData = await updateSchedule(inforSchedule);
             if (resData && resData.errCode === 0) {
                 toast.success(resData.value, { position: toast.POSITION.TOP_RIGHT });
-                props.handleClickClose()
+                props.handleClickClose('schedule')
             } else {
                 toast.error(resData.value, { position: toast.POSITION.TOP_RIGHT });
-                props.handleClickClose()
+                props.handleClickClose('schedule')
             }
         }
     }
