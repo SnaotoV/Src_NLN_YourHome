@@ -23,7 +23,7 @@ let Home = () => {
                     </div>
                 </Carousel.Item>
             </Carousel>
-            <div className='search-box row justify-content-center align-items-center'>
+            <div className='search-box row justify-content-center align-items-center '>
                 <Form className="col-6 ">
                     <Form.Control placeholder="Nhập nội dung tìm kiêm"></Form.Control>
                 </Form>

@@ -15,9 +15,9 @@ import { ToastContainer } from 'react-toastify';
 function App(props) {
   return (
     <BrowserRouter>
-      <div className="container-fluid">
+      <div className="container-fluid ">
         <Header></Header>
-        <div className='body-content p-4 main-bg'>
+        <div className='  main-bg '>
           <Switch>
             <Route path={'/'} exact component={(Home)} />
             <Route path={'/Infor'} component={(InforUser)} />

@@ -23,7 +23,6 @@ let ScheduleSeenRoom = (props) => {
         setInforSchedule(cloneInfor);
     }
     let handleClickChanges = async () => {
-        console.log(inforSchedule);
         let check = await checkValidForm();
         if (check.isValid) {
             let resData = await updateSchedule(inforSchedule);

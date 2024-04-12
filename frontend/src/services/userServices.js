@@ -16,13 +16,18 @@ let registerRoom = (room, user) => {
     return axios.post(`/user/room`, { room, user });
 }
 
-let updateSchedule = (data) => {
-    return axios.put(`/user/room/${data._id}`, { data });
+let updateSchedule = (data, type) => {
+    return axios.put(`/user/room/${data._id}`, { data, type });
+}
+
+let hireRoom = (motel, user) => {
+    return axios.post('/user/hire', { motel, user });
 }
 export {
     edit,
     addMotel,
     getMotel,
     registerRoom,
-    updateSchedule
+    updateSchedule,
+    hireRoom
 }

@@ -28,6 +28,9 @@ router.route('/user/room')
     .post(room.registerRoom)
 router.route('/user/room/:id')
     .put(room.editRegisterRoom);
+router.route('/user/hire')
+    .post(room.createHire)
+
 
 router.route('/app/all-page')
     .post(app.allpage);

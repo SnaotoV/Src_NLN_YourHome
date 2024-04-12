@@ -21,20 +21,57 @@ let addHire = async (room, user) => {
     }
     return resData
 }
-let editSchedule = async (id, data) => {
+let editSchedule = async (id, data, type) => {
     let resData = {};
-    let Room = new RoomModel(MongoDB.client);
-    if (id && data) {
-        let newRegisterHire = await Room.updateSchedule(id, data, 8);
-        if (newRegisterHire) {
-            resData.errCode = 0;
-            resData.value = 'Hẹn lịch lên phòng thành công';
-        }
+    if (type === "Cancel") {
+        let Room = new RoomModel(MongoDB.client);
+        if (id && data) {
+            let newRegisterHire = await Room.updateSchedule(id, data, 0);
+            if (newRegisterHire) {
+                resData.errCode = 0;
+                resData.value = 'Hủy lịch hẹn thành công';
+            }
 
+        }
+    } else if (type === "Contact" || type === "success") {
+        let Room = new RoomModel(MongoDB.client);
+        if (id && data) {
+            let newRegisterHire = await Room.updateSchedule(id, data, 10);
+            if (newRegisterHire) {
+                resData.errCode = 0;
+                resData.value = 'Vui lòng liên hệ với chủ sở hữu theo số điện thoại';
+            }
+
+        }
+    } else {
+        let Room = new RoomModel(MongoDB.client);
+        if (id && data) {
+            let newRegisterHire = await Room.updateSchedule(id, data, 8);
+            if (newRegisterHire) {
+                resData.errCode = 0;
+                resData.value = 'Hẹn lịch lên phòng thành công';
+            }
+
+        }
     }
     return resData
 }
+
+let createHireInfor = async (motel, user) => {
+    let resData = {}
+    let Room = new RoomModel(MongoDB.client);
+    if (motel && user) {
+        let newInforHire = await Room.addHire(motel, user._id);
+        if (newInforHire) {
+            await Room.updateSchedule(motel._id, motel, 0);
+            resData.errCode = 0;
+            resData.value = 'Xác nhận thuê thành công!';
+        }
+    }
+    return resData;
+}
 module.exports = {
     addHire,
-    editSchedule
+    editSchedule,
+    createHireInfor
 }

@@ -18,7 +18,22 @@ let editRegisterRoom = async (req, res) => {
     try {
         let id = req.params.id;
         let data = req.body.data;
-        let resData = await roomService.editSchedule(id, data);
+        let type = req.body.type;
+        let resData = await roomService.editSchedule(id, data, type);
+        return res.status(200).json({
+            errCode: resData.errCode,
+            value: resData.value
+        })
+    } catch (error) {
+        new ApiError(500, "An error orrcured while retrieving the contacts")
+    }
+}
+
+let createHire = async (req, res) => {
+    try {
+        let motel = req.body.motel;
+        let user = req.body.user;
+        let resData = await roomService.createHireInfor(motel, user);
         return res.status(200).json({
             errCode: resData.errCode,
             value: resData.value
@@ -29,5 +44,6 @@ let editRegisterRoom = async (req, res) => {
 }
 module.exports = {
     registerRoom,
-    editRegisterRoom
+    editRegisterRoom,
+    createHire
 }

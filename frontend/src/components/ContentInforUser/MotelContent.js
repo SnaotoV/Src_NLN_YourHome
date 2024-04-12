@@ -82,7 +82,7 @@ let MotelContent = (props) => {
                                         <td>{item.ward.type === 'phuong' ? item.ward.name_with_type : item.ward.name}</td>
                                         <td>{item.district.name}</td>
                                         <td>{item.province.name}</td>
-                                        <td><Link to={`/User/Motel/${item._id}`} className="btn btn-primary text-white ">Xem</Link></td>
+                                        <td><Link to={`/User/Motel/${item._id}/1`} className="btn btn-primary text-white ">Xem</Link></td>
                                     </tr>
                                 )
                             })}

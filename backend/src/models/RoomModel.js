@@ -75,7 +75,14 @@ class RoomModel {
         let quantity = quantityPage
         if (filter && filter.motelId) {
             filterUser = {
-                motelId: ObjectId.isValid(filter.motelId) ? new ObjectId(filter.motelId) : null
+                motelId: ObjectId.isValid(filter.motelId) ? new ObjectId(filter.motelId) : null,
+                statusCode: { $ne: 0 }
+            }
+        }
+        if (filter && filter.userId) {
+            filterUser = {
+                userId: ObjectId.isValid(filter.userId) ? new ObjectId(filter.userId) : null,
+                statusCode: { $ne: 0 }
             }
         }
         const cursor = await this.inforRegisterHire.aggregate([
@@ -90,10 +97,45 @@ class RoomModel {
                     foreignField: '_id',
                     as: 'user'
                 }
+            }, {
+                $lookup:
+                {
+                    from: 'motel',
+                    localField: 'motelId',
+                    foreignField: '_id',
+                    pipeline: [
+                        {
+                            $lookup:
+                            {
+                                from: 'priceEW',
+                                localField: '_id',
+                                foreignField: 'IdMotel',
+                                pipeline: [
+                                    {
+                                        $match: {
+                                            statusCode: 4
+                                        }
+                                    },
+                                ],
+                                as: 'priceEW',
+                            }
+                        },
+                        {
+                            $lookup:
+                            {
+                                from: 'user',
+                                localField: 'userId',
+                                foreignField: '_id',
+                                as: 'user'
+                            }
+                        }
+                    ],
+                    as: 'motel'
+                }
             }], {
             skip: start,
             limit: quantity,
-        });
+        }).sort({ _id: -1 });
         return cursor.toArray();
     }
     async updateSchedule(id, data, statusCode) {
@@ -109,6 +151,21 @@ class RoomModel {
             }
         })
         return cursor
+    }
+    async findInforHire(filter) {
+        let filterUser = {};
+        if (filter && filter.userId) {
+            filterUser = {
+                userId: ObjectId.isValid(filter.userId) ? new ObjectId(filter.userId) : null,
+                statusCode: { $ne: 0 }
+            }
+        }
+        const cursor = await this.inforHire.aggregate([
+            {
+                $match: filterUser
+            },
+        ])
+        return cursor.toArray();
     }
 }
 module.exports = RoomModel;

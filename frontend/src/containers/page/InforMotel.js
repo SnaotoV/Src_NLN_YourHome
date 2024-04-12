@@ -1,4 +1,3 @@
-import Pagination from 'react-bootstrap/Pagination';
 import { withRouter } from "react-router-dom";
 import { connect } from 'react-redux';
 import { useEffect, useState } from "react";
@@ -26,16 +25,29 @@ let InforMotel = (props) => {
     let changeImage = (event, item) => {
         setActiveImage(item)
     }
-    let handleButtonModal = (type, data) => {
+    let handleButtonModal = async (type, data) => {
         if (type === 'edit') {
             setHandleAddMotelModel(!handleAddMotelModal);
         }
         if (type === 'schedule') {
             setHandleSchedule(!handleSchedule);
             setActiveRegistorHire(data);
+            await reFetchData();
         }
     }
 
+    let reFetchData = async () => {
+        let clonePage = page;
+        let filter = {
+            motelId: dataMotel._id ? dataMotel._id : ''
+        }
+        if (user && user._id) {
+            let cloneListMotel = await getDataInPage('registerHire', clonePage, filter);
+            let quantityPageFromBE = await getQuantityPage('registerHire', 10, filter);
+            setListRegisterHire(cloneListMotel.data);
+            setQuantityPage(quantityPageFromBE);
+        }
+    }
     // let handleButton = (room, index) => {
     //     room.index = index + 1;
     //     setActiveRoom(room);
@@ -201,7 +213,16 @@ let InforMotel = (props) => {
                                                 <td>{item.user[0]?.address}</td>
                                                 <td>{getGender(item.user[0]?.gender)}</td>
                                                 <td>{item.data_Date !== null ? item.data_Date : "Chưa duyệt"}</td>
-                                                <td><button className='btn btn-primary' onClick={() => { handleButtonModal('schedule', item) }}>Lên lịch</button></td>
+                                                <td>
+                                                    {item.statusCode === 9 ?
+                                                        <button className='btn btn-primary' onClick={() => { handleButtonModal('schedule', item) }}>Lên lịch</button>
+                                                        :
+                                                        item.statusCode === 8 ?
+                                                            <div className='bg-primary text-white border-none rounded-2'>Đã lên lịch hẹn đợi xác nhận</div>
+                                                            :
+                                                            <div className='bg-primary text-white'>Khác</div>
+                                                    }
+                                                </td>
                                             </tr>
                                         )
                                     })}
@@ -232,7 +253,7 @@ let InforMotel = (props) => {
             <ScheduleSeenRoom
                 inforRegisterHire={activeRegistorHire}
                 motel={dataMotel}
-                modalName={"Thêm dãy nhà trọ"}
+                modalName={"Lên lịch hẹn xem phòng"}
                 show={handleSchedule}
                 handleClickChanges={handleButtonModal}
                 handleClickClose={handleButtonModal}
