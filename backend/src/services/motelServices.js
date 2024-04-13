@@ -17,11 +17,11 @@ let createMotel = async (data) => {
     }
     return resData;
 }
-let findOneMotel = async (id, user, type) => {
+let findOneMotel = async (id, type) => {
     let motel = {}
     if (id) {
         let Motel = new MotelModel(MongoDB.client);
-        let motelData = await Motel.findById(id, user, type);
+        let motelData = await Motel.findById(id, type);
         motel = motelData;
     }
     return motel;

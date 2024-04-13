@@ -8,7 +8,7 @@ import { withRouter, Switch, Route } from "react-router-dom";
 import MotelContent from "../../components/ContentInforUser/MotelContent";
 import NewsContent from "../../components/ContentInforUser/NewsContent";
 import AddMotelForm from "../../components/AddMotelForm/AddMotelForm";
-import { getGender } from "../../ultils/gender";
+import * as actions from '../../stores/actions'
 import InforContent from "../../components/ContentInforUser/InforContent";
 let InforUser = (props) => {
     let [user, setUser] = useState({});
@@ -26,13 +26,19 @@ let InforUser = (props) => {
             setHandleAddMotelModel(!handleAddMotelModal);
             checkFetchData();
         }
+        if (type === 'logout') {
+            let history = props.history;
+            history.replace({ pathname: '/' });
+            props.processLogout();
+
+        }
     }
     useEffect(() => {
         setUser(props.userInfor)
     }, [props.userInfor])
     return (
-        <div className="main-content my-2">
-            <div className="row my-2 main-title ">
+        <div className="main-content">
+            <div className="row main-title ">
                 <div className="col-2 ">
                     <img src={image} className="border rounded-circle my-2"></img>
                 </div>
@@ -43,6 +49,7 @@ let InforUser = (props) => {
                     <button className=" btn-infor text-center col-12 fs-5 my-1" onClick={() => handleButton('edit')}>Chỉnh sửa<i class="fas fa-user-edit mx-2 "></i></button>
                     <button className=" btn-infor text-center col-12 fs-5 my-1" onClick={() => handleButton('add-motel')}>Thêm dãy trọ<i class="fas fa-plus mx-2 "></i></button>
                     <button className=" btn-infor text-center col-12 fs-5 my-1">Thêm bài viết<i class="fas fa-pencil-alt mx-2"></i></button>
+                    <button className=" btn-infor text-center col-12 fs-5 my-1" onClick={() => handleButton('logout')} >Đăng xuất<i class="fas fa-sign-out-alt mx-2"></i></button>
                 </div>
                 <div className="col-10 p-4 border rounded-4 shadow bg-white">
                     <div className="row">
@@ -85,6 +92,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
+        processLogout: () => dispatch(actions.processLogout())
     };
 };
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(InforUser));

@@ -108,55 +108,130 @@ class MotelModel {
         }
         return await cursor.toArray();
     }
-    async findById(id, user, type) {
+    async findById(id, type) {
         const filter = {
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
         };
-        const cursor = await this.Motel.aggregate([{
-            $match: filter
-        }, {
-            $lookup:
+        let cursor = {}
+        if (type === 'admin') {
+            cursor = await this.Motel.aggregate([{
+                $match: filter
+            }, {
+                $lookup:
+                {
+                    from: 'image',
+                    localField: '_id',
+                    foreignField: 'IdParent',
+                    as: 'image'
+                }
+            },
             {
-                from: 'image',
-                localField: '_id',
-                foreignField: 'IdParent',
-                as: 'image'
-            }
-        },
-        {
-            $lookup:
-            {
-                from: 'room',
-                localField: '_id',
-                foreignField: 'idMotel',
-                pipeline: [
-                    {
-                        $match: {
-                            statusCode: 1
-                        }
-                    }
-                ],
-                as: 'listRoom'
-            }
-        },
-        {
+                $lookup:
+                {
+                    from: 'room',
+                    localField: '_id',
+                    foreignField: 'idMotel',
+                    pipeline: [
+                        {
 
-            $lookup:
+                            $lookup:
+                            {
+                                from: 'inforHire',
+                                localField: '_id',
+                                foreignField: 'roomId',
+                                pipeline: [
+                                    {
+                                        $match: {
+                                            statusCode: 4
+                                        }
+                                    },
+                                    {
+                                        $lookup:
+                                        {
+                                            from: 'user',
+                                            localField: 'userId',
+                                            foreignField: '_id',
+                                            as: 'user'
+                                        }
+                                    },
+                                    {
+                                        $lookup:
+                                        {
+                                            from: 'bills',
+                                            localField: 'billId',
+                                            foreignField: '_id',
+                                            as: 'bills'
+                                        }
+                                    }
+
+                                ],
+                                as: 'inforHire',
+                            }
+                        },
+
+                    ],
+                    as: 'listRoom'
+                }
+            },
             {
-                from: 'priceEW',
-                localField: '_id',
-                foreignField: 'IdMotel',
-                pipeline: [
-                    {
-                        $match: {
-                            statusCode: 4
+
+                $lookup:
+                {
+                    from: 'priceEW',
+                    localField: '_id',
+                    foreignField: 'IdMotel',
+                    pipeline: [
+                        {
+                            $match: {
+                                statusCode: 4
+                            }
                         }
-                    }
-                ],
-                as: 'priceEW',
-            }
-        },
-        ]);
+                    ],
+                    as: 'priceEW',
+                }
+            },
+            ]);
+        }
+        else {
+            cursor = await this.Motel.aggregate([{
+                $match: filter
+            }, {
+                $lookup:
+                {
+                    from: 'image',
+                    localField: '_id',
+                    foreignField: 'IdParent',
+                    as: 'image'
+                }
+            },
+            {
+                $lookup:
+                {
+                    from: 'room',
+                    localField: '_id',
+                    foreignField: 'idMotel',
+                    as: 'listRoom'
+                }
+            },
+            {
+
+                $lookup:
+                {
+                    from: 'priceEW',
+                    localField: '_id',
+                    foreignField: 'IdMotel',
+                    pipeline: [
+                        {
+                            $match: {
+                                statusCode: 4
+                            }
+                        }
+                    ],
+                    as: 'priceEW',
+                }
+            },
+            ]);
+        }
         return await cursor.toArray();
 
     }

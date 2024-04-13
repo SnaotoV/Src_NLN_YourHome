@@ -5,6 +5,7 @@ class RoomModel {
         this.Room = client.db().collection("room");
         this.dateHire = client.db().collection("dateHire");
         this.inforHire = client.db().collection("inforHire");
+        this.Bill = client.db().collection("bills");
         this.inforRegisterHire = client.db().collection("inforRegisterHire");
     };
     tranformRoomEWData(idMotel) {
@@ -155,7 +156,7 @@ class RoomModel {
     async addHire(room, idUser) {
         let dataInforRegisterHire = {
             userId: ObjectId.isValid(idUser) ? new ObjectId(idUser) : null,
-            roomId: ObjectId.isValid(room._id) ? new ObjectId(room._id) : null,
+            roomId: ObjectId.isValid(room.roomId) ? new ObjectId(room.roomId) : null,
             motelId: ObjectId.isValid(room.motelId) ? new ObjectId(room.motelId) : null,
             statusCode: 4,
             indexRoom: room.index,
@@ -165,6 +166,16 @@ class RoomModel {
         const resData = await this.inforHire.insertOne(
             dataInforRegisterHire
         );
+        let filter = {
+            _id: ObjectId.isValid(room.roomId) ? new ObjectId(room.roomId) : null,
+        }
+        if (resData && filter) {
+            await this.Room.updateOne(filter, {
+                $set: {
+                    statusCode: 2
+                }
+            });
+        }
         return resData;
     }
     async findInforHire(filter) {

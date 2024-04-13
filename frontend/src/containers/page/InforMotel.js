@@ -1,4 +1,4 @@
-import { withRouter } from "react-router-dom";
+import { withRouter, Link } from "react-router-dom";
 import { connect } from 'react-redux';
 import { useEffect, useState } from "react";
 import { getMotel } from '../../services/userServices';
@@ -8,6 +8,7 @@ import { getDataInPage, getQuantityPage } from '../../services/appServices';
 import { getGender } from '../../ultils/gender';
 import EditModelForm from '../../components/AddMotelForm/EditModelForm';
 import ScheduleSeenRoom from '../../components/ContactRoom/scheduleSeenRoom';
+import { getFullDate } from "../../ultils/getFullDate";
 let InforMotel = (props) => {
     let [dataMotel, setDataMotel] = useState({});
     let [listImage, setListImage] = useState([]);
@@ -34,6 +35,7 @@ let InforMotel = (props) => {
             setActiveRegistorHire(data);
             await reFetchData();
         }
+
     }
 
     let reFetchData = async () => {
@@ -58,40 +60,13 @@ let InforMotel = (props) => {
         let idUser = props.userInfor ? props.userInfor._id : null
         if (idUser) {
             let getData = async () => {
-                setUser(props.userInfor);
-                let data = await getMotel(idMotel, idUser, 'admin')
-                setDataMotel(data.data);
-                if (data && data.data.image.length <= 3) {
+                let data = await getMotel(idMotel, 'admin')
+                setDataMotel(data?.data);
+                if (data && data.data?.image.length <= 5) {
                     setListImage(data.data.image);
                     setActiveImage(data.data.image[0]);
                 }
-                let clonePage = page;
-                let filter = {
-                    motelId: dataMotel._id ? dataMotel._id : ''
-                }
-                if (user && user._id) {
-                    let cloneListMotel = await getDataInPage('registerHire', clonePage, filter);
-                    let quantityPageFromBE = await getQuantityPage('registerHire', 10, filter);
-                    setListRegisterHire(cloneListMotel.data);
-                    setQuantityPage(quantityPageFromBE);
-                }
-            }
-            getData();
-        }
-    }, [])
-    useEffect(() => {
-        let idMotel = props.match.params.id;
-        let idUser = props.userInfor ? props.userInfor._id : null
-        if (idUser) {
-            let getData = async () => {
-                setUser(props.userInfor);
-                let data = await getMotel(idMotel, idUser, 'admin')
-                setDataMotel(data.data);
-                if (data && data.data.image.length <= 5) {
-                    setListImage(data.data.image);
-                    setActiveImage(data.data.image[0]);
-                }
-                if (data && data.data.listRoom.length > 0) {
+                if (data && data.data?.listRoom.length > 0) {
                     let count = 0;
                     data.data.listRoom.forEach(item => {
                         if (item.statusCode === 1) {
@@ -103,12 +78,15 @@ let InforMotel = (props) => {
             }
             getData();
         }
-    }, [props.userInfor, user])
+    }, [props.userInfor, props.match.params.id])
+    useEffect(() => {
+        setUser(props.userInfor);
+    }, [props.userInfor])
     useEffect(() => {
         let getData = async () => {
             let clonePage = page;
             let filter = {
-                motelId: dataMotel._id ? dataMotel._id : ''
+                motelId: dataMotel ? dataMotel._id : ''
             }
             if (user && user._id) {
                 let cloneListMotel = await getDataInPage('registerHire', clonePage, filter);
@@ -118,7 +96,7 @@ let InforMotel = (props) => {
             }
         }
         getData();
-    }, [props.match.params.page, dataMotel])
+    }, [page, dataMotel, user])
     return (
         <div className="container bg-white px-3 rounded-4 shadow-lg">
             {dataMotel && dataMotel._id &&
@@ -139,8 +117,9 @@ let InforMotel = (props) => {
                                     })}
                                 </div>
                             </div>
+                            {console.log()}
                             <div className='row'><button className='btn btn-primary my-2' onClick={() => { handleButtonModal('edit') }}>Chỉnh sửa</button> </div>
-                            <div className='row'><button className='btn btn-primary my-2'>Xem chi tiết thuê phòng</button> </div>
+                            <div className='row'><Link to={`/User/Hire/Motel/${dataMotel._id}`} className='btn btn-primary my-2'>Quản lý phòng</Link> </div>
                         </div>
                         <div className="col-8 px-4">
                             <div className=" px-4">
@@ -178,7 +157,7 @@ let InforMotel = (props) => {
                                 {dataMotel.listRoom && dataMotel.listRoom.map((item, index) => {
                                     return (
                                         <div key={index} className="col-3  my-2 text-center">
-                                            <div className="border btn rounded main-button w-100">
+                                            <div className={`border text-white btn rounded w-100 ${item.statusCode === 1 ? 'btn-success' : 'btn-danger'}`}>
                                                 Phòng {index + 1}
                                             </div>
                                         </div>
@@ -186,59 +165,109 @@ let InforMotel = (props) => {
                                 })}
                             </div>
                         </div>
+                        <div className="row my-2">
+                            <p className="fs-3 text_center">
+                                Danh sách thuê phòng.
+                            </p>
+                            {dataMotel.listRoom && dataMotel.listRoom.filter((item) => {
+                                return item.statusCode === 2;
+                            }).length > 0 ?
+                                < Table >
+                                    <thead>
+                                        <tr className="text-center">
+                                            <th>STT</th>
+                                            <th>Tên người dùng</th>
+                                            <th>Số điện thoại</th>
+                                            <th>Thời gian bắt đầu thuê</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {dataMotel.listRoom.filter((item) => {
+                                            return item.statusCode === 2;
+                                        }).map((item, index) => {
+                                            console.log(item);
+                                            return (
+                                                <tr className="text-center" key={index}>
+                                                    <td>{index + 1}</td>
+                                                    <td>{item.inforHire[0].user[0].fullName}</td>
+                                                    <td>{item.inforHire[0].user[0].phoneNumber}</td>
+                                                    <td>{getFullDate(item.inforHire[0].create_at)}</td>
+                                                </tr>
+                                            )
+                                        })}
+                                    </tbody>
+                                </Table>
+                                :
+                                <div className="fs-4 text-center">
+                                    <i>
+                                        Hiện chưa có lịch hẹn xem phòng
+                                    </i>
+                                </div>
+                            }
+                        </div>
                         <div className='row my-4'>
                             <p className="fs-3 text_center">
                                 Danh sách hẹn xem phòng.
                             </p>
-                            <Table>
-                                <thead>
-                                    <tr className="text-center">
-                                        <th>STT</th>
-                                        <th>Tên người dùng</th>
-                                        <th>Số điện thoại</th>
-                                        <th>Căn cước công dân</th>
-                                        <th>Quê quán</th>
-                                        <th>Giới tính</th>
-                                        <th>Hẹn gặp</th>
-                                        <th>Thao tác</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {listRegisterHire && listRegisterHire.map((item, index) => {
-                                        return (
-                                            < tr className="text-center" key={index} >
-                                                <td >{index + 1}</td>
-                                                <td>{item.user[0]?.fullName}</td>
-                                                <td>{item.user[0]?.phoneNumber}</td>
-                                                <td>{item.user[0]?.CICNumber}</td>
-                                                <td>{item.user[0]?.address}</td>
-                                                <td>{getGender(item.user[0]?.gender)}</td>
-                                                <td>{item.data_Date !== null ? item.data_Date : "Chưa duyệt"}</td>
-                                                <td>
-                                                    {item.statusCode === 9 ?
-                                                        <button className='btn btn-primary' onClick={() => { handleButtonModal('schedule', item) }}>Lên lịch</button>
-                                                        :
-                                                        item.statusCode === 8 ?
-                                                            <div className='bg-primary text-white border-none rounded-2'>Đã lên lịch hẹn đợi xác nhận</div>
-                                                            :
-                                                            <div className='bg-primary text-white'>Khác</div>
-                                                    }
+
+                            {
+                                listRegisterHire && listRegisterHire.length > 0 ?
+                                    < Table >
+                                        <thead>
+                                            <tr className="text-center">
+                                                <th>STT</th>
+                                                <th>Tên người dùng</th>
+                                                <th>Số điện thoại</th>
+                                                <th>Căn cước công dân</th>
+                                                <th>Quê quán</th>
+                                                <th>Giới tính</th>
+                                                <th>Hẹn gặp</th>
+                                                <th>Thao tác</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {listRegisterHire.map((item, index) => {
+                                                return (
+                                                    < tr className="text-center" key={index} >
+                                                        <td >{index + 1}</td>
+                                                        <td>{item.user[0]?.fullName}</td>
+                                                        <td>{item.user[0]?.phoneNumber}</td>
+                                                        <td>{item.user[0]?.CICNumber}</td>
+                                                        <td>{item.user[0]?.address}</td>
+                                                        <td>{getGender(item.user[0]?.gender)}</td>
+                                                        <td>{item.data_Date !== null ? item.data_Date : "Chưa duyệt"}</td>
+                                                        <td>
+                                                            {item.statusCode === 9 ?
+                                                                <button className='btn btn-primary' onClick={() => { handleButtonModal('schedule', item) }}>Lên lịch</button>
+                                                                :
+                                                                item.statusCode === 8 ?
+                                                                    <div className='bg-primary text-white border-none rounded-2'>Đã lên lịch hẹn đợi xác nhận</div>
+                                                                    :
+                                                                    <div className='bg-primary text-white'>Khác</div>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                )
+                                            })}
+                                        </tbody>
+                                        <tfoot >
+                                            <tr >
+                                                <td colSpan="11">
+                                                    <Pagenated
+                                                        quantityPage={quantityPage}
+                                                        className="d-flex justify-content-center"
+                                                    ></Pagenated>
                                                 </td>
                                             </tr>
-                                        )
-                                    })}
-                                </tbody>
-                                <tfoot >
-                                    <tr >
-                                        <td colSpan="11">
-                                            <Pagenated
-                                                quantityPage={quantityPage}
-                                                className="d-flex justify-content-center"
-                                            ></Pagenated>
-                                        </td>
-                                    </tr>
-                                </tfoot>
-                            </Table>
+                                        </tfoot>
+                                    </Table>
+                                    :
+                                    <div className="fs-4 text-center">
+                                        <i>
+                                            Hiện chưa có lịch hẹn xem phòng
+                                        </i>
+                                    </div>
+                            }
                         </div>
                     </div>
                 </>

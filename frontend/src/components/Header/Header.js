@@ -17,7 +17,7 @@ let Header = (props) => {
         }
     }
     return (
-        <div className='row'>
+        <div className='row bg-white'>
             <div className='col-3 p-2'>logo</div>
             <div className='nav header-nav col-9'>
                 <NavLink className='py-2 px-4 fs-5' activeClassName="active" to='/' exact={true}>Trang chủ</NavLink>

@@ -122,10 +122,18 @@ let DetailMotel = (props) => {
                             <div className="row">
                                 {dataMotel.listRoom && dataMotel.listRoom.map((item, index) => {
                                     return (
-                                        <div key={index} className="col-3  my-2 text-center">
-                                            <div className="border btn rounded main-button w-100" onClick={() => handleButton(item, index)}>
-                                                Phòng {index + 1}
-                                            </div>
+                                        <div key={index} className="col-3  my-2 text-center ">
+                                            {
+                                                item.statusCode !== 2 ?
+
+                                                    <div className="border btn rounded btn-success w-100" onClick={() => handleButton(item, index)}>
+                                                        Phòng {index + 1}
+                                                    </div>
+                                                    :
+                                                    <div className="border bg-danger text-white btn rounded w-100">
+                                                        Phòng {index + 1}
+                                                    </div>
+                                            }
                                         </div>
                                     )
                                 })}

@@ -99,10 +99,12 @@ let EditModelForm = (props) => {
 
     useEffect(() => {
         let cloneMotel = props.motel;
-        cloneMotel.priceE = props.motel.priceEW ? props.motel.priceEW[0].priceE : 0
-        cloneMotel.priceW = props.motel.priceEW ? props.motel.priceEW[0].priceW : 0
-        setImages(motel.image);
-        setMotel(cloneMotel);
+        if (cloneMotel) {
+            cloneMotel.priceE = props.motel && props.motel.priceEW ? props.motel.priceEW[0].priceE : 0
+            cloneMotel.priceW = props.motel && props.motel.priceEW ? props.motel.priceEW[0].priceW : 0
+            setImages(motel.image);
+            setMotel(cloneMotel);
+        }
     }, [props.motel])
 
     let { show, modalName, modalBtnClose, modalBtnChanges, modalClose, modalChanges } = props

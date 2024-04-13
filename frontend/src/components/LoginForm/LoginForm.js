@@ -39,7 +39,7 @@ let LoginForm = (props) => {
 
     }
     let handleOnChangesValue = async (event, id) => {
-        let cloneUser = user;
+        let cloneUser = { ...user };
         cloneUser[id] = event.target.value;
         setUser(cloneUser);
     }

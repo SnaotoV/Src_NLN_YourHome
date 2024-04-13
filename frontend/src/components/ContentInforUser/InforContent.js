@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { withRouter } from "react-router-dom";
+import { withRouter, Link } from "react-router-dom";
 import { getQuantityPage, getDataInPage } from "../../services/appServices";
 import { getGender } from "../../ultils/gender";
 import { Button, Table } from "react-bootstrap";
@@ -59,6 +59,15 @@ let InforContent = (props) => {
             setListRegisterHire(cloneListMotel.data);
             setQuantityPage(quantityPageFromBE);
         }
+        if (user && user._id) {
+            let data = await findInforHire(filter);
+            if (data.resData.length > 0) {
+                let cloneData = data.resData ? data.resData[0] : {};
+                let date = data.resData ? data.resData[0]?.create_at : new Date();
+                cloneData.dataDate = await getFullDate(date)
+                setInforHire(cloneData);
+            }
+        }
     }
     useEffect(() => {
         setUser(props.userInfor);
@@ -101,10 +110,9 @@ let InforContent = (props) => {
         setPage(clonePage);
     }, [props.match.params.page, props.userInfor])
     return (
-        <div className="container">
+        <div>
             <div className="row">
                 <div className="row">
-
                     {user &&
                         <div className="col-6">
                             <table className="fs-5 border infor-box ">
@@ -167,8 +175,8 @@ let InforContent = (props) => {
                                         <td className="px-4">{inforHire?.motel && inforHire?.motel[0].priceEW.length > 0 && inforHire?.motel[0].priceEW[0].priceW.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}</td>
                                     </tr>
                                     <tr >
-                                        <td colspan="2">
-                                            <Button className="w-100">Xem chi tiết</Button>
+                                        <td colspan="2" className="p-2">
+                                            <Link to={`/User/Room/${inforHire?.roomId}`} className="w-100 btn btn-primary">Xem chi tiết</Link>
                                         </td>
                                     </tr>
                                 </tbody>

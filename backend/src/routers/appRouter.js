@@ -21,7 +21,7 @@ router.route('/user/motel')
     .get(motel.findAll)
     .post(motel.create)
 
-router.route('/user/motel/:type/:user/:id')
+router.route('/user/motel/:type/:id')
     .get(motel.findOneFromUser)
 
 router.route('/user/room')

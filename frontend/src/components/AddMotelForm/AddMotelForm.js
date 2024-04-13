@@ -117,7 +117,7 @@ let AddMotelForm = (props) => {
                                     <Form.Label htmlFor="name">
                                         Tên dãy trọ:
                                     </Form.Label>
-                                    <Form.Control id='name' placeholder="Tên dãy trọ" onChange={event => handleOnChangesValue(event, 'name')}></Form.Control>
+                                    <Form.Control id='name' autoComplete="on" type='text' placeholder="Tên dãy trọ" onChange={event => handleOnChangesValue(event, 'name')}></Form.Control>
                                     {err['name'] && err['name'].errCode === 1 && <div className='text-danger'>Tên dãy trọ không được trống</div>}
                                 </Form.Group>
                                 <Form.Group className="col-6">
