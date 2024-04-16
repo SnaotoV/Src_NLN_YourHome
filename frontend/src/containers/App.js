@@ -4,7 +4,7 @@ import Home from './page/Home';
 import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
 import InforUser from './page/InforUser';
-import InforRoom from './page/InforRoom';
+import Pay from './page/Pay';
 import DetailMotel from './page/DetailMotel';
 import Motel from './page/Motels';
 import News from './page/News';
@@ -27,7 +27,7 @@ function App(props) {
             <Route path={'/News'} exact component={(News)} />
             <Route path={'/Contact'} exact component={(Contact)} />
             <Route path={'/User/Motel/:id/:page'} component={(InforMotel)} />
-            <Route path={'/User/Room/:id'} component={(InforRoom)} />
+            <Route path={'/Pay/:id'} component={(Pay)} />
             <Route path={'/User/Hire/Motel/:id'} component={(InforHirePage)} />
           </Switch>
         </div>

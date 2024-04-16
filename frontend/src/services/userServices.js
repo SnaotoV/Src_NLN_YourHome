@@ -26,6 +26,15 @@ let hireRoom = (motel, user) => {
 let findInforHire = (filter) => {
     return axios.post(`/hire`, { filter });
 }
+let createBill = (bill) => {
+    return axios.post(`/create/bill`, { bill });
+}
+let getBillById = (id) => {
+    return axios.get(`/pay/${id}`);
+}
+let updateBill = (id) => {
+    return axios.put(`/pay/${id}`);
+}
 export {
     edit,
     addMotel,
@@ -33,5 +42,8 @@ export {
     registerRoom,
     updateSchedule,
     hireRoom,
-    findInforHire
+    findInforHire,
+    createBill,
+    getBillById,
+    updateBill
 }

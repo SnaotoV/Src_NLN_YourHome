@@ -33,7 +33,12 @@ router.route('/user/hire')
     .post(room.createHire)
 router.route('/hire')
     .post(room.findOneRoom)
+router.route('/create/bill')
+    .post(room.addBill)
 
+router.route('/pay/:id')
+    .get(room.findBill)
+    .put(room.updateBill)
 
 router.route('/app/all-page')
     .post(app.allpage);

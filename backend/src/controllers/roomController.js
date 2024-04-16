@@ -53,9 +53,48 @@ let findOneRoom = async (req, res) => {
         new ApiError(500, "An error orrcured while retrieving the contacts")
     }
 }
+let addBill = async (req, res) => {
+    try {
+        let bill = req.body.bill;
+        let resFromServices = await roomService.createBill(bill);
+        return res.status(200).json({
+            errCode: resFromServices.errCode,
+            value: resFromServices.value
+        })
+    } catch (error) {
+        new ApiError(500, "An error orrcured while retrieving the contacts")
+    }
+}
+let findBill = async (req, res) => {
+    try {
+        let id = req.params.id;
+        let resData = await roomService.getBillId(id);
+        return res.status(200).json({
+            resData
+        })
+    } catch (error) {
+        new ApiError(500, "An error orrcured while retrieving the contacts")
+    }
+}
+let updateBill = async (req, res) => {
+    try {
+        let id = req.params.id;
+        let resData = await roomService.updateBill(id);
+        return res.status(200).json({
+            errCode: resData.errCode,
+            value: resData.value
+        })
+    } catch (error) {
+        new ApiError(500, "An error orrcured while retrieving the contacts")
+    }
+}
+
 module.exports = {
     registerRoom,
     editRegisterRoom,
     createHire,
-    findOneRoom
+    findOneRoom,
+    addBill,
+    findBill,
+    updateBill
 }

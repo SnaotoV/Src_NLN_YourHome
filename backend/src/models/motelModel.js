@@ -112,6 +112,12 @@ class MotelModel {
         const filter = {
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
         };
+        let month = new Date().getMonth() + 1;
+        let year = new Date().getFullYear();
+        let date = new Date().getUTCDate();
+        let formatNumber = Intl.NumberFormat("es-Us", { minimumIntegerDigits: 2 })
+        let time_at_pay = `${year}-${formatNumber.format(month)}-${formatNumber.format(date)}T00:00:00.000Z`;
+        let time_late_pay = `${year}-${formatNumber.format(month - 1)}-${formatNumber.format(date)}T00:00:00.000Z`;
         let cursor = {}
         if (type === 'admin') {
             cursor = await this.Motel.aggregate([{
@@ -158,11 +164,28 @@ class MotelModel {
                                         $lookup:
                                         {
                                             from: 'bills',
-                                            localField: 'billId',
-                                            foreignField: '_id',
+                                            localField: '_id',
+                                            foreignField: 'hireId',
+                                            pipeline: [
+                                                {
+                                                    $match: {
+                                                        $or: [
+                                                            {
+                                                                date_end: { $gte: time_at_pay }
+                                                            },
+                                                            {
+                                                                date_end: { $gte: time_late_pay }
+                                                            }
+                                                        ]
+                                                    }
+                                                },
+                                                {
+                                                    $sort: { _id: -1 }
+                                                }
+                                            ],
                                             as: 'bills'
                                         }
-                                    }
+                                    },
 
                                 ],
                                 as: 'inforHire',
@@ -232,6 +255,7 @@ class MotelModel {
             },
             ]);
         }
+
         return await cursor.toArray();
 
     }

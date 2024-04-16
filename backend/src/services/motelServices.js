@@ -27,5 +27,4 @@ let findOneMotel = async (id, type) => {
     return motel;
 }
 
-
-module.exports = { createMotel, findOneMotel }
+module.exports = { createMotel, findOneMotel, }

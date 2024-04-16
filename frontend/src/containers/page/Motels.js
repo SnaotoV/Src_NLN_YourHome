@@ -151,7 +151,7 @@ let Motel = (props) => {
                                             <br />
                                             Chiều rộng: {item.vertical}m
                                             <br />
-                                            {item.price} VND/tháng
+                                            {item.price.replace(/\B(?=(\d{3})+(?!\d))/g, '.')} VND/tháng
                                         </Card.Text>
                                         <Link className='btn btn-dark text-white' to={user._id === item.userId ? `/User/Motel/${item._id}/1` : `/Detail/Motel/${item._id}`}>Xem chi tiết</Link>
                                     </Card.Body>

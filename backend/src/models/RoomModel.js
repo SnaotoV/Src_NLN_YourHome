@@ -20,6 +20,26 @@ class RoomModel {
         )
         return room
     }
+    fillDataBill(bill) {
+        let billClone = {
+            valueE: bill.valueE,
+            valueW: bill.valueW,
+            priceEW: ObjectId.isValid(bill.priceEW) ? new ObjectId(bill.priceEW) : null,
+            price: bill.price,
+            hireId: ObjectId.isValid(bill.hireId) ? new ObjectId(bill.hireId) : null,
+            time_start: bill.time_start,
+            time_end: bill.time_end,
+            date_pay: bill.date_pay,
+            date_end: bill.date_end,
+            create_at: bill.create_at,
+            update_at: bill.update_at,
+            statusCode: bill.statusCode
+        }
+        Object.keys(billClone).forEach(
+            (key) => billClone[key] === undefined && delete billClone[key]
+        )
+        return billClone;
+    }
 
     async create(idMotel) {
         const room = this.tranformRoomEWData(idMotel);
@@ -186,6 +206,12 @@ class RoomModel {
                 statusCode: { $ne: 0 }
             }
         }
+        let month = new Date().getMonth() + 1;
+        let year = new Date().getFullYear();
+        let date = new Date().getUTCDate();
+        let formatNumber = Intl.NumberFormat("es-Us", { minimumIntegerDigits: 2 })
+        let time_at_pay = `${year}-${formatNumber.format(month)}-${formatNumber.format(date)}T00:00:00.000Z`;
+        // let time_late_pay = `${year}-${formatNumber.format(month - 1)}-${formatNumber.format(date)}T00:00:00.000Z`;
         const cursor = await this.inforHire.aggregate([
             {
                 $match: filterUser
@@ -220,13 +246,82 @@ class RoomModel {
                                 foreignField: '_id',
                                 as: 'user'
                             }
-                        }
+                        },
+
                     ],
                     as: 'motel'
+                },
+            },
+            {
+                $lookup:
+                {
+                    from: 'bills',
+                    localField: '_id',
+                    foreignField: 'hireId',
+                    pipeline: [
+                        {
+                            $match: {
+                                date_end: { $gte: time_at_pay }
+
+                            }
+                        },
+                        {
+                            $sort: { _id: -1 }
+                        }
+                    ],
+                    as: 'bills'
                 }
-            }
+            },
         ]);
         return cursor.toArray();
+    }
+    async createBill(bill) {
+        let billClone = this.fillDataBill(bill);
+        const resData = await this.Bill.insertOne(
+            billClone
+        );
+        return resData;
+    }
+
+    async findBillById(id) {
+        const filter = {
+            _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
+        };
+        const cursor = await this.Bill.aggregate([
+            {
+                $match: filter
+            },
+            {
+
+                $lookup:
+                {
+                    from: 'priceEW',
+                    localField: 'priceEW',
+                    foreignField: '_id',
+                    pipeline: [
+                        {
+                            $match: {
+                                statusCode: 4
+                            }
+                        }
+                    ],
+                    as: 'priceEW',
+                }
+            },
+        ]);
+        return await cursor.toArray();
+    }
+    async updateBill(id) {
+        const filter = {
+            _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
+        };
+        const cursor = await this.Bill.updateOne(filter, {
+            $set: {
+                statusCode: 6,
+                date_pay: new Date()
+            }
+        })
+        return cursor
     }
 }
 module.exports = RoomModel;

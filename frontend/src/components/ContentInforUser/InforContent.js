@@ -9,6 +9,7 @@ import Pagenated from '../../components/Pagenated/Pagenated';
 import EditSchedule from "../ContactRoom/editSchedule";
 import { updateSchedule, hireRoom, findInforHire } from "../../services/userServices";
 import { getFullDate } from "../../ultils/getFullDate";
+import '../../styles/ContentInforUser/InforContent.scss';
 let InforContent = (props) => {
     let [user, setUser] = useState({});
     let [listRegisterHire, setListRegisterHire] = useState([]);
@@ -109,6 +110,7 @@ let InforContent = (props) => {
         setUser(props.userInfor);
         setPage(clonePage);
     }, [props.match.params.page, props.userInfor])
+    console.log(inforHire);
     return (
         <div>
             <div className="row">
@@ -156,35 +158,105 @@ let InforContent = (props) => {
                                     </tr>
                                 </thead>
                                 <tbody>
-
-                                    <tr>
-                                        <td className="px-4">Ngày bắt đầu thuê:</td>
-                                        <td className="px-4">{inforHire?.dataDate}</td>
-                                    </tr>
-                                    <tr>
-                                        <td className="px-4">Giá:</td>
-                                        <td className="px-4">{inforHire?.motel && inforHire?.motel[0].price.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ</td>
-                                    </tr>
-                                    <tr>
-                                        {console.log(inforHire)}
-                                        <td className="px-4">Giá điện:</td>
-                                        <td className="px-4">{inforHire?.motel && inforHire?.motel[0].priceEW.length > 0 && inforHire?.motel[0].priceEW[0].priceE.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}</td>
-                                    </tr>
-                                    <tr>
-                                        <td className="px-4">Giá nước:</td>
-                                        <td className="px-4">{inforHire?.motel && inforHire?.motel[0].priceEW.length > 0 && inforHire?.motel[0].priceEW[0].priceW.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}</td>
-                                    </tr>
-                                    <tr >
-                                        <td colspan="2" className="p-2">
-                                            <Link to={`/User/Room/${inforHire?.roomId}`} className="w-100 btn btn-primary">Xem chi tiết</Link>
-                                        </td>
-                                    </tr>
+                                    {inforHire ?
+                                        <>
+                                            <tr>
+                                                <td className="px-4">Ngày bắt đầu thuê:</td>
+                                                <td className="px-4">{inforHire?.dataDate}</td>
+                                            </tr>
+                                            <tr>
+                                                <td className="px-4">Giá:</td>
+                                                <td className="px-4">{inforHire?.motel && inforHire?.motel[0].price.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ</td>
+                                            </tr>
+                                            <tr>
+                                                <td className="px-4">Giá điện:</td>
+                                                <td className="px-4">{inforHire?.motel && inforHire?.motel[0].priceEW.length > 0 && inforHire?.motel[0].priceEW[0].priceE.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}</td>
+                                            </tr>
+                                            <tr>
+                                                <td className="px-4">Giá nước:</td>
+                                                <td className="px-4">{inforHire?.motel && inforHire?.motel[0].priceEW.length > 0 && inforHire?.motel[0].priceEW[0].priceW.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}</td>
+                                            </tr>
+                                            <tr>
+                                                {
+                                                    inforHire?.bills && inforHire?.bills[0].statusCode == 6 ?
+                                                        <td className="px-4 text-center text-success" colSpan={2}>Đã thanh toán tiền tháng này</td>
+                                                        :
+                                                        <td className="px-4 text-center text-danger" colSpan={2}>Chưa thanh toán tiền tháng này</td>
+                                                }
+                                            </tr>
+                                        </>
+                                        :
+                                        <div className="warning-infor text-center">
+                                            Hiện tại người dùng chưa thuê phòng.
+                                        </div>
+                                    }
                                 </tbody>
                             </table>
                         </div>
                     }
-
                 </div>
+                {
+                    inforHire && inforHire.bills?.length > 0 &&
+                    <div className="row">
+                        {
+                            inforHire.bills[0] && inforHire.bills[0].statusCode == 7 &&
+                            <table className="fs-5 border infor-box ">
+                                <thead>
+                                    <tr>
+                                        <td colSpan={2} className="text-center py-2 fs-3 main-title">Hóa đơn</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    <tr>
+                                        <td className="px-4">Ngày lập hóa đơn:</td>
+                                        <td className="px-4">{getFullDate(inforHire.bills[0].create_at)}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="px-4">Ngày bắt đầu:</td>
+                                        <td className="px-4">{getFullDate(inforHire.bills[0].time_start)}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="px-4">Ngày kết thúc:</td>
+                                        <td className="px-4">{getFullDate(inforHire.bills[0].time_end)}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="px-4">Số kg điện:</td>
+                                        <td className="px-4">{inforHire.bills[0].valueE} kgW</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="px-4">Số khối nước:</td>
+                                        <td className="px-4">{inforHire.bills[0].valueW} khối</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="px-4">Tiền thuê:</td>
+                                        <td className="px-4">{inforHire.bills[0].price.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ/tháng</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="px-4">Tiền điện: {inforHire.bills[0].valueE}x{inforHire.motel[0].priceEW[0].priceE.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ</td>
+                                        <td className="px-4">{(inforHire.bills[0].valueE * inforHire.motel[0].priceEW[0].priceE).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ/tháng</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="px-4">Tiền nước: {inforHire.bills[0].valueW}x{inforHire.motel[0].priceEW[0].priceW.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ</td>
+                                        <td className="px-4">{(inforHire.bills[0].valueW * inforHire.motel[0].priceEW[0].priceW).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ/tháng</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="px-4">Tổng tiền:</td>
+                                        <td className="px-4">{(Number(inforHire.bills[0].price) + (inforHire.bills[0].valueW * inforHire.motel[0].priceEW[0].priceW) + (inforHire.bills[0].valueE * inforHire.motel[0].priceEW[0].priceE)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ/tháng</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="px-4 text-center" colSpan={2} >
+                                            <div>
+                                                <Link to={`/Pay/${inforHire.bills[0]._id}`} className="w-100 btn main-button">Thanh Toán</Link>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        }
+                    </div>
+
+                }
             </div>
             {listRegisterHire && listRegisterHire.length > 0 &&
                 <div className="row m-2">
@@ -206,6 +278,7 @@ let InforContent = (props) => {
                             </thead>
                             <tbody>
                                 {listRegisterHire && listRegisterHire.map((item, index) => {
+
                                     return (
                                         <tr key={index}>
                                             <td>{index + 1}</td>

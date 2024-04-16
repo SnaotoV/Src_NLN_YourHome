@@ -35,9 +35,12 @@ let update = (req, res) => {
     console.log('hello');
 }
 
+
+
+
 module.exports = {
     findAll,
     findOneFromUser,
     create,
-    update
+    update,
 }

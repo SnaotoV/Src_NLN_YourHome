@@ -79,9 +79,56 @@ let findInforHire = async (filter) => {
     }
     return resData;
 }
+let createBill = async (bill) => {
+    let resData = {};
+    let Room = new RoomModel(MongoDB.client);
+    if (bill) {
+        let data = await Room.createBill(bill);
+        if (data) {
+            resData.errCode = 0;
+            resData.value = 'Thêm phiếu thu tiền thành công!';
+        }
+        else {
+            resData.errCode = 1;
+            resData.value = 'Thêm phiếu thu tiền không thành công!';
+        }
+    }
+    else {
+        resData.errCode = 3;
+        resData.value = 'Có lỗi xảy ra không nhận được bill!';
+    }
+    return resData;
+}
+let getBillId = async (id) => {
+    let Room = new RoomModel(MongoDB.client);
+    let resData = {};
+    if (id) {
+        resData = await Room.findBillById(id);
+    }
+    return resData
+}
+let updateBill = async (id) => {
+    let Room = new RoomModel(MongoDB.client);
+    let resData = {};
+    if (id) {
+        let data = await Room.updateBill(id);
+        if (data) {
+            resData.errCode = 0;
+            resData.value = 'Thanh toán thành công!'
+        }
+        else {
+            resData.errCode = 1;
+            resData.value = 'Có lỗi xảy ra!'
+        }
+    }
+    return resData
+}
 module.exports = {
     addHire,
     editSchedule,
     createHireInfor,
-    findInforHire
+    findInforHire,
+    createBill,
+    getBillId,
+    updateBill
 }

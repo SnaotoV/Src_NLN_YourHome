@@ -2,8 +2,26 @@ import '../../styles/Container/Home.scss';
 import image from '../../assets/image/60380.jpg';
 import { Form, Button, Card, Carousel } from "react-bootstrap";
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { useEffect, useState } from 'react';
+import { getDataInPage } from '../../services/appServices';
+let Home = (props) => {
+    let [motels, setMotels] = useState({});
+    let [user, setUser] = useState({});
 
-let Home = () => {
+    useEffect(() => {
+        let getData = async () => {
+            let data = await getDataInPage('motel-home', 1)
+            if (data) {
+                setMotels(data.data)
+            }
+        }
+        getData()
+    }, [])
+    useEffect(() => {
+        setUser(props.userInfor)
+    }, [props.userInfor])
+    console.log(motels);
     return (
         <div>
             <Carousel>
@@ -31,61 +49,39 @@ let Home = () => {
             </div>
             <div className='h2 text-center m-4'>Phòng trống nổi bật</div>
             <div className='cart-box mx-3 row'>
-                <Card className='col-3'>
-                    <Card.Img src={image} className="w-100 card-img" variant="top" />
-                    <Card.Body>
-                        <Card.Title className=" title-text">Sản phẩm test</Card.Title>
-                        <div className='row'>
-                            <Card.Text>
-                                Địa chỉ: Ninh Kiều, Cần Thơ
-                                <br /><p className='text-primary fs-4'>17000000 VND/tháng</p>
-                            </Card.Text>
-                            <Link className='btn btn-primary text-white' to='/'>Xem chi tiết</Link>
+                {motels && motels.length > 0 && motels.map((item, index) => {
+
+                    return (
+                        <div className="col-3" key={index}>
+                            <Card>
+                                <Card.Img className="w-100 card-img" variant="top" src={item.image[0].image} />
+                                <Card.Body>
+                                    <Card.Title className=" title-text">{item.name}</Card.Title>
+                                    <Card.Text>
+                                        Chiều dài: {item.horizontal}m
+                                        <br />
+                                        Chiều rộng: {item.vertical}m
+                                        <br />
+                                        {item.price.replace(/\B(?=(\d{3})+(?!\d))/g, '.')} VND/tháng
+                                    </Card.Text>
+                                    <Link className='btn btn-dark text-white' to={user._id === item.userId ? `/User/Motel/${item._id}/1` : `/Detail/Motel/${item._id}`}>Xem chi tiết</Link>
+                                </Card.Body>
+                            </Card>
                         </div>
-                    </Card.Body>
-                </Card>
-                <Card className='col-3'>
-                    <Card.Img src={image} className="w-100 card-img" variant="top" />
-                    <Card.Body>
-                        <Card.Title className=" title-text">Sản phẩm test</Card.Title>
-                        <div className='row'>
-                            <Card.Text>
-                                Địa chỉ: Ninh Kiều, Cần Thơ
-                                <br /><p className='text-primary fs-4'>17000000 VND/tháng</p>
-                            </Card.Text>
-                            <Link className='btn btn-primary text-white' to='/'>Xem chi tiết</Link>
-                        </div>
-                    </Card.Body>
-                </Card>
-                <Card className='col-3'>
-                    <Card.Img src={image} className="w-100 card-img" variant="top" />
-                    <Card.Body>
-                        <Card.Title className=" title-text">Sản phẩm test</Card.Title>
-                        <div className='row'>
-                            <Card.Text>
-                                Địa chỉ: Ninh Kiều, Cần Thơ
-                                <br /><p className='text-primary fs-4'>17000000 VND/tháng</p>
-                            </Card.Text>
-                            <Link className='btn btn-primary text-white' to='/'>Xem chi tiết</Link>
-                        </div>
-                    </Card.Body>
-                </Card>
-                <Card className='col-3'>
-                    <Card.Img src={image} className="w-100 card-img" variant="top" />
-                    <Card.Body>
-                        <Card.Title className=" title-text">Sản phẩm test</Card.Title>
-                        <div className='row'>
-                            <Card.Text>
-                                Địa chỉ: Ninh Kiều, Cần Thơ
-                                <br /><p className='text-primary fs-4'>17000000 VND/tháng</p>
-                            </Card.Text>
-                            <Link className='btn btn-primary text-white' to='/'>Xem chi tiết</Link>
-                        </div>
-                    </Card.Body>
-                </Card>
+                    )
+                }
+                )}
             </div>
         </div>
     )
 }
-
-export default Home;
+const mapStatetoProps = state => {
+    return {
+        userInfor: state.user.userInfor
+    }
+}
+const mapDispatchToProps = dispatch => {
+    return {
+    }
+}
+export default connect(mapStatetoProps, mapDispatchToProps)(Home);
