@@ -10,9 +10,11 @@ import { checkvalid } from "../../ultils/checkValid";
 import { addMotel } from "../../services/userServices";
 import { connect } from "react-redux";
 import { toast } from "react-toastify";
+import { updateMotel } from "../../services/userServices";
 let EditModelForm = (props) => {
     let [motel, setMotel] = useState({ userId: props.userInfor ? props.userInfor._id : '' });
     let [images, setImages] = useState([]);
+    let [deleteImages, setDeleteImgages] = useState([]);
     let [err, setErr] = useState({ isValid: false });
     let [QuanHuyen, setQuanHuyen] = useState([]);
     let [XaPhuong, setXaPhuong] = useState([]);
@@ -23,24 +25,30 @@ let EditModelForm = (props) => {
         props.handleClickClose('edit')
     }
     let handleClickChanges = async () => {
-        // let arrErr = await checkValidForm();
-        // if (arrErr.isValid === true) {
-        //     let data = await addMotel(motel);
-        //     if (data && data.errCode === 0) {
-        //         toast.success(data.value, { position: toast.POSITION.TOP_RIGHT });
-        //         props.handleClickChanges('edit');
-        //         setMotel({ userId: props.userInfor._id });
-        //         setErr({ sValid: false });
-        //         setImages([]);
-        //     }
-        //     else {
-        //         toast.error(data.value, { position: toast.POSITION.TOP_RIGHT });
-        //     }
-        // }
+
+        let cloneMotel = {
+            ...motel,
+            deleteImages
+        }
+        let arrErr = await checkValidForm();
+        if (arrErr.isValid === true) {
+            let data = await updateMotel('admin', cloneMotel);
+            if (data && data.errCode === 0) {
+                toast.success(data.value, { position: toast.POSITION.TOP_RIGHT });
+                props.refrestData(cloneMotel);
+                console.log(cloneMotel);
+                handleClickClose();
+            }
+            else {
+                toast.error(data.value, { position: toast.POSITION.TOP_RIGHT });
+                handleClickClose()
+
+            }
+        }
     }
     let checkValidForm = async () => {
         let cloneMotel = { ...motel };
-        let positions = ['name', 'quantity', 'price', 'priceE', 'priceW', 'vertical', 'horizontal', 'province', 'district', 'ward', 'address'];
+        let positions = ['priceE', 'priceW'];
         let arrErr = await checkvalid(cloneMotel, positions);
         await setErr(arrErr);
         return arrErr;
@@ -72,17 +80,29 @@ let EditModelForm = (props) => {
         if (fileImg && fileImg.length > 0) {
             for (let i = 0; i < fileImg.length; i++) {
                 let ImageBase64 = await handleImgType.getBase64(fileImg[i]);
-                listImage = [...listImage, ImageBase64];
+                let ImageObject = {
+                    image: ImageBase64,
+                    IdParent: motel._id,
+                    type: 'motel',
+                    create_at: new Date(),
+                    update_at: null,
+                }
+                listImage = [...listImage, ImageObject];
             }
-            if (listImage.length > 0) {
+            if (listImage.length > 0 && images.length === 0) {
                 let cloneMotel = { ...motel };
                 cloneMotel['listImage'] = listImage;
                 setMotel(cloneMotel);
                 setImages(listImage);
+            } else {
+                let cloneMotel = { ...motel };
+                let clonelistImage = [...images, ...listImage];
+                cloneMotel['listImage'] = clonelistImage
+                setMotel(cloneMotel);
+                setImages(clonelistImage);
             }
         }
     }
-
     let handleBtn = async (index, type) => {
         let listImage = [...images];
         if (type === 'delete') {
@@ -94,6 +114,8 @@ let EditModelForm = (props) => {
                 setMotel(cloneMotel);
                 setImages(listImage);
             }
+            let cloneListDelete = [...deleteImages, images[index]];
+            setDeleteImgages(cloneListDelete)
         }
     }
 
@@ -102,11 +124,17 @@ let EditModelForm = (props) => {
         if (cloneMotel) {
             cloneMotel.priceE = props.motel && props.motel.priceEW ? props.motel.priceEW[0].priceE : 0
             cloneMotel.priceW = props.motel && props.motel.priceEW ? props.motel.priceEW[0].priceW : 0
-            setImages(motel.image);
             setMotel(cloneMotel);
         }
     }, [props.motel])
+    useEffect(() => {
+        let cloneMotel = { ...motel };
+        if (cloneMotel) {
+            setImages(motel.listImage ? motel.listImage : motel.image);
+        }
+    }, [motel])
 
+    // console.log(motel);
     let { show, modalName, modalBtnClose, modalBtnChanges, modalClose, modalChanges } = props
     return (
         <div>
@@ -118,88 +146,6 @@ let EditModelForm = (props) => {
 
                     <Form className="row">
                         <div className='col-12' >
-                            <div className="row">
-                                <Form.Group className="col-6">
-                                    <Form.Label htmlFor="name">
-                                        Tên dãy trọ:
-                                    </Form.Label>
-                                    <Form.Control id='name' placeholder="Tên dãy trọ" ype='text' value={motel.name || ''} onChange={event => handleOnChangesValue(event, 'name')}></Form.Control>
-                                    {err['name'] && err['name'].errCode === 1 && <div className='text-danger'>Tên dãy trọ không được trống</div>}
-                                </Form.Group>
-                                <Form.Group className="col-6">
-                                    <Form.Label htmlFor="address">
-                                        Địa chỉ:
-                                    </Form.Label>
-                                    <Form.Control id='address' autoComplete="on" type='text' value={motel.address || ''} placeholder="Địa chỉ" onChange={event => handleOnChangesValue(event, 'address')}></Form.Control>
-                                    {err.address && err.address.errCode === 1 && <div className='text-danger'>Địa chỉ không được trống</div>}
-                                </Form.Group>
-                            </div>
-                            <div className="row">
-                                <Form.Group className="col-4">
-                                    <Form.Label htmlFor="City">
-                                        Tỉnh:
-                                    </Form.Label>
-                                    <Autocomplete
-                                        size="small"
-                                        value={motel.province || ''}
-                                        fullWidth={true}
-                                        onChange={(event, values) => handleOnChangesValue(event, 'province', values)}
-                                        id="province"
-                                        autoSelect={true}
-                                        sx={{ width: 300 }} options={tinh ? tinh : []}
-                                        getOptionLabel={(option) => option.name_with_type}
-                                        renderInput={(params) => <TextField {...params} label="Tỉnh" />}></Autocomplete>
-                                    {err.province && err.province.errCode === 1 && <div className='text-danger'>Tỉnh không được trống</div>}
-                                </Form.Group>
-                                <Form.Group className="col-4">
-                                    <Form.Label htmlFor="district">
-                                        Quận hoặc Huyện:
-                                    </Form.Label>
-                                    <Autocomplete
-                                        value={motel.district || ''}
-                                        size="small"
-                                        fullWidth={true}
-                                        onChange={(event, values) => handleOnChangesValue(event, 'district', values)}
-                                        id="district"
-                                        autoSelect={true}
-                                        sx={{ width: 300 }} options={QuanHuyen ? QuanHuyen : []}
-                                        getOptionLabel={(option) => option.name_with_type}
-                                        renderInput={(params) => <TextField {...params} label="Quận hoặc Huyện:" />}></Autocomplete>
-                                    {err.district && err.district.errCode === 1 && <div className='text-danger'>Quận hoặc Huyện không được trống</div>}
-                                </Form.Group >
-                                <Form.Group className="col-4">
-                                    <Form.Label htmlFor="ward">
-                                        Xã hoặc Phường:
-                                    </Form.Label>
-                                    <Autocomplete
-                                        size="small"
-                                        value={motel.ward || ''}
-                                        fullWidth={true}
-                                        onChange={(event, values) => handleOnChangesValue(event, 'ward', values)}
-                                        id="ward"
-                                        autoSelect={true}
-                                        sx={{ width: 300 }} options={XaPhuong ? XaPhuong : []}
-                                        getOptionLabel={(option) => option.name_with_type}
-                                        renderInput={(params) => <TextField {...params} label="Xã hoặc Phường:" />}></Autocomplete>
-                                    {err.ward && err.ward.errCode === 1 && <div className='text-danger'>Xã hoặc Phường không được trống</div>}
-                                </Form.Group>
-                            </div>
-                            <div className="row my-2">
-                                <Form.Group className="col-6">
-                                    <Form.Label htmlFor="vertical">
-                                        Chiều dài:
-                                    </Form.Label>
-                                    <Form.Control id='vertical' autoComplete="on" type='number' value={motel.vertical || ''} placeholder="Chiều dài " min={1000} step={1000} onChange={event => handleOnChangesValue(event, 'vertical')}></Form.Control>
-                                    {err['vertical'] && err['vertical'].errCode === 1 && <div className='text-danger'> Chiều dài không được trống</div>}
-                                </Form.Group>
-                                <Form.Group className="col-6">
-                                    <Form.Label htmlFor="horizontal">
-                                        Chiều rộng:
-                                    </Form.Label>
-                                    <Form.Control id='horizontal' autoComplete="on" type='number' value={motel.horizontal || ''} placeholder="Chiều rộng" min={1000} step={1000} onChange={event => handleOnChangesValue(event, 'horizontal')}></Form.Control>
-                                    {err['horizontal'] && err['horizontal'].errCode === 1 && <div className='text-danger'> Chiều rộng không được trống</div>}
-                                </Form.Group>
-                            </div>
                             <Form.Group>
                                 <Form.Label htmlFor="price">
                                     Giá phòng:

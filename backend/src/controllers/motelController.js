@@ -31,8 +31,17 @@ let create = async (req, res) => {
 }
 
 
-let update = (req, res) => {
-    console.log('hello');
+let update = async (req, res) => {
+    try {
+        let motel = req.body.motel;
+        let resFromServices = await motelService.updateMotel(motel);
+        return res.status(200).json({
+            errCode: resFromServices.errCode,
+            value: resFromServices.value
+        })
+    } catch (error) {
+        new ApiError(500, "An error orrcured while retrieving the contacts")
+    }
 }
 
 

@@ -23,6 +23,7 @@ router.route('/user/motel')
 
 router.route('/user/motel/:type/:id')
     .get(motel.findOneFromUser)
+    .put(motel.update)
 
 router.route('/user/room')
     .post(room.registerRoom)

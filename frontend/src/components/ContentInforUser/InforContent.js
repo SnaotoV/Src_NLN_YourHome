@@ -110,7 +110,6 @@ let InforContent = (props) => {
         setUser(props.userInfor);
         setPage(clonePage);
     }, [props.match.params.page, props.userInfor])
-    console.log(inforHire);
     return (
         <div>
             <div className="row">
@@ -178,7 +177,7 @@ let InforContent = (props) => {
                                             </tr>
                                             <tr>
                                                 {
-                                                    inforHire?.bills && inforHire?.bills[0].statusCode == 6 ?
+                                                    inforHire?.bills && inforHire?.bills.length > 0 && inforHire?.bills[0].statusCode == 6 ?
                                                         <td className="px-4 text-center text-success" colSpan={2}>Đã thanh toán tiền tháng này</td>
                                                         :
                                                         <td className="px-4 text-center text-danger" colSpan={2}>Chưa thanh toán tiền tháng này</td>

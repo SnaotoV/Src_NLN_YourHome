@@ -26,5 +26,16 @@ let findOneMotel = async (id, type) => {
     }
     return motel;
 }
-
-module.exports = { createMotel, findOneMotel, }
+let updateMotel = async (motel) => {
+    let resData = {}
+    let Motel = new MotelModel(MongoDB.client);
+    if (motel) {
+        let data = await Motel.updateMotel(motel);
+        if (data) {
+            resData.errCode = 0;
+            resData.value = "Cập nhật thông tin dãy trọ thành công";
+        }
+    }
+    return resData
+}
+module.exports = { createMotel, findOneMotel, updateMotel }

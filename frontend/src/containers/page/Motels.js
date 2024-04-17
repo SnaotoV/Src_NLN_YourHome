@@ -143,7 +143,7 @@ let Motel = (props) => {
                         return (
                             <div className="col-4" key={index}>
                                 <Card>
-                                    <Card.Img className="w-100 card-img" variant="top" src={item.image[0].image} />
+                                    <Card.Img className="w-100 card-img" variant="top" src={item?.image.length > 0 && item?.image[0].image} />
                                     <Card.Body>
                                         <Card.Title className=" title-text">{item.name}</Card.Title>
                                         <Card.Text>
@@ -153,7 +153,7 @@ let Motel = (props) => {
                                             <br />
                                             {item.price.replace(/\B(?=(\d{3})+(?!\d))/g, '.')} VND/tháng
                                         </Card.Text>
-                                        <Link className='btn btn-dark text-white' to={user._id === item.userId ? `/User/Motel/${item._id}/1` : `/Detail/Motel/${item._id}`}>Xem chi tiết</Link>
+                                        <Link className='btn btn-dark text-white' to={(user && user._id === item.userId) ? `/User/Motel/${item._id}/1` : `/Detail/Motel/${item._id}`}>Xem chi tiết</Link>
                                     </Card.Body>
                                 </Card>
                             </div>

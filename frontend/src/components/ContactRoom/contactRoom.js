@@ -12,13 +12,18 @@ let ContactRoom = (props) => {
     }
     let handleClickChanges = async () => {
         let resData = {};
-        resData = await registerRoom(room, props.userInfor);
-        if (resData && resData.errCode === 0) {
-            toast.success(resData.value, { position: toast.POSITION.TOP_RIGHT });
-            props.handleClickClose()
-        } else {
-            toast.error(resData.value, { position: toast.POSITION.TOP_RIGHT });
-            props.handleClickClose()
+        if (props.userInfor && props.userInfor._id) {
+            resData = await registerRoom(room, props.userInfor);
+            if (resData && resData.errCode === 0) {
+                toast.success(resData.value, { position: toast.POSITION.TOP_RIGHT });
+                props.handleClickClose()
+            } else {
+                toast.error(resData.value, { position: toast.POSITION.TOP_RIGHT });
+                props.handleClickClose()
+            }
+        }
+        else {
+            toast.error('Vui lòng đăng nhập để thực hiện thao tác.', { position: toast.POSITION.TOP_RIGHT });
         }
     }
     useEffect(() => {
@@ -33,7 +38,7 @@ let ContactRoom = (props) => {
                     <Modal.Title>{modalName}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    Xác nhận hẹn lịch xem phòng {room.index}.
+                    <>   Xác nhận hẹn lịch xem phòng {room.index}.</>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant={modalBtnClose ? modalBtnClose : "secondary"} onClick={handleClickClose}>

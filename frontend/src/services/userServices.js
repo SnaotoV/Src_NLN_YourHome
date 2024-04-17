@@ -35,6 +35,9 @@ let getBillById = (id) => {
 let updateBill = (id) => {
     return axios.put(`/pay/${id}`);
 }
+let updateMotel = (type, motel) => {
+    return axios.put(`/user/motel/${type}/${motel._id}`, { motel });
+}
 export {
     edit,
     addMotel,
@@ -45,5 +48,6 @@ export {
     findInforHire,
     createBill,
     getBillById,
-    updateBill
+    updateBill,
+    updateMotel
 }

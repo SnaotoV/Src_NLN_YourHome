@@ -6,9 +6,10 @@ class PriceEWModel {
     };
     tranformPriceEWData(idParent, payload) {
         const priceEW = {
-            IdMotel: idParent,
+            IdMotel: ObjectId.isValid(idParent) ? new ObjectId(idParent) : null,
             priceE: payload.priceE,
             priceW: payload.priceW,
+            statusCode: payload.statusCode ? payload.statusCode : 4,
             create_at: null,
             update_at: null
         };
@@ -24,7 +25,18 @@ class PriceEWModel {
             item
         );
 
-        return resPriceEW.value;
+        return resPriceEW;
     };
+    async update(id, statusCode) {
+        const filter = {
+            _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
+        };
+        const cursor = await this.PriceEW.updateOne(filter, {
+            $set: {
+                statusCode: statusCode
+            }
+        })
+        return cursor
+    }
 }
 module.exports = PriceEWModel;

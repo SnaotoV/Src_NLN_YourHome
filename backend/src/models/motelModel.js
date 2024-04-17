@@ -52,6 +52,53 @@ class MotelModel {
 
         return resMotel;
     };
+    async updateMotel(payload) {
+        const motel = this.tranformMotelData(payload);
+
+        const filter = {
+            _id: ObjectId.isValid(payload._id) ? new ObjectId(payload._id) : null,
+        };
+        const cursor = await this.Motel.updateOne(filter, {
+            $set: {
+                price: motel.price,
+                update_at: new Date()
+            }
+        })
+
+        if (cursor) {
+            if (payload.listImage?.length > 0) {
+                for (let i = 0; i < payload.listImage.length; i++) {
+                    if (!payload.listImage[i]._id) {
+                        let image = {
+                            image: payload.listImage[i].image,
+                            idParent: ObjectId.isValid(payload._id) ? new ObjectId(payload._id) : null,
+                        }
+                        await this.Image.create(image, 'motel');
+                    }
+                }
+                if (payload.deleteImages.length > 0) {
+                    for (let i = 0; i < payload.deleteImages.length; i++) {
+                        if (payload.deleteImages[i]._id) {
+                            await this.Image.delete(payload.deleteImages[i]._id);
+                        }
+                    }
+
+                }
+
+            }
+            if (payload.priceE || payload.priceW) {
+                if (payload.priceE != payload.priceEW[0].priceE || payload.priceW != payload.priceEW[0].priceW) {
+                    let resPriceEW = await this.PriceEW.create(payload._id, payload);
+                    if (resPriceEW) {
+                        await this.PriceEW.update(payload.priceEW[0]._id, 5);
+                    }
+                }
+            }
+        }
+
+
+        return cursor;
+    }
     async countAll(filter) {
         let filterUser = {};
         if (filter && filter.userId) {
@@ -259,6 +306,7 @@ class MotelModel {
         return await cursor.toArray();
 
     }
+
 
 }
 module.exports = MotelModel;

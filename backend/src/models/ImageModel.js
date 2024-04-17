@@ -26,5 +26,12 @@ class ImageModel {
 
         return resImage.value;
     };
+    async delete(id) {
+        const filter = {
+            _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
+        };
+        const cursor = await this.Image.findOneAndDelete(filter)
+        return cursor
+    }
 }
 module.exports = ImageModel;
