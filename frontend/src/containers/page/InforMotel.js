@@ -145,8 +145,8 @@ let InforMotel = (props) => {
         getData();
     }, [page, dataMotel, user]);
     return (
-        <div className="container bg-white px-3 rounded-4 shadow-lg">
-            {dataMotel && dataMotel._id &&
+        <div className="container bg-white px-3 my-4 rounded-4 shadow-lg">
+            {dataMotel && user && dataMotel._id && dataMotel.userId === user._id ?
                 <>
                     <div className="row  p-4">
                         <div className="col-4 p-2">
@@ -154,7 +154,7 @@ let InforMotel = (props) => {
                                 {activeImage &&
                                     <img className="image-motel main-bg col-12 row" src={activeImage.image} placeholder={`Hình ảnh dãy trọ ${dataMotel.name}`} />
                                 }
-                                <div className="row  my-2 main-bg">
+                                <div className="row my-2 main-bg">
                                     <div className="btn btn-primary col-1 fs-3" onClick={() => handleButtonModal('count-remove')}> {'<'}</div>
                                     <div className="col-10">
                                         <div className="row item-image ">
@@ -318,6 +318,12 @@ let InforMotel = (props) => {
                                     </div>
                             }
                         </div>
+                    </div>
+                </>
+                :
+                <>
+                    <div className="warning-box fs-1 m-4 p-4">
+                        <div className="text-center w-100 p-4 text-danger">Bạn không có quyền truy cập trang này</div>
                     </div>
                 </>
             }

@@ -183,6 +183,9 @@ let InforContent = (props) => {
                                                         <td className="px-4 text-center text-danger" colSpan={2}>Chưa thanh toán tiền tháng này</td>
                                                 }
                                             </tr>
+                                            <tr>
+                                                <td className="px-4" colSpan={2}><Button variant="danger" className="w-100">Đăng ký ngưng thuê</Button></td>
+                                            </tr>
                                         </>
                                         :
                                         <div className="warning-infor text-center">
@@ -297,7 +300,10 @@ let InforContent = (props) => {
                                                     </div>
                                                     :
                                                     item.statusCode === 10 ?
-                                                        <Button className="font-weight-bold" onClick={() => handleButton('hire', item)}>Xác nhận thuê phòng</Button>
+                                                        <div className="row">
+                                                            <Button className="font-weight-bold col m-2" onClick={() => handleButton('hire', item)}>Thuê phòng</Button>
+                                                            <Button variant="danger" className="font-weight-bold col m-2" onClick={() => handleButton('none-hire', item)}>Không thuê phòng</Button>
+                                                        </div>
                                                         :
                                                         <div>Đợi chủ dãy trọ duyệt</div>
                                                 }

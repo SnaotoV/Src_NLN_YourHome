@@ -8,6 +8,7 @@ import classHuyenQuan from "../../ultils/quan_huyen";
 import { getQuantityPage, getDataInPage } from "../../services/appServices";
 import { Link, withRouter } from 'react-router-dom';
 import Pagenated from '../../components/Pagenated/Pagenated';
+import * as actions from '../../stores/actions'
 import '../../styles/Motel/Motel.scss';
 let Motel = (props) => {
     let [filter, setFilter] = useState({});
@@ -41,7 +42,7 @@ let Motel = (props) => {
         let clonePage = page;
         let cloneFilter = filter;
         let cloneListMotel = await getDataInPage('motel', clonePage, cloneFilter);
-        let quantityPageFromBE = await getQuantityPage('motel', 10);
+        let quantityPageFromBE = await getQuantityPage('motel', 10, cloneFilter);
         setListMotel(cloneListMotel.data);
         setQuantityPage(quantityPageFromBE);
     }
@@ -59,7 +60,7 @@ let Motel = (props) => {
         let getData = async () => {
             let clonePage = page
             let cloneFilter = filter
-            let cloneListMotel = await getDataInPage('motel', clonePage);
+            let cloneListMotel = await getDataInPage('motel', clonePage, cloneFilter);
             let quantityPageFromBE = await getQuantityPage('motel', 10, cloneFilter);
             setListMotel(cloneListMotel.data);
             setQuantityPage(quantityPageFromBE);
@@ -67,8 +68,41 @@ let Motel = (props) => {
         getData()
     }, [])
     useEffect(() => {
+        console.log(page);
+        let getData = async () => {
+            let clonePage = page
+            let cloneFilter = filter
+            let cloneListMotel = await getDataInPage('motel', clonePage, cloneFilter);
+            let quantityPageFromBE = await getQuantityPage('motel', 10, cloneFilter);
+            setListMotel(cloneListMotel.data);
+            setQuantityPage(quantityPageFromBE);
+        }
+        getData()
+    }, [page])
+
+    useEffect(() => {
         setUser(props.userInfor)
     }, [props.userInfor])
+    useEffect(() => {
+        setPage(props.match.params.page);
+    }, [props.match.params.page])
+    useEffect(() => {
+        if (props.filter !== null) {
+            setFilter(props.filter);
+            let getData = async () => {
+                let clonePage = page;
+                let cloneFilter = props.filter;
+                let cloneListMotel = await getDataInPage('motel', clonePage, cloneFilter);
+                let quantityPageFromBE = await getQuantityPage('motel', 10);
+                setListMotel(cloneListMotel.data);
+                setQuantityPage(quantityPageFromBE);
+                if (cloneListMotel) {
+                    props.userFilter(null);
+                }
+            }
+            getData()
+        }
+    }, [props.filter])
     return (
         <div>
             <div className="">
@@ -82,6 +116,7 @@ let Motel = (props) => {
                                 size="small"
                                 className="bg-white "
                                 fullWidth={true}
+                                value={filter?.province || null}
                                 onChange={(event, values) => handleOnChangesValue(event, 'province', values)}
                                 id="province"
                                 autoSelect={true}
@@ -96,6 +131,7 @@ let Motel = (props) => {
                             <Autocomplete
                                 size="small"
                                 className="bg-white "
+                                value={filter?.district || null}
                                 fullWidth={true}
                                 onChange={(event, values) => handleOnChangesValue(event, 'district', values)}
                                 id="district"
@@ -111,6 +147,7 @@ let Motel = (props) => {
                             <Autocomplete
                                 size="small"
                                 className="bg-white "
+                                value={filter?.ward || null}
                                 fullWidth={true}
                                 onChange={(event, values) => handleOnChangesValue(event, 'ward', values)}
                                 id="ward"
@@ -127,7 +164,7 @@ let Motel = (props) => {
                             </Form.Label>
                             <div className="row">
                                 <div className="col-6">
-                                    <Form.Control id='name' placeholder="Tìm kiếm" onChange={event => handleOnChangesValue(event, 'name')} value={filter.name || ''}></Form.Control>
+                                    <Form.Control id='name' placeholder="Tìm kiếm" onChange={event => handleOnChangesValue(event, 'name')} value={filter?.name || ''}></Form.Control>
                                 </div>
                                 <Button onClick={() => handleClick('search')} className="col-2 mx-1">Tìm kiếm</Button>
                                 <Button type="reset" onClick={() => handleClick('reset')} className="col-2 btn-danger mx-1">Hủy</Button>
@@ -136,7 +173,7 @@ let Motel = (props) => {
                     </div>
                 </Form >
             </div>
-            <div className="container p-3">
+            <div className="container p-3 main-content-box">
                 <div className="row">
                     {listMotel && listMotel.length > 0 && listMotel.map((item, index) => {
 
@@ -171,11 +208,13 @@ let Motel = (props) => {
 }
 const mapStatetoProps = state => {
     return {
-        userInfor: state.user.userInfor
+        userInfor: state.user.userInfor,
+        filter: state.user.filter
     }
 }
 const mapDispatchToProps = dispatch => {
     return {
+        userFilter: (filter) => dispatch(actions.filterMotel(filter))
     }
 }
-export default connect(mapStatetoProps, mapDispatchToProps)(Motel);
+export default withRouter(connect(mapStatetoProps, mapDispatchToProps)(Motel));

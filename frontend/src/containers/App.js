@@ -18,7 +18,7 @@ function App(props) {
     <BrowserRouter>
       <div className="container-fluid  main-bg ">
         <Header></Header>
-        <div className=' '>
+        <div className=' content-box'>
           <Switch>
             <Route path={'/'} exact component={(Home)} />
             <Route path={'/Infor'} component={(InforUser)} />

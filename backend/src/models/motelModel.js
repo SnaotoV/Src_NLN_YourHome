@@ -132,11 +132,16 @@ class MotelModel {
                     foreignField: 'IdParent',
                     as: 'image'
                 }
-            }], {
-                skip: start,
-                limit: quantity,
-            });
+            },
+            {
+                $skip: start
 
+            },
+            { $limit: quantity },
+            {
+                $sort: { _id: -1 },
+            }
+            ]);
         }
         else {
 
@@ -220,9 +225,9 @@ class MotelModel {
                                                             {
                                                                 date_end: { $gte: time_at_pay }
                                                             },
-                                                            {
-                                                                date_end: { $gte: time_late_pay }
-                                                            }
+                                                            // {
+                                                            //     date_end: { $gte: time_late_pay }
+                                                            // }
                                                         ]
                                                     }
                                                 },

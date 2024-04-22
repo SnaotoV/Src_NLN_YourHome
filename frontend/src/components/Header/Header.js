@@ -18,18 +18,18 @@ let Header = (props) => {
     }
     return (
         <div className='row bg-white'>
-            <div className='col-3 p-2'>logo</div>
-            <div className='nav header-nav col-9'>
-                <NavLink className='py-2 px-4 fs-5' activeClassName="active" to='/' exact={true}>Trang chủ</NavLink>
-                <NavLink className='py-2 px-4 fs-5' activeClassName="active" to='/Motel/1' exact={true}>Dãy trọ</NavLink>
-                <NavLink className='py-2 px-4 fs-5' activeClassName="active" to='/News' exact={true}>Tin tức</NavLink>
-                <NavLink className='py-2 px-4 fs-5' activeClassName="active" to='/Contact' exact={true}>Liên hệ</NavLink>
+            <div className='col-3 p-2 fs-1 px-4'>MyHome</div>
+            <div className='nav header-nav col-7'>
+                <NavLink className='py-4 px-4 fs-4' activeClassName="active" to='/' exact={true}>Trang chủ</NavLink>
+                <NavLink className='py-4 px-4 fs-4' activeClassName="active" to='/Motel/1' exact={true}>Dãy trọ</NavLink>
+                {/* <NavLink className='py-2 px-4 fs-5' activeClassName="active" to='/News' exact={true}>Tin tức</NavLink>
+                <NavLink className='py-2 px-4 fs-5' activeClassName="active" to='/Contact' exact={true}>Liên hệ</NavLink> */}
                 {props.isLoggedIn ?
-                    <NavLink className='py-2 px-4 fs-5' activeClassName="active" to='/Infor/Motel/1'>Cá nhân</NavLink>
+                    <NavLink className='py-4 px-4 fs-4 ' activeClassName="active" to='/Infor/User/1'>Cá nhân</NavLink>
                     :
                     <>
-                        <button className='py-2 px-4 fs-5' onClick={() => handleButton('login')}>Đăng Nhập</button>
-                        <button className='py-2 px-4 fs-5' onClick={() => handleButton('register')} > Đăng Ký</button>
+                        <button className='py-4 px-4 fs-4 ' onClick={() => handleButton('login')}>Đăng Nhập</button>
+                        <button className='py-4 px-4 fs-4 ' onClick={() => handleButton('register')} > Đăng Ký</button>
                     </>
                 }
             </div>
@@ -49,6 +49,7 @@ let Header = (props) => {
                 modalChanges={'Đăng Ký'}
                 modalClose={'Hủy'}
             />
+            <div className='py-4 px-4 col-2'>liên hệ: 035-xxx-xxxx </div>
         </div >
     )
 }

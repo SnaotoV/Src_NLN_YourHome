@@ -119,7 +119,7 @@ let DetailMotel = (props) => {
         }
     }, [props.userInfor, props.match.params.id])
     return (
-        <div className="container bg-white px-3 rounded-4 shadow-lg">
+        <div className="container bg-white px-3 my-4 rounded-4 shadow-lg">
             {dataMotel && dataMotel._id &&
                 <>
                     < div className="row  p-4">

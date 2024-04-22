@@ -2,7 +2,8 @@ import actionTypes from '../actions/typeActions';
 
 const initialState = {
     isLoggedIn: false,
-    userInfor: null
+    userInfor: null,
+    filter: null,
 }
 
 const appReducer = (state = initialState, action) => {
@@ -24,6 +25,11 @@ const appReducer = (state = initialState, action) => {
                 ...state,
                 isLoggedIn: false,
                 userInfor: null
+            }
+        case actionTypes.USER_FILTER:
+            return {
+                ...state,
+                filter: action.filter
             }
         default:
             return state;

@@ -152,11 +152,19 @@ class RoomModel {
                         }
                     ],
                     as: 'motel'
-                }
-            }], {
-            skip: start,
-            limit: quantity,
-        }).sort({ _id: -1 });
+                },
+
+            },
+            {
+                $skip: start,
+            },
+            {
+                $limit: quantity,
+            },
+            {
+                $sort: { _id: -1 },
+            }
+        ]);
         return cursor.toArray();
     }
     async updateSchedule(id, data, statusCode) {

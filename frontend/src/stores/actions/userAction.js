@@ -16,3 +16,7 @@ export const userLoginFail = () => ({
 export const processLogout = () => ({
     type: actionTypes.PROCESS_LOGOUT
 })
+export const filterMotel = (filter) => ({
+    type: actionTypes.USER_FILTER,
+    filter: filter
+})

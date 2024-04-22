@@ -48,14 +48,14 @@ let InforUser = (props) => {
                 <div className="col-2 p-4 row submenu">
                     <button className=" btn-infor text-center col-12 fs-5 my-1" onClick={() => handleButton('edit')}>Chỉnh sửa<i class="fas fa-user-edit mx-2 "></i></button>
                     <button className=" btn-infor text-center col-12 fs-5 my-1" onClick={() => handleButton('add-motel')}>Thêm dãy trọ<i class="fas fa-plus mx-2 "></i></button>
-                    <button className=" btn-infor text-center col-12 fs-5 my-1">Thêm bài viết<i class="fas fa-pencil-alt mx-2"></i></button>
+                    {/* <button className=" btn-infor text-center col-12 fs-5 my-1">Thêm bài viết<i class="fas fa-pencil-alt mx-2"></i></button> */}
                     <button className=" btn-infor text-center col-12 fs-5 my-1" onClick={() => handleButton('logout')} >Đăng xuất<i class="fas fa-sign-out-alt mx-2"></i></button>
                 </div>
                 <div className="col-10 p-4 border rounded-4 shadow bg-white">
                     <div className="row">
-                        <NavLink to='/Infor/User/1' activeClassName='active-infor' className="col-3 btn-infor text-center mx-1">Người dùng</NavLink>
-                        <NavLink to='/Infor/Motel/1' activeClassName='active-infor' className="col-3 btn-infor text-center mx-1">Dãy trọ</NavLink>
-                        <NavLink to='/Infor/News/1' activeClassName='active-infor' className="col-3 btn-infor text-center mx-1">Bài viết</NavLink>
+                        <NavLink to='/Infor/User/1' activeClassName='active-infor' className="col-3 btn-infor text-center mx-1 fs-5">Người dùng</NavLink>
+                        <NavLink to='/Infor/Motel/1' activeClassName='active-infor' className="col-3 btn-infor text-center mx-1 fs-5">Dãy trọ</NavLink>
+                        {/* <NavLink to='/Infor/News/1' activeClassName='active-infor' className="col-3 btn-infor text-center mx-1">Bài viết</NavLink> */}
                     </div>
                     <div className="m-4 ">
                         <Switch>

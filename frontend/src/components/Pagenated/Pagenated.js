@@ -16,6 +16,7 @@ let Pagenated = (props) => {
     }
     let createListItem = async (lengthPage) => {
         let list = [];
+        console.log(lengthPage);
         if (lengthPage < 6) {
             for (let i = 1; i <= lengthPage; i++) {
                 let item = {
@@ -53,7 +54,7 @@ let Pagenated = (props) => {
     }
     useEffect(() => {
         let setup = async () => {
-            let quantityPageData = props.quantityPage.quantityPage
+            let quantityPageData = props.quantityPage.quantityPage;
             setQuantityPage(quantityPage);
             let list = await createListItem(quantityPageData);
             setListItem(list)

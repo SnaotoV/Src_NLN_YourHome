@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Table } from "react-bootstrap";
+import { Button, Table } from "react-bootstrap";
 import { withRouter } from "react-router-dom";
 import { getQuantityPage, getDataInPage } from "../../services/appServices";
 import Pagenated from "../Pagenated/Pagenated";
@@ -40,14 +40,13 @@ let MotelContent = (props) => {
             }
         }
         getData()
-    }, [props.checkGetData, user]);
+    }, [props.checkGetData, user, page]);
 
     useEffect(() => {
         let clonePage = props.match.params.page;
         setUser(props.userInfor);
         setPage(clonePage);
     }, [props.match.params.page, props.userInfor])
-
     return (
         <div>
             <div>Danh sách nhà trọ</div>
@@ -83,6 +82,7 @@ let MotelContent = (props) => {
                                         <td>{item.district.name}</td>
                                         <td>{item.province.name}</td>
                                         <td><Link to={`/User/Motel/${item._id}/1`} className="btn btn-primary text-white ">Xem</Link></td>
+                                        <td><Button variant="danger">Xóa</Button></td>
                                     </tr>
                                 )
                             })}
