@@ -59,12 +59,17 @@ let getAllPage = async (type, limit, filter) => {
         let quantityMotel = await Room.countAllRegisterHire(filter);
         quantityPage = Math.ceil(quantityMotel / limit);
     }
+    if (type == 'user') {
+        let User = new UserModel(MongoDB.client);
+        let quantityMotel = await User.countAll(filter);
+        quantityPage = Math.ceil(quantityMotel / limit);
+    }
     return quantityPage
 }
-let getDataInPage = async (type, page, filter) => {
+let getDataInPage = async (type, page, limit, filter) => {
     if (type == 'motel') {
         let Motel = new MotelModel(MongoDB.client);
-        let quantityMotel = await Motel.findInPage(page, 10, filter);
+        let quantityMotel = await Motel.findInPage(page, limit, filter);
         return quantityMotel;
     }
     if (type == 'motel-home') {
@@ -75,6 +80,14 @@ let getDataInPage = async (type, page, filter) => {
     if (type == 'registerHire') {
         let Room = new RoomModel(MongoDB.client);
         let quantityMotel = await Room.findInPageRegisterHire(page, 10, filter);
+        return quantityMotel;
+    }
+    if (type == 'user') {
+        let User = new UserModel(MongoDB.client);
+        let quantityMotel = await User.findInPage(page, limit, filter);
+        quantityMotel.forEach(element => {
+            delete element.password;
+        });
         return quantityMotel;
     }
 }

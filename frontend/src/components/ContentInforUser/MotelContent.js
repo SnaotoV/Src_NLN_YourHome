@@ -18,7 +18,7 @@ let MotelContent = (props) => {
                 userId: user ? user._id : ''
             }
             if (user && user._id) {
-                let cloneListMotel = await getDataInPage('motel', clonePage, filter);
+                let cloneListMotel = await getDataInPage('motel', clonePage, 10, filter);
                 let quantityPageFromBE = await getQuantityPage('motel', 10, filter);
                 setListMotel(cloneListMotel.data);
                 setQuantityPage(quantityPageFromBE);
@@ -33,7 +33,7 @@ let MotelContent = (props) => {
                 userId: user ? user._id : ''
             }
             if (user && user._id) {
-                let cloneListMotel = await getDataInPage('motel', clonePage, filter);
+                let cloneListMotel = await getDataInPage('motel', clonePage, 10, filter);
                 let quantityPageFromBE = await getQuantityPage('motel', 10, filter);
                 setListMotel(cloneListMotel.data);
                 setQuantityPage(quantityPageFromBE);

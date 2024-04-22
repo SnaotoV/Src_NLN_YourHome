@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import image from '../../assets/image/60380.jpg'
+import image from '../../assets/image/user_clone.jpg'
 import '../../styles/InforUser/InforUser.scss'
 import { NavLink } from 'react-router-dom';
 import EditInforForm from "../../components/EditInforForm/EditInforForm";
@@ -40,7 +40,7 @@ let InforUser = (props) => {
         <div className="main-content">
             <div className="row main-title ">
                 <div className="col-2 ">
-                    <img src={image} className="border rounded-circle my-2"></img>
+                    <img src={image} className="border rounded-circle my-4" height={"200px"} width={"200px"}></img>
                 </div>
                 <div className="h2 my-4 mx-2 col row align-items-center">{user && user.fullName}</div>
             </div>
@@ -81,7 +81,7 @@ let InforUser = (props) => {
                 handleClickClose={handleButton}
                 modalChanges={'Lưu'}
                 modalClose={'Hủy'} />
-        </div>
+        </div >
     )
 }
 const mapStateToProps = state => {

@@ -45,7 +45,8 @@ let dataInPage = async (req, res) => {
         let type = req.params.type;
         let page = req.params.page;
         let filter = req.body.filter;
-        let resData = await appService.getDataInPage(type, page, filter);
+        let limit = req.body.limit;
+        let resData = await appService.getDataInPage(type, page, limit, filter);
         return res.status(200).json({
             data: resData
         })

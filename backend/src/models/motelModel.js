@@ -121,7 +121,7 @@ class MotelModel {
             if (filter.userId) {
                 filter.userId = ObjectId.isValid(filterClone.userId) ? new ObjectId(filterClone.userId) : null;
             }
-
+            filter.statusCode = 4;
             cursor = await this.Motel.aggregate([{
                 $match: filter
             }, {
@@ -145,18 +145,29 @@ class MotelModel {
         }
         else {
 
-            cursor = await this.Motel.aggregate([{
-                $lookup:
+            cursor = await this.Motel.aggregate([
                 {
-                    from: 'image',
-                    localField: '_id',
-                    foreignField: 'IdParent',
-                    as: 'image'
-                }
-            }], {
-                skip: start,
-                limit: quantity,
-            });
+                    $match: {
+                        statusCode: 4
+                    }
+                },
+                {
+                    $lookup:
+                    {
+                        from: 'image',
+                        localField: '_id',
+                        foreignField: 'IdParent',
+                        as: 'image'
+                    }
+                },
+                {
+                    $skip: start
+
+                },
+                { $limit: quantity },
+                {
+                    $sort: { _id: -1 },
+                }]);
         }
         return await cursor.toArray();
     }

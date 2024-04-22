@@ -1,5 +1,8 @@
 import '../../styles/Container/Home.scss';
 import image from '../../assets/image/60380.jpg';
+import image1 from '../../assets/image/banner_1.jpg';
+import image2 from '../../assets/image/banner_2.jpg';
+import image3 from '../../assets/image/banner_3.jpg';
 import { Form, Button, Card, Carousel } from "react-bootstrap";
 import { Link } from 'react-router-dom';
 import { tinh } from "../../ultils/tinh_tp";
@@ -72,17 +75,17 @@ let Home = (props) => {
             <Carousel>
                 <Carousel.Item interval={1000} >
                     <div className="">
-                        <img className="w-100 slide-image" src={image} alt="Hình ảnh đại diện sản phẩm"></img>
+                        <img className="w-100 slide-image" src={image1} alt="Hình ảnh đại diện sản phẩm"></img>
                     </div>
                 </Carousel.Item>
                 <Carousel.Item interval={1000} >
                     <div className="">
-                        <img className="w-100 slide-image" src={image} alt="Hình ảnh đại diện sản phẩm"></img>
+                        <img className="w-100 slide-image" src={image2} alt="Hình ảnh đại diện sản phẩm"></img>
                     </div>
                 </Carousel.Item>
                 <Carousel.Item interval={1000} >
                     <div className="">
-                        <img className="w-100 slide-image" src={image} alt="Hình ảnh đại diện sản phẩm"></img>
+                        <img className="w-100 slide-image" src={image3} alt="Hình ảnh đại diện sản phẩm"></img>
                     </div>
                 </Carousel.Item>
             </Carousel>

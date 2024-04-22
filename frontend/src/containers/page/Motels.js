@@ -41,7 +41,7 @@ let Motel = (props) => {
     let fetchData = async () => {
         let clonePage = page;
         let cloneFilter = filter;
-        let cloneListMotel = await getDataInPage('motel', clonePage, cloneFilter);
+        let cloneListMotel = await getDataInPage('motel', clonePage, 12, cloneFilter);
         let quantityPageFromBE = await getQuantityPage('motel', 10, cloneFilter);
         setListMotel(cloneListMotel.data);
         setQuantityPage(quantityPageFromBE);
@@ -60,7 +60,7 @@ let Motel = (props) => {
         let getData = async () => {
             let clonePage = page
             let cloneFilter = filter
-            let cloneListMotel = await getDataInPage('motel', clonePage, cloneFilter);
+            let cloneListMotel = await getDataInPage('motel', clonePage, 12, cloneFilter);
             let quantityPageFromBE = await getQuantityPage('motel', 10, cloneFilter);
             setListMotel(cloneListMotel.data);
             setQuantityPage(quantityPageFromBE);
@@ -68,11 +68,10 @@ let Motel = (props) => {
         getData()
     }, [])
     useEffect(() => {
-        console.log(page);
         let getData = async () => {
             let clonePage = page
             let cloneFilter = filter
-            let cloneListMotel = await getDataInPage('motel', clonePage, cloneFilter);
+            let cloneListMotel = await getDataInPage('motel', clonePage, 12, cloneFilter);
             let quantityPageFromBE = await getQuantityPage('motel', 10, cloneFilter);
             setListMotel(cloneListMotel.data);
             setQuantityPage(quantityPageFromBE);
@@ -92,7 +91,7 @@ let Motel = (props) => {
             let getData = async () => {
                 let clonePage = page;
                 let cloneFilter = props.filter;
-                let cloneListMotel = await getDataInPage('motel', clonePage, cloneFilter);
+                let cloneListMotel = await getDataInPage('motel', clonePage, 12, cloneFilter);
                 let quantityPageFromBE = await getQuantityPage('motel', 10);
                 setListMotel(cloneListMotel.data);
                 setQuantityPage(quantityPageFromBE);

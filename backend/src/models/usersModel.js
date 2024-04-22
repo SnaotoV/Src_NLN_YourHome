@@ -14,6 +14,7 @@ class UserModel {
             phoneNumber: payload.phoneNumber,
             birthday: payload.birthday,
             gender: payload.gender,
+            isAdmin: payload.isAdmin,
             create_at: null,
             update_at: null
         };
@@ -23,6 +24,7 @@ class UserModel {
         return user;
     }
     async create(payload) {
+        payload.isAdmin = false;
         const user = this.extractConactData(payload);
         user.create_at = new Date();
         const result = await this.User.insertOne(
@@ -34,19 +36,20 @@ class UserModel {
         const cursor = await this.User.find();
         return await cursor.toArray();
     }
-    async findInPage(page) {
-        let start = (page - 1) * 10;
-        let quantity = 10
-        const cursor = await this.User.find({}, {
-            skip: start,
-            limit: quantity,
-        });
-        return await cursor.toArray();
-    }
+    // async findInPage(page) {
+    //     let start = (page - 1) * 10;
+    //     let quantity = 10
+    //     const cursor = await this.User.find({}, {
+    //         skip: start,
+    //         limit: quantity,
+    //     });
+    //     return await cursor.toArray();
+    // }
     async findByUsername(user) {
         const cursor = await this.User.find({
             username: user.username,
-            password: user.password
+            password: user.password,
+            statusCode: 4,
         });
         return await cursor.toArray();
     }
@@ -59,7 +62,9 @@ class UserModel {
     }
     async checkUserExist(user) {
         const cursor = await this.User.find({
-            username: user.username
+            username: user.username,
+            statusCode: 4,
+
         });
         let data = await cursor.toArray();
         if (data && data.length > 0) {
@@ -95,6 +100,26 @@ class UserModel {
             _id: ObjectId.isValid(user) ? new ObjectId(user) : null,
         })
         return result
+    }
+    async countAll() {
+        const cursor = await this.User.count();
+        return cursor
+    }
+    async findInPage(page, quantityPage) {
+        let start = (page - 1) * quantityPage;
+        let quantity = quantityPage
+        let cursor = [];
+        cursor = await this.User.find({
+            isAdmin: false
+        }, {
+            skip: start,
+            limit: quantity,
+            sort: {
+                _id: -1
+            },
+
+        });
+        return cursor.toArray();
     }
 }
 

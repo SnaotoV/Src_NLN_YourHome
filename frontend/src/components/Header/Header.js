@@ -21,10 +21,15 @@ let Header = (props) => {
             <div className='col-3 p-2 fs-1 px-4'>MyHome</div>
             <div className='nav header-nav col-7'>
                 <NavLink className='py-4 px-4 fs-4' activeClassName="active" to='/' exact={true}>Trang chủ</NavLink>
-                <NavLink className='py-4 px-4 fs-4' activeClassName="active" to='/Motel/1' exact={true}>Dãy trọ</NavLink>
+                {props.userInfor?.isAdmin ?
+                    <></>
+                    :
+                    <NavLink className='py-4 px-4 fs-4' activeClassName="active" to='/Motel/1' exact={true}>Dãy trọ</NavLink>
+                }
                 {/* <NavLink className='py-2 px-4 fs-5' activeClassName="active" to='/News' exact={true}>Tin tức</NavLink>
                 <NavLink className='py-2 px-4 fs-5' activeClassName="active" to='/Contact' exact={true}>Liên hệ</NavLink> */}
                 {props.isLoggedIn ?
+                    props.userInfor.isAdmin === false &&
                     <NavLink className='py-4 px-4 fs-4 ' activeClassName="active" to='/Infor/User/1'>Cá nhân</NavLink>
                     :
                     <>
@@ -55,7 +60,8 @@ let Header = (props) => {
 }
 const mapStateToProps = state => {
     return {
-        isLoggedIn: state.user.isLoggedIn
+        isLoggedIn: state.user.isLoggedIn,
+        userInfor: state.user.userInfor
     };
 };
 
