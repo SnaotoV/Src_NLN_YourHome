@@ -15,6 +15,7 @@ class UserModel {
             birthday: payload.birthday,
             gender: payload.gender,
             isAdmin: payload.isAdmin,
+            statusCode: payload.statusCode ? payload.statusCode : 4,
             create_at: null,
             update_at: null
         };
@@ -79,19 +80,13 @@ class UserModel {
         return cursor
     }
     async updated(id, user) {
-        const filter = {
+        let idObject = {
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
-        };
-        const cursor = await this.User.updateOne(filter, {
-            $set: {
-                CICNumber: user.CICNumber,
-                fullName: user.fullName,
-                address: user.address,
-                phoneNumber: user.phoneNumber,
-                birthday: user.birthday,
-                gender: user.gender,
-                update_at: new Date()
-            }
+        }
+        const cloneFilter = this.extractConactData(user)
+        if (user.statusCode === 0) cloneFilter.statusCode = 0;
+        const cursor = await this.User.updateOne(idObject, {
+            $set: cloneFilter
         })
         return cursor
     }
@@ -110,7 +105,8 @@ class UserModel {
         let quantity = quantityPage
         let cursor = [];
         cursor = await this.User.find({
-            isAdmin: false
+            isAdmin: false,
+            statusCode: 4
         }, {
             skip: start,
             limit: quantity,
@@ -121,6 +117,7 @@ class UserModel {
         });
         return cursor.toArray();
     }
+
 }
 
 module.exports = UserModel;

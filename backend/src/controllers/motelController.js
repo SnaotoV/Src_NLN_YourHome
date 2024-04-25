@@ -43,6 +43,18 @@ let update = async (req, res) => {
         new ApiError(500, "An error orrcured while retrieving the contacts")
     }
 }
+let deleteMotel = async (req, res) => {
+    try {
+        let motel = req.params.id;
+        let resFromServices = await motelService.removeMotel(motel);
+        return res.status(200).json({
+            errCode: resFromServices.errCode,
+            value: resFromServices.value
+        })
+    } catch (error) {
+        new ApiError(500, "An error orrcured while retrieving the contacts")
+    }
+}
 
 
 
@@ -52,4 +64,5 @@ module.exports = {
     findOneFromUser,
     create,
     update,
+    deleteMotel
 }

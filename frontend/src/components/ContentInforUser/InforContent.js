@@ -7,15 +7,17 @@ import { Button, Table } from "react-bootstrap";
 import { toast } from 'react-toastify';
 import Pagenated from '../../components/Pagenated/Pagenated';
 import EditSchedule from "../ContactRoom/editSchedule";
-import { updateSchedule, hireRoom, findInforHire } from "../../services/userServices";
+import { updateSchedule, hireRoom, findInforHire, noneHire } from "../../services/userServices";
 import { getFullDate } from "../../ultils/getFullDate";
 import '../../styles/ContentInforUser/InforContent.scss';
+import RemoveHire from "../HireRoom/RemoveHire";
 let InforContent = (props) => {
     let [user, setUser] = useState({});
     let [listRegisterHire, setListRegisterHire] = useState([]);
     let [quantityPage, setQuantityPage] = useState(1);
     let [page, setPage] = useState(1);
     let [handleSchedule, setHandleSchedule] = useState(false);
+    let [handleRemoveHire, setHandleRemoveHire] = useState(false);
     let [activeSchedule, setActiceSchedule] = useState({})
     let [inforHire, setInforHire] = useState({});
     let handleModal = async (type, motel) => {
@@ -40,6 +42,22 @@ let InforContent = (props) => {
                 toast.error(resData.value, { position: toast.POSITION.TOP_RIGHT });
             }
         }
+        if (type === 'none-hire') {
+            let resData = await noneHire(motel, user);
+            if (resData && resData.errCode === 0) {
+                await refetchData()
+                toast.success(resData.value, { position: toast.POSITION.TOP_RIGHT });
+            } else {
+                toast.error(resData.value, { position: toast.POSITION.TOP_RIGHT });
+            }
+        }
+        if (type === "remove-hire") {
+            setHandleRemoveHire(!handleRemoveHire);
+        }
+        if (type === 'remove-hire-success') {
+            await refetchData()
+            setHandleRemoveHire(!handleRemoveHire);
+        }
     }
     let handleButton = async (type, motel) => {
         setActiceSchedule(motel);
@@ -55,18 +73,22 @@ let InforContent = (props) => {
             userId: user ? user._id : ''
         }
         if (user && user._id) {
-            let cloneListMotel = await getDataInPage('registerHire', clonePage, filter);
+            let cloneListMotel = await getDataInPage('registerHire', clonePage, 10, filter);
             let quantityPageFromBE = await getQuantityPage('registerHire', 10, filter);
             setListRegisterHire(cloneListMotel.data);
             setQuantityPage(quantityPageFromBE);
         }
         if (user && user._id) {
             let data = await findInforHire(filter);
+            console.log(data);
             if (data.resData.length > 0) {
                 let cloneData = data.resData ? data.resData[0] : {};
                 let date = data.resData ? data.resData[0]?.create_at : new Date();
                 cloneData.dataDate = await getFullDate(date)
                 setInforHire(cloneData);
+            }
+            else {
+                setInforHire([]);
             }
         }
     }
@@ -97,7 +119,7 @@ let InforContent = (props) => {
                 userId: user ? user._id : ''
             }
             if (user && user._id) {
-                let cloneListMotel = await getDataInPage('registerHire', clonePage, filter);
+                let cloneListMotel = await getDataInPage('registerHire', clonePage, 10, filter);
                 let quantityPageFromBE = await getQuantityPage('registerHire', 10, filter);
                 setListRegisterHire(cloneListMotel.data);
                 setQuantityPage(quantityPageFromBE);
@@ -110,6 +132,7 @@ let InforContent = (props) => {
         setUser(props.userInfor);
         setPage(clonePage);
     }, [props.match.params.page, props.userInfor])
+    console.log(inforHire);
     return (
         <div>
             <div className="row">
@@ -157,7 +180,7 @@ let InforContent = (props) => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {inforHire ?
+                                    {inforHire._id ?
                                         <>
                                             <tr>
                                                 <td className="px-4">Ngày bắt đầu thuê:</td>
@@ -184,7 +207,7 @@ let InforContent = (props) => {
                                                 }
                                             </tr>
                                             <tr>
-                                                <td className="px-4" colSpan={2}><Button variant="danger" className="w-100">Đăng ký ngưng thuê</Button></td>
+                                                <td className="px-4" colSpan={2}><Button variant="danger" className="w-100" onClick={() => { handleModal('remove-hire') }}>Đăng ký ngưng thuê</Button></td>
                                             </tr>
                                         </>
                                         :
@@ -335,6 +358,15 @@ let InforContent = (props) => {
                 handleClickClose={handleButton}
                 modalChanges={'Lưu'}
                 modalClose={'Hủy'} />
+            <RemoveHire
+                hire={inforHire?._id}
+                modalName={"Hủy hợp đồng"}
+                show={handleRemoveHire}
+                handleClickChanges={handleButton}
+                handleClickClose={handleButton}
+                modalChanges={'Xác nhận'}
+                modalClose={'Hủy'} />
+
         </div >
     )
 }

@@ -71,7 +71,7 @@ let Home = (props) => {
         setUser(props.userInfor)
     }, [props.userInfor])
     return (
-        <div>
+        <div className='mb-4'>
             <Carousel>
                 <Carousel.Item interval={1000} >
                     <div className="">

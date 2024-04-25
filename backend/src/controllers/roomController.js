@@ -88,7 +88,30 @@ let updateBill = async (req, res) => {
         new ApiError(500, "An error orrcured while retrieving the contacts")
     }
 }
-
+let deleteRegister = async (req, res) => {
+    try {
+        let id = req.params.id;
+        let resData = await roomService.deleteRegister(id);
+        return res.status(200).json({
+            errCode: resData.errCode,
+            value: resData.value
+        })
+    } catch (error) {
+        new ApiError(500, "An error orrcured while retrieving the contacts")
+    }
+}
+let deleteHire = async (req, res) => {
+    try {
+        let id = req.params.id;
+        let resData = await roomService.deleteHire(id);
+        return res.status(200).json({
+            errCode: resData.errCode,
+            value: resData.value
+        })
+    } catch (error) {
+        new ApiError(500, "An error orrcured while retrieving the contacts")
+    }
+}
 module.exports = {
     registerRoom,
     editRegisterRoom,
@@ -96,5 +119,7 @@ module.exports = {
     findOneRoom,
     addBill,
     findBill,
-    updateBill
+    updateBill,
+    deleteRegister,
+    deleteHire
 }

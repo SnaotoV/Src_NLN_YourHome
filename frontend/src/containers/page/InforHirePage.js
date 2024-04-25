@@ -162,7 +162,10 @@ let InforHirePage = (props) => {
                                                 </td>
                                                 <td>
                                                     {item.inforHire[0].bills.length > 0 && validDate(item.inforHire[0].bills[0].date_end) ?
-                                                        <p>Chưa qua tháng mới</p>
+                                                        item.inforHire[0].bills[0].statusCode === 7 ?
+                                                            <Button>Đã thanh toán trực tiếp</Button>
+                                                            :
+                                                            <p>Chưa qua tháng mới</p>
                                                         :
                                                         <Button onClick={() => handleButton(item.inforHire[0], index)}>Tạo phiếu thu</Button>
                                                     }

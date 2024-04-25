@@ -60,8 +60,7 @@ let DetailMotel = (props) => {
     }, [checkImage])
     useEffect(() => {
         let idMotel = props.match.params.id;
-        let idUser = props.userInfor ? props.userInfor._id : null
-        if (idUser) {
+        if (idMotel) {
             let getData = async () => {
                 let data = await getMotel(idMotel, 'admin')
                 setDataMotel(data?.data);

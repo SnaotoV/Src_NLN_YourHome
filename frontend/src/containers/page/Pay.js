@@ -48,11 +48,12 @@ let Pay = (props) => {
             setUser(props.userInfor)
         }
     }, [props.userInfor])
+    console.log(bill);
     return (
-        <div className="container ">
+        <div className="container p-4">
             <div className="row bg-white m-4 rounded-4 shadow p-4">
                 <div className="row col-6">
-                    {bill && bill.priceEW &&
+                    {bill && bill.priceEW && bill.priceEW.length > 0 &&
 
                         <table className="fs-5 border infor-box">
                             <thead>
@@ -158,12 +159,12 @@ let Pay = (props) => {
                                     <>
                                         <tr>
                                             <td className="px-4">
-                                                <Form.Label htmlFor="fullName">
+                                                <Form.Label htmlFor="number-bank">
                                                     Số tài khoản:
                                                 </Form.Label>
                                             </td>
                                             <td className="px-4">
-                                                <Form.Control id='fullName' placeholder="Số tài khoản"></Form.Control>
+                                                <Form.Control id='number-bank' type="number" placeholder="Số tài khoản"></Form.Control>
                                             </td>
                                         </tr>
                                         <tr>
@@ -175,7 +176,7 @@ let Pay = (props) => {
                                     :
                                     <tr>
                                         <td colspan="2" className="p-2">
-                                            <Button className="w-100" onClick={() => { handleButton(2) }}>Qua nhà thanh toán</Button>
+                                            <Button className="w-100" onClick={() => { handleButton(2) }}>Thanh toán trực tiếp</Button>
                                         </td>
                                     </tr>
 

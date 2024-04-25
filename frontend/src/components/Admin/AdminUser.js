@@ -2,10 +2,12 @@ import { connect } from 'react-redux';
 import { useEffect, useState } from "react";
 import { getQuantityPage, getDataInPage } from "../../services/appServices";
 import { withRouter, Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { Button, Table } from "react-bootstrap";
 import Pagenated from '../Pagenated/Pagenated';
 import RegistorForm from '../RegistorForm/RegistorForm';
 import { getGender } from '../../ultils/gender';
+import { deleteUser } from '../../services/userServices';
 let AdminUser = (props) => {
     let [page, setPage] = useState(1);
     let [quantityPage, setQuantityPage] = useState(1);
@@ -18,6 +20,14 @@ let AdminUser = (props) => {
             if (handleModalAdd) {
                 await reFetchData();
             }
+        }
+        if (type === 'delete-user') {
+            let resData = await deleteUser(data._id);
+            if (resData && resData.errCode === 0) {
+                await reFetchData();
+                toast.success(resData.value, { position: toast.POSITION.TOP_RIGHT });
+            } else
+                toast.error(resData.value, { position: toast.POSITION.TOP_RIGHT });
         }
     }
     let reFetchData = async () => {
@@ -91,7 +101,7 @@ let AdminUser = (props) => {
                                         <td>{item.username}</td>
                                         <td>
                                             <Button className='mx-2'>Sửa</Button>
-                                            <Button className='mx-2' variant="danger">Xóa</Button>
+                                            <Button className='mx-2' variant="danger" onClick={() => { handleButton('delete-user', item) }}>Xóa</Button>
                                         </td>
                                     </tr>
                                 )

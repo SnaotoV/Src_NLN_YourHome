@@ -29,8 +29,14 @@ let update = async (req, res) => {
 
     })
 }
-let deleteUser = (req, res) => {
-    console.log('hello');
+let deleteUser = async (req, res) => {
+    let id = req.params.id;
+    let resService = await userServices.removeOneUser(id)
+    return res.status(200).json({
+        errCode: resService?.errCode,
+        value: resService?.value,
+
+    })
 }
 
 module.exports = {

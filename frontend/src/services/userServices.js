@@ -26,6 +26,9 @@ let hireRoom = (motel, user) => {
 let findInforHire = (filter) => {
     return axios.post(`/hire`, { filter });
 }
+let removeInforHire = (id) => {
+    return axios.delete(`/hire/${id}`);
+}
 let createBill = (bill) => {
     return axios.post(`/create/bill`, { bill });
 }
@@ -38,6 +41,15 @@ let updateBill = (id) => {
 let updateMotel = (type, motel) => {
     return axios.put(`/user/motel/${type}/${motel._id}`, { motel });
 }
+let deleteMotel = (type, motel) => {
+    return axios.delete(`/user/motel/${type}/${motel._id}`);
+}
+let noneHire = (motel) => {
+    return axios.delete(`/user/hire/${motel._id}`);
+}
+let deleteUser = (id) => {
+    return axios.delete(`/user/${id}`);
+}
 export {
     edit,
     addMotel,
@@ -49,5 +61,9 @@ export {
     createBill,
     getBillById,
     updateBill,
-    updateMotel
+    updateMotel,
+    deleteMotel,
+    noneHire,
+    removeInforHire,
+    deleteUser
 }

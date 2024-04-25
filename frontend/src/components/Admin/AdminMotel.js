@@ -4,7 +4,9 @@ import { getQuantityPage, getDataInPage } from "../../services/appServices";
 import { withRouter, Link } from 'react-router-dom';
 import { Button, Table } from "react-bootstrap";
 import AddMotelForm from '../AddMotelForm/AddMotelForm';
+import { toast } from 'react-toastify';
 import Pagenated from '../Pagenated/Pagenated';
+import { deleteMotel } from '../../services/userServices';
 let AdminMotel = (props) => {
     let [listMotel, setListMotel] = useState([]);
     let [page, setPage] = useState(1);
@@ -12,7 +14,7 @@ let AdminMotel = (props) => {
     let [handleEditMotelModel, setHandleEditMotelModel] = useState(false)
     let [handleAddMotelModal, setHandleAddMotelModel] = useState(false)
     let [user, setUser] = useState({ ...props.userInfor });
-    let handleButton = async (type, data) => {
+    let handleButton = async (type, motel) => {
         if (type === 'edit') {
             setHandleEditMotelModel(!handleEditMotelModel);
         }
@@ -20,6 +22,15 @@ let AdminMotel = (props) => {
             setHandleAddMotelModel(!handleAddMotelModal);
             if (handleAddMotelModal) {
                 await reFetchData()
+            }
+        }
+        if (type === 'delete-motel') {
+            let data = await deleteMotel('admin', motel);
+            if (data && data.errCode === 0) {
+                toast.success(data.value, { position: toast.POSITION.TOP_RIGHT });
+                await reFetchData()
+            } else {
+                toast.error(data.value, { position: toast.POSITION.TOP_RIGHT });
             }
         }
     }
@@ -97,7 +108,7 @@ let AdminMotel = (props) => {
                                     <td>{item.district.name}</td>
                                     <td>{item.province.name}</td>
                                     <td><Button>Sửa</Button></td>
-                                    <td><Button variant="danger">Xóa</Button></td>
+                                    <td><Button variant="danger" onClick={() => { handleButton('delete-motel', item) }}>Xóa</Button></td>
                                 </tr>
                             )
                         })}

@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { Button, Table } from "react-bootstrap";
 import { withRouter } from "react-router-dom";
 import { getQuantityPage, getDataInPage } from "../../services/appServices";
+import { deleteMotel } from "../../services/userServices";
 import Pagenated from "../Pagenated/Pagenated";
+import { toast } from 'react-toastify';
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 let MotelContent = (props) => {
@@ -10,6 +12,24 @@ let MotelContent = (props) => {
     let [page, setPage] = useState(1);
     let [quantityPage, setQuantityPage] = useState(1);
     let [user, setUser] = useState({ ...props.userInfor });
+
+    let handleButton = async (type, motel, index) => {
+        if (type === 'delete-motel') {
+            let data = await deleteMotel('admin', motel);
+            if (data && data.errCode === 0) {
+                toast.success(data.value, { position: toast.POSITION.TOP_RIGHT });
+                removeMotelInList(index);
+            } else {
+                toast.error(data.value, { position: toast.POSITION.TOP_RIGHT });
+            }
+        }
+    }
+
+    let removeMotelInList = (index) => {
+        let cloneListMotel = [...listMotel];
+        cloneListMotel.splice(index, 1);
+        setListMotel(cloneListMotel);
+    }
 
     useEffect(() => {
         let getData = async () => {
@@ -82,7 +102,7 @@ let MotelContent = (props) => {
                                         <td>{item.district.name}</td>
                                         <td>{item.province.name}</td>
                                         <td><Link to={`/User/Motel/${item._id}/1`} className="btn btn-primary text-white ">Xem</Link></td>
-                                        <td><Button variant="danger">Xóa</Button></td>
+                                        <td><Button variant="danger" onClick={() => { handleButton('delete-motel', item, index) }}>Xóa</Button></td>
                                     </tr>
                                 )
                             })}

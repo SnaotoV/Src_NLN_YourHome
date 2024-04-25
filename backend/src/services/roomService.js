@@ -61,11 +61,22 @@ let createHireInfor = async (motel, user) => {
     let resData = {}
     let Room = new RoomModel(MongoDB.client);
     if (motel && user) {
-        let newInforHire = await Room.addHire(motel, user._id);
-        if (newInforHire) {
-            await Room.updateSchedule(motel._id, motel, 0);
-            resData.errCode = 0;
-            resData.value = 'Xác nhận thuê thành công!';
+        let motelClone = {
+            userId: user._id,
+        }
+        let InforHire = await Room.findInforHire(motelClone);
+        if (InforHire.length === 0) {
+            let newInforHire = await Room.addHire(motel, user._id);
+            if (newInforHire) {
+                await Room.updateSchedule(motel._id, motel, 0);
+                resData.errCode = 0;
+                resData.value = 'Xác nhận thuê thành công!';
+            }
+        }
+        else {
+            resData.errCode = 1;
+            resData.value = 'Bạn đã có một hợp đồng trước đó vui lòng kết thúc hợp đồng để bắt đầu một hợp đồng mới!';
+
         }
     }
     return resData;
@@ -77,6 +88,7 @@ let findInforHire = async (filter) => {
     if (filter) {
         resData = await Room.findInforHire(filter);
     }
+    console.log(resData);
     return resData;
 }
 let createBill = async (bill) => {
@@ -123,6 +135,46 @@ let updateBill = async (id) => {
     }
     return resData
 }
+let deleteRegister = async (id) => {
+    let resData = {};
+    let Room = new RoomModel(MongoDB.client);
+    if (id) {
+        let motel = {
+            _id: id
+        }
+        let data = await Room.updateSchedule(motel._id, motel, 0);
+        if (data) {
+            resData.errCode = 0;
+            resData.value = 'Xác nhận không thuê phòng thành công'
+        }
+        else {
+            resData.errCode = 1;
+            resData.value = 'Có lỗi xảy ra!'
+        }
+    }
+    return resData
+}
+
+let deleteHire = async (id) => {
+    let resData = {};
+    let Room = new RoomModel(MongoDB.client);
+    if (id) {
+        let cloneHire = {
+            _id: id,
+            statusCode: 0,
+        }
+        let data = await Room.removeHire(cloneHire);
+        if (data) {
+            resData.errCode = 0;
+            resData.value = 'Xác nhận hủy hợp đồng thành công'
+        }
+        else {
+            resData.errCode = 1;
+            resData.value = 'Có lỗi xảy ra!'
+        }
+    }
+    return resData
+}
 module.exports = {
     addHire,
     editSchedule,
@@ -130,5 +182,7 @@ module.exports = {
     findInforHire,
     createBill,
     getBillId,
-    updateBill
+    updateBill,
+    deleteRegister,
+    deleteHire
 }

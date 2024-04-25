@@ -2,13 +2,15 @@ import { withRouter, Link } from "react-router-dom";
 import { connect } from 'react-redux';
 import { useEffect, useState } from "react";
 import { getMotel } from '../../services/userServices';
-import { Table } from "react-bootstrap";
+import { Button, Table } from "react-bootstrap";
 import Pagenated from '../../components/Pagenated/Pagenated';
 import { getDataInPage, getQuantityPage } from '../../services/appServices';
 import { getGender } from '../../ultils/gender';
 import EditModelForm from '../../components/AddMotelForm/EditModelForm';
 import ScheduleSeenRoom from '../../components/ContactRoom/scheduleSeenRoom';
 import { getFullDate } from "../../ultils/getFullDate";
+import { noneHire } from "../../services/userServices";
+import RemoveHire from "../../components/HireRoom/RemoveHire";
 let InforMotel = (props) => {
     let [dataMotel, setDataMotel] = useState({});
     let [listImage, setListImage] = useState([]);
@@ -18,10 +20,12 @@ let InforMotel = (props) => {
     let [activeRegistorHire, setActiveRegistorHire] = useState({});
     let [page, setPage] = useState(1);
     let [quantityPage, setQuantityPage] = useState(1);
+    let [handleRemoveHire, setHandleRemoveHire] = useState(false);
     let [user, setUser] = useState({ ...props.userInfor });
     let [handleAddMotelModal, setHandleAddMotelModel] = useState(false)
     let [handleSchedule, setHandleSchedule] = useState(false)
     let [checkImage, setCheckImage] = useState(0);
+    let [activeHire, setActiveHire] = useState({})
     let changeImage = (event, item) => {
         setActiveImage(item)
     }
@@ -50,6 +54,14 @@ let InforMotel = (props) => {
                 setCheckImage(checkImage - 1)
             }
         }
+        if (type === "remove-hire") {
+            setHandleRemoveHire(!handleRemoveHire);
+            setActiveHire(data);
+        }
+        if (type === 'remove-hire-success') {
+            await reFetchData()
+            setHandleRemoveHire(!handleRemoveHire);
+        }
 
     }
     let refrestData = (data) => {
@@ -72,10 +84,11 @@ let InforMotel = (props) => {
     let reFetchData = async () => {
         let clonePage = page;
         let filter = {
-            motelId: dataMotel._id ? dataMotel._id : ''
+            motelId: dataMotel?._id
         }
         if (user && user._id) {
-            let cloneListMotel = await getDataInPage('registerHire', clonePage, filter);
+            console.log('hello');
+            let cloneListMotel = await getDataInPage('registerHire', clonePage, 10, filter);
             let quantityPageFromBE = await getQuantityPage('registerHire', 10, filter);
             setListRegisterHire(cloneListMotel.data);
             setQuantityPage(quantityPageFromBE);
@@ -98,7 +111,7 @@ let InforMotel = (props) => {
 
     useEffect(() => {
         let idMotel = props.match.params.id;
-        let idUser = props.userInfor ? props.userInfor._id : null
+        let idUser = props?.userInfor
         if (idUser) {
             let getData = async () => {
                 let data = await getMotel(idMotel, 'admin')
@@ -130,20 +143,24 @@ let InforMotel = (props) => {
         setUser(props.userInfor);
     }, [props.userInfor])
     useEffect(() => {
-        let getData = async () => {
-            let clonePage = page;
-            let filter = {
-                motelId: dataMotel ? dataMotel._id : ''
+        let idUser = props?.userInfor
+        if (idUser) {
+            let getData = async () => {
+                let clonePage = page;
+                let filter = {
+                    motelId: dataMotel ? dataMotel._id : 20
+                }
+                if (user && user._id) {
+                    let cloneListMotel = await getDataInPage('registerHire', clonePage, 10, filter);
+                    let quantityPageFromBE = await getQuantityPage('registerHire', 10, filter);
+                    setListRegisterHire(cloneListMotel.data);
+                    setQuantityPage(quantityPageFromBE);
+                }
             }
-            if (user && user._id) {
-                let cloneListMotel = await getDataInPage('registerHire', clonePage, filter);
-                let quantityPageFromBE = await getQuantityPage('registerHire', 10, filter);
-                setListRegisterHire(cloneListMotel.data);
-                setQuantityPage(quantityPageFromBE);
-            }
+            getData();
         }
-        getData();
     }, [page, dataMotel, user]);
+    console.log(listRegisterHire);
     return (
         <div className="container bg-white px-3 my-4 rounded-4 shadow-lg">
             {dataMotel && user && dataMotel._id && dataMotel.userId === user._id ?
@@ -229,6 +246,7 @@ let InforMotel = (props) => {
                                             <th>Tên người dùng</th>
                                             <th>Số điện thoại</th>
                                             <th>Thời gian bắt đầu thuê</th>
+                                            <th>Thao tác</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -241,6 +259,7 @@ let InforMotel = (props) => {
                                                     <td>{item.inforHire[0].user[0].fullName}</td>
                                                     <td>{item.inforHire[0].user[0].phoneNumber}</td>
                                                     <td>{getFullDate(item.inforHire[0].create_at)}</td>
+                                                    <td><Button variant="danger" onClick={() => { handleButtonModal('remove-hire', item.inforHire[0]) }}>Kết thúc hợp đồng</Button></td>
                                                 </tr>
                                             )
                                         })}
@@ -345,6 +364,15 @@ let InforMotel = (props) => {
                 handleClickClose={handleButtonModal}
                 modalChanges={'Lưu'}
                 modalClose={'Hủy'} />
+            <RemoveHire
+                hire={activeHire?._id}
+                modalName={"Hủy hợp đồng"}
+                show={handleRemoveHire}
+                handleClickChanges={handleButtonModal}
+                handleClickClose={handleButtonModal}
+                modalChanges={'Xác nhận'}
+                modalClose={'Hủy'} />
+
         </div >
     )
 }

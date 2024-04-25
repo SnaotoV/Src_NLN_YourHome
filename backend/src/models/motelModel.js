@@ -22,11 +22,12 @@ class MotelModel {
             price: payload.price,
             horizontal: payload.horizontal,
             vertical: payload.vertical,
-            create_at: null,
-            update_at: null
+            statusCode: payload.statusCode ? payload.statusCode : 4,
+            create_at: payload.create_at ? payload.create_at : null,
+            update_at: payload.update_at ? payload.update_at : null
         };
         Object.keys(motel).forEach(
-            (key) => motel[key] === undefined && delete motel[key]
+            (key) => (motel[key] === undefined || motel[key] === null) && delete motel[key]
         )
         return motel
     }
@@ -167,7 +168,8 @@ class MotelModel {
                 { $limit: quantity },
                 {
                     $sort: { _id: -1 },
-                }]);
+                }
+            ]);
         }
         return await cursor.toArray();
     }
@@ -320,9 +322,28 @@ class MotelModel {
         }
 
         return await cursor.toArray();
-
     }
+    async deleteMotel(payload) {
+        const motel = this.tranformMotelData(payload);
 
+        const filter = {
+            _id: ObjectId.isValid(payload._id) ? new ObjectId(payload._id) : null,
+        };
+        const cursor = await this.Motel.updateOne(filter, {
+            $set: motel,
+        })
+        return cursor;
+    }
+    async deleteByUser(filter) {
+        const motel = this.tranformMotelData(filter);
+        const ListMotel = await this.Motel.find(motel);
+        const cursor = await this.Motel.updateMany(motel, {
+            $set: {
+                statusCode: 0
+            },
+        })
+        return ListMotel.toArray();
+    }
 
 }
 module.exports = MotelModel;

@@ -42,7 +42,7 @@ let Motel = (props) => {
         let clonePage = page;
         let cloneFilter = filter;
         let cloneListMotel = await getDataInPage('motel', clonePage, 12, cloneFilter);
-        let quantityPageFromBE = await getQuantityPage('motel', 10, cloneFilter);
+        let quantityPageFromBE = await getQuantityPage('motel', 12, cloneFilter);
         setListMotel(cloneListMotel.data);
         setQuantityPage(quantityPageFromBE);
     }
@@ -61,7 +61,7 @@ let Motel = (props) => {
             let clonePage = page
             let cloneFilter = filter
             let cloneListMotel = await getDataInPage('motel', clonePage, 12, cloneFilter);
-            let quantityPageFromBE = await getQuantityPage('motel', 10, cloneFilter);
+            let quantityPageFromBE = await getQuantityPage('motel', 12, cloneFilter);
             setListMotel(cloneListMotel.data);
             setQuantityPage(quantityPageFromBE);
         }
@@ -72,7 +72,7 @@ let Motel = (props) => {
             let clonePage = page
             let cloneFilter = filter
             let cloneListMotel = await getDataInPage('motel', clonePage, 12, cloneFilter);
-            let quantityPageFromBE = await getQuantityPage('motel', 10, cloneFilter);
+            let quantityPageFromBE = await getQuantityPage('motel', 12, cloneFilter);
             setListMotel(cloneListMotel.data);
             setQuantityPage(quantityPageFromBE);
         }
@@ -92,7 +92,7 @@ let Motel = (props) => {
                 let clonePage = page;
                 let cloneFilter = props.filter;
                 let cloneListMotel = await getDataInPage('motel', clonePage, 12, cloneFilter);
-                let quantityPageFromBE = await getQuantityPage('motel', 10);
+                let quantityPageFromBE = await getQuantityPage('motel', 12, cloneFilter);
                 setListMotel(cloneListMotel.data);
                 setQuantityPage(quantityPageFromBE);
                 if (cloneListMotel) {
@@ -177,7 +177,7 @@ let Motel = (props) => {
                     {listMotel && listMotel.length > 0 && listMotel.map((item, index) => {
 
                         return (
-                            <div className="col-4" key={index}>
+                            <div className="col-3" key={index}>
                                 <Card>
                                     <Card.Img className="w-100 card-img" variant="top" src={item?.image.length > 0 && item?.image[0].image} />
                                     <Card.Body>

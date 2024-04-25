@@ -40,6 +40,21 @@ class RoomModel {
         )
         return billClone;
     }
+    fillDataHire(hire) {
+        let hireClone = {
+            userId: ObjectId.isValid(hire.userId) ? new ObjectId(hire.userId) : null,
+            roomId: ObjectId.isValid(hire.roomId) ? new ObjectId(hire.roomId) : null,
+            motelId: ObjectId.isValid(hire.motelId) ? new ObjectId(hire.motelId) : null,
+            indexRoom: hire.indexRoom,
+            create_at: hire.create_at,
+            update_at: hire.update_at,
+            statusCode: hire.statusCode ? hire.statusCod : 4
+        }
+        Object.keys(hireClone).forEach(
+            (key) => (hireClone[key] === undefined || hireClone[key] === null) && delete hireClone[key]
+        )
+        return hireClone;
+    }
 
     async create(idMotel) {
         const room = this.tranformRoomEWData(idMotel);
@@ -93,7 +108,7 @@ class RoomModel {
     async findInPageRegisterHire(page, quantityPage, filter) {
         let filterUser = {};
         let start = (page - 1) * quantityPage;
-        let quantity = quantityPage
+        let quantity = quantityPage;
         if (filter && filter.motelId) {
             filterUser = {
                 motelId: ObjectId.isValid(filter.motelId) ? new ObjectId(filter.motelId) : null,
@@ -174,8 +189,8 @@ class RoomModel {
         const cursor = await this.inforRegisterHire.updateOne(filter, {
             $set: {
                 statusCode: statusCode,
-                data_Date: data.data_Date,
-                data_Time: data.data_Time,
+                data_Date: data.data_Date ? data.data_Date : null,
+                data_Time: data.data_Time ? data.data_Time : null,
                 update_at: new Date()
             }
         })
@@ -208,11 +223,8 @@ class RoomModel {
     }
     async findInforHire(filter) {
         let filterUser = {};
-        if (filter && filter.userId) {
-            filterUser = {
-                userId: ObjectId.isValid(filter.userId) ? new ObjectId(filter.userId) : null,
-                statusCode: { $ne: 0 }
-            }
+        if (filter) {
+            filterUser = this.fillDataHire(filter);
         }
         let month = new Date().getMonth() + 1;
         let year = new Date().getFullYear();
@@ -306,13 +318,6 @@ class RoomModel {
                     from: 'priceEW',
                     localField: 'priceEW',
                     foreignField: '_id',
-                    pipeline: [
-                        {
-                            $match: {
-                                statusCode: 4
-                            }
-                        }
-                    ],
                     as: 'priceEW',
                 }
             },
@@ -330,6 +335,49 @@ class RoomModel {
             }
         })
         return cursor
+    }
+    async removeHire(filter) {
+        const filterClone = this.fillDataHire(filter)
+        if (filter?._id) {
+            filterClone._id = ObjectId.isValid(filter?._id) ? new ObjectId(filter?._id) : null
+        }
+        const HireData = await this.inforHire.find(filterClone).toArray();
+        const cursor = await this.inforHire.updateOne(filterClone, {
+            $set: {
+                statusCode: 0,
+                update_at: new Date()
+            }
+        })
+        if (cursor && HireData.length > 0) {
+            let filterRoom = {
+                _id: ObjectId.isValid(HireData[0].roomId) ? new ObjectId(HireData[0].roomId) : null,
+            }
+            const dataRoom = await this.Room.updateOne(filterRoom, {
+                $set: {
+                    statusCode: 1,
+                    update_at: new Date()
+                }
+            })
+            let filterBill = {
+                hireId: ObjectId.isValid(HireData[0]._id) ? new ObjectId(HireData[0]._id) : null,
+            }
+            const dataBill = await this.Bill.updateOne(filterBill, {
+                $set: {
+                    statusCode: 0,
+                    update_at: new Date()
+                }
+            })
+        }
+        return cursor;
+    }
+    async removeHireByMotel(filter) {
+        let cloneFilter = this.fillDataHire(filter);
+        const cursor = await this.inforHire.updateOne(cloneFilter, {
+            $set: {
+                statusCode: 0
+            },
+        })
+        return cursor;
     }
 }
 module.exports = RoomModel;

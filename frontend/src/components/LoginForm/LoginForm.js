@@ -19,15 +19,16 @@ let LoginForm = (props) => {
         let arrErr = await checkValidForm();
         if (arrErr.isValid === true) {
             let data = await login(user);
+            console.log(data);
             if (data.errCode === 0) {
-                console.log(data);
                 toast.success(data.value, { position: toast.POSITION.TOP_RIGHT });
                 setUser({});
                 setErr({ isValid: false });
                 props.userLoginSuccess(data.userData);
                 props.handleClickClose('login')
-            } else
+            } else {
                 toast.error(data.value, { position: toast.POSITION.TOP_RIGHT });
+            }
         }
     }
     let checkValidForm = async () => {
