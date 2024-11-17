@@ -56,28 +56,28 @@ let Motel = (props) => {
             setQuanHuyen([]);
         }
     }
-    useEffect(() => {
-        let getData = async () => {
-            let clonePage = page
-            let cloneFilter = filter
-            let cloneListMotel = await getDataInPage('motel', clonePage, 12, cloneFilter);
-            let quantityPageFromBE = await getQuantityPage('motel', 12, cloneFilter);
-            setListMotel(cloneListMotel.data);
-            setQuantityPage(quantityPageFromBE);
-        }
-        getData()
-    }, [])
-    useEffect(() => {
-        let getData = async () => {
-            let clonePage = page
-            let cloneFilter = filter
-            let cloneListMotel = await getDataInPage('motel', clonePage, 12, cloneFilter);
-            let quantityPageFromBE = await getQuantityPage('motel', 12, cloneFilter);
-            setListMotel(cloneListMotel.data);
-            setQuantityPage(quantityPageFromBE);
-        }
-        getData()
-    }, [page])
+    // useEffect(() => {
+    //     let getData = async () => {
+    //         let clonePage = page
+    //         let cloneFilter = filter
+    //         let cloneListMotel = await getDataInPage('motel', clonePage, 12, cloneFilter);
+    //         let quantityPageFromBE = await getQuantityPage('motel', 12, cloneFilter);
+    //         setListMotel(cloneListMotel.data);
+    //         setQuantityPage(quantityPageFromBE);
+    //     }
+    //     getData()
+    // }, [])
+    // useEffect(() => {
+    //     let getData = async () => {
+    //         let clonePage = page
+    //         let cloneFilter = filter
+    //         let cloneListMotel = await getDataInPage('motel', clonePage, 12, cloneFilter);
+    //         let quantityPageFromBE = await getQuantityPage('motel', 12, cloneFilter);
+    //         setListMotel(cloneListMotel.data);
+    //         setQuantityPage(quantityPageFromBE);
+    //     }
+    //     getData()
+    // }, [page])
 
     useEffect(() => {
         setUser(props.userInfor)
@@ -87,6 +87,7 @@ let Motel = (props) => {
     }, [props.match.params.page])
     useEffect(() => {
         if (props.filter !== null) {
+            console.log(props.filter);
             setFilter(props.filter);
             let getData = async () => {
                 let clonePage = page;
@@ -100,8 +101,18 @@ let Motel = (props) => {
                 }
             }
             getData()
+        } else {
+            let getData = async () => {
+                let clonePage = page
+                let cloneFilter = filter
+                let cloneListMotel = await getDataInPage('motel', clonePage, 12, cloneFilter);
+                let quantityPageFromBE = await getQuantityPage('motel', 12, cloneFilter);
+                setListMotel(cloneListMotel.data);
+                setQuantityPage(quantityPageFromBE);
+            }
+            getData()
         }
-    }, [props.filter])
+    }, [props.filter, page])
     return (
         <div>
             <div className="">
@@ -187,7 +198,7 @@ let Motel = (props) => {
                                             <br />
                                             Chiều rộng: {item.vertical}m
                                             <br />
-                                            {item.price.replace(/\B(?=(\d{3})+(?!\d))/g, '.')} VND/tháng
+                                            {item.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')} VND/tháng
                                         </Card.Text>
                                         <Link className='btn btn-dark text-white' to={(user && user._id === item.userId) ? `/User/Motel/${item._id}/1` : `/Detail/Motel/${item._id}`}>Xem chi tiết</Link>
                                     </Card.Body>

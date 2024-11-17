@@ -14,7 +14,7 @@ let HireRoom = (props) => {
             let data = await removeInforHire(hire);
             if (data && data.errCode === 0) {
                 toast.success(data.value, { position: toast.POSITION.TOP_RIGHT });
-                props.handleClickClose('remove-hire-success')
+                props.handleClickClose('remove-hire-success');
             } else {
                 toast.error(data.value, { position: toast.POSITION.TOP_RIGHT });
             }

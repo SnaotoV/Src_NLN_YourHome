@@ -19,7 +19,7 @@ class MotelModel {
             ward: payload.ward,
             district: payload.district,
             province: payload.province,
-            price: payload.price,
+            price: Number(payload.price),
             horizontal: payload.horizontal,
             vertical: payload.vertical,
             statusCode: payload.statusCode ? payload.statusCode : 4,
@@ -107,6 +107,7 @@ class MotelModel {
                 userId: ObjectId.isValid(filter.userId) ? new ObjectId(filter.userId) : null
             }
         }
+
         const cursor = await this.Motel.count(filterUser);
         return cursor
     }
@@ -177,12 +178,6 @@ class MotelModel {
         const filter = {
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
         };
-        let month = new Date().getMonth() + 1;
-        let year = new Date().getFullYear();
-        let date = new Date().getUTCDate();
-        let formatNumber = Intl.NumberFormat("es-Us", { minimumIntegerDigits: 2 })
-        let time_at_pay = `${year}-${formatNumber.format(month)}-${formatNumber.format(date)}T00:00:00.000Z`;
-        let time_late_pay = `${year}-${formatNumber.format(month - 1)}-${formatNumber.format(date)}T00:00:00.000Z`;
         let cursor = {}
         if (type === 'admin') {
             cursor = await this.Motel.aggregate([{
@@ -236,7 +231,8 @@ class MotelModel {
                                                     $match: {
                                                         $or: [
                                                             {
-                                                                date_end: { $gte: time_at_pay }
+
+                                                                date_pay: null
                                                             },
                                                             // {
                                                             //     date_end: { $gte: time_late_pay }

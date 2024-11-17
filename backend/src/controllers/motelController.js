@@ -58,7 +58,6 @@ let deleteMotel = async (req, res) => {
 
 
 
-
 module.exports = {
     findAll,
     findOneFromUser,

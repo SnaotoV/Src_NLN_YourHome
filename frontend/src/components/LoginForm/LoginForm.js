@@ -24,6 +24,7 @@ let LoginForm = (props) => {
                 toast.success(data.value, { position: toast.POSITION.TOP_RIGHT });
                 setUser({});
                 setErr({ isValid: false });
+                const dataLogin = localStorage.setItem('accessToken', data.token);
                 props.userLoginSuccess(data.userData);
                 props.handleClickClose('login')
             } else {

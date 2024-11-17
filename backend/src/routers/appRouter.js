@@ -3,6 +3,8 @@ import app from '../controllers/appController';
 import user from '../controllers/userController';
 import motel from '../controllers/motelController';
 import room from '../controllers/roomController';
+import auth from '../services/auth';
+import pay from '../controllers/payController';
 const router = express.Router();
 
 router.route('/login')
@@ -11,45 +13,52 @@ router.route('/register')
     .post(app.register)
 
 router.route('/user')
-    .get(user.findAll)
-    .post(user.create)
+    .get(auth.verifyToken, user.findAll)
+    .post(auth.verifyToken, user.create)
 router.route('/user/:id')
-    .get(user.findOne)
-    .put(user.update)
-    .delete(user.deleteUser)
+    .get(auth.verifyToken, user.findOne)
+    .put(auth.verifyToken, user.update)
+    .delete(auth.verifyToken, user.deleteUser)
 
 router.route('/user/motel')
-    .get(motel.findAll)
-    .post(motel.create)
+    .get(auth.verifyToken, motel.findAll)
+    .post(auth.verifyToken, motel.create)
 
 router.route('/user/motel/:type/:id')
     .get(motel.findOneFromUser)
-    .put(motel.update)
-    .delete(motel.deleteMotel)
+    .put(auth.verifyToken, motel.update)
+    .delete(auth.verifyToken, motel.deleteMotel)
 
 router.route('/user/room')
-    .post(room.registerRoom)
+    .post(auth.verifyToken, room.registerRoom)
 router.route('/user/room/:id')
-    .get(room.findOneRoom)
-    .put(room.editRegisterRoom);
+    .get(auth.verifyToken, room.findOneRoom)
+    .put(auth.verifyToken, room.editRegisterRoom);
 router.route('/user/hire')
-    .post(room.createHire)
+    .post(auth.verifyToken, room.createHire)
 router.route('/user/hire/:id')
-    .delete(room.deleteRegister)
+    .delete(auth.verifyToken, room.deleteRegister)
 router.route('/hire')
-    .post(room.findOneRoom)
+    .post(auth.verifyToken, room.findOneRoom)
 router.route('/hire/:id')
-    .delete(room.deleteHire)
+    .delete(auth.verifyToken, room.deleteHire)
 router.route('/create/bill')
-    .post(room.addBill)
+    .post(auth.verifyToken, room.addBill)
+router.route('/bill/:year')
+    .get(room.getBillInYear)
 
 router.route('/pay/:id')
-    .get(room.findBill)
-    .put(room.updateBill)
+    .get(auth.verifyToken, room.findBill)
+    .put(auth.verifyToken, room.updateBill)
 
+router.route('/app/auth/token')
+    .get(app.getNewKey);
 router.route('/app/all-page')
     .post(app.allpage);
 router.route('/app/:type/:page')
-    .put(app.dataInPage)
-
+    .put(app.dataInPage);
+router.route('/create_payment_url')
+    .post(auth.verifyToken, pay.createPaymentUrl);
+router.route('/vnpay_check')
+    .get(pay.checkPayment)
 module.exports = router;

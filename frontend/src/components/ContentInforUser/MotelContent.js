@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button, Table } from "react-bootstrap";
 import { withRouter } from "react-router-dom";
-import { getQuantityPage, getDataInPage } from "../../services/appServices";
+import { getQuantityPage, getDataInPage, getNewToken } from "../../services/appServices";
 import { deleteMotel } from "../../services/userServices";
 import Pagenated from "../Pagenated/Pagenated";
 import { toast } from 'react-toastify';
@@ -48,15 +48,26 @@ let MotelContent = (props) => {
     }, []);
     useEffect(() => {
         let getData = async () => {
-            let clonePage = page
-            let filter = {
-                userId: user ? user._id : ''
-            }
-            if (user && user._id) {
-                let cloneListMotel = await getDataInPage('motel', clonePage, 10, filter);
-                let quantityPageFromBE = await getQuantityPage('motel', 10, filter);
-                setListMotel(cloneListMotel.data);
-                setQuantityPage(quantityPageFromBE);
+            try {
+
+                let clonePage = page
+                let filter = {
+                    userId: user ? user._id : ''
+                }
+                if (user && user._id) {
+                    let cloneListMotel = await getDataInPage('motel', clonePage, 10, filter);
+                    let quantityPageFromBE = await getQuantityPage('motel', 10, filter);
+                    setListMotel(cloneListMotel.data);
+                    setQuantityPage(quantityPageFromBE);
+                }
+
+            } catch (error) {
+                if (error.response.status === 400) {
+                    let check = await getNewToken();
+                    if (check) {
+                        getData();
+                    }
+                }
             }
         }
         getData()
@@ -96,7 +107,7 @@ let MotelContent = (props) => {
                                         <td>{item.quantity}</td>
                                         <td>{item.horizontal} m</td>
                                         <td>{item.vertical}m</td>
-                                        <td>{item.price.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}</td>
+                                        <td>{item.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}</td>
                                         <td>{item.address.address}</td>
                                         <td>{item.ward.type === 'phuong' ? item.ward.name_with_type : item.ward.name}</td>
                                         <td>{item.district.name}</td>

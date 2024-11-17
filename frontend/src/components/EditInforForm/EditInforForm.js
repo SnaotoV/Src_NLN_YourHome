@@ -1,5 +1,6 @@
 import { connect } from 'react-redux';
 import { Form, Button, Modal } from "react-bootstrap";
+import { getNewToken } from '../../services/appServices';
 import { toast } from 'react-toastify';
 import * as actions from '../../stores/actions'
 import { useEffect, useState } from 'react';
@@ -18,18 +19,28 @@ let EditUser = (props) => {
 
     }
     let handleClickChanges = async () => {
-        if (props.isLoggedIn) {
-            let arrErr = await checkValidForm();
-            if (arrErr.isValid) {
-                let data = await edit(props.userInfor._id, user);
-                if (data && data.errCode === 0) {
-                    toast.success(data.value, { position: toast.POSITION.TOP_RIGHT });
-                    props.handleClickClose('edit');
-                    props.userLoginSuccess(data.userInfor);
-                    setErr({ sValid: false });
+        try {
+
+            if (props.isLoggedIn) {
+                let arrErr = await checkValidForm();
+                if (arrErr.isValid) {
+                    let data = await edit(props.userInfor._id, user);
+                    if (data && data.errCode === 0) {
+                        toast.success(data.value, { position: toast.POSITION.TOP_RIGHT });
+                        props.handleClickClose('edit');
+                        props.userLoginSuccess(data.userInfor);
+                        setErr({ sValid: false });
+                    }
+                    else {
+                        toast.error(data.value, { position: toast.POSITION.TOP_RIGHT });
+                    }
                 }
-                else {
-                    toast.error(data.value, { position: toast.POSITION.TOP_RIGHT });
+            }
+        } catch (error) {
+            if (error.response.status === 400) {
+                let check = await getNewToken();
+                if (check) {
+                    handleClickChanges();
                 }
             }
         }

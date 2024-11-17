@@ -46,6 +46,7 @@ let findOneRoom = async (req, res) => {
     try {
         let filter = req.body.filter;
         let resData = await roomService.findInforHire(filter);
+
         return res.status(200).json({
             resData
         })
@@ -79,7 +80,10 @@ let findBill = async (req, res) => {
 let updateBill = async (req, res) => {
     try {
         let id = req.params.id;
-        let resData = await roomService.updateBill(id);
+        let type = req.body.type;
+        let userPayId = req.body.userPayId;
+
+        let resData = await roomService.updateBill(id, type, userPayId);
         return res.status(200).json({
             errCode: resData.errCode,
             value: resData.value
@@ -112,6 +116,20 @@ let deleteHire = async (req, res) => {
         new ApiError(500, "An error orrcured while retrieving the contacts")
     }
 }
+let getBillInYear = async (req, res) => {
+    try {
+        let year = req.params.year;
+        let resData = await roomService.getAllCheck(year);
+        return res.status(200).json({
+            errCode: resData.errCode,
+            value: resData.value
+        })
+
+    } catch (error) {
+        new ApiError(500, "An error orrcured while retrieving the contacts")
+    }
+}
+
 module.exports = {
     registerRoom,
     editRegisterRoom,
@@ -121,5 +139,6 @@ module.exports = {
     findBill,
     updateBill,
     deleteRegister,
-    deleteHire
+    deleteHire,
+    getBillInYear
 }

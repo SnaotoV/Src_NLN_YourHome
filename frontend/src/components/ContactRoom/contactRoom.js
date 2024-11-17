@@ -11,19 +11,23 @@ let ContactRoom = (props) => {
         props.handleClickClose()
     }
     let handleClickChanges = async () => {
-        let resData = {};
-        if (props.userInfor && props.userInfor._id) {
-            resData = await registerRoom(room, props.userInfor);
-            if (resData && resData.errCode === 0) {
-                toast.success(resData.value, { position: toast.POSITION.TOP_RIGHT });
-                props.handleClickClose()
-            } else {
-                toast.error(resData.value, { position: toast.POSITION.TOP_RIGHT });
-                props.handleClickClose()
+        try {
+            let resData = {};
+            if (props.userInfor && props.userInfor._id) {
+                resData = await registerRoom(room, props.userInfor);
+                if (resData && resData.errCode === 0) {
+                    toast.success(resData.value, { position: toast.POSITION.TOP_RIGHT });
+                    props.handleClickClose()
+                } else {
+                    toast.error(resData.value, { position: toast.POSITION.TOP_RIGHT });
+                    props.handleClickClose()
+                }
             }
-        }
-        else {
-            toast.error('Vui lòng đăng nhập để thực hiện thao tác.', { position: toast.POSITION.TOP_RIGHT });
+            else {
+                toast.error('Vui lòng đăng nhập để thực hiện thao tác.', { position: toast.POSITION.TOP_RIGHT });
+            }
+        } catch (error) {
+            console.log(error.response.status);
         }
     }
     useEffect(() => {

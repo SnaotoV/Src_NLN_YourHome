@@ -88,7 +88,6 @@ let findInforHire = async (filter) => {
     if (filter) {
         resData = await Room.findInforHire(filter);
     }
-    console.log(resData);
     return resData;
 }
 let createBill = async (bill) => {
@@ -119,11 +118,13 @@ let getBillId = async (id) => {
     }
     return resData
 }
-let updateBill = async (id) => {
+let updateBill = async (id, type, userPayId) => {
+
     let Room = new RoomModel(MongoDB.client);
     let resData = {};
     if (id) {
-        let data = await Room.updateBill(id);
+        let data = await Room.updateBill(id, type, userPayId);
+
         if (data) {
             resData.errCode = 0;
             resData.value = 'Thanh toán thành công!'
@@ -175,6 +176,22 @@ let deleteHire = async (id) => {
     }
     return resData
 }
+let getAllCheck = async (year) => {
+    let resData = {}
+    let Room = new RoomModel(MongoDB.client);
+
+    if (year) {
+        let filter = {
+            year: year
+        }
+        let listBiillMonth = await Room.getMonneyMonthInYear(filter);
+        if (listBiillMonth) {
+            resData.errCode = 0;
+            resData.value = listBiillMonth;
+        }
+    }
+    return resData;
+}
 module.exports = {
     addHire,
     editSchedule,
@@ -184,5 +201,6 @@ module.exports = {
     getBillId,
     updateBill,
     deleteRegister,
-    deleteHire
+    deleteHire,
+    getAllCheck
 }

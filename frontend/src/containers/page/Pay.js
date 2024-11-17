@@ -1,36 +1,38 @@
 import { useEffect, useState } from "react";
-import { withRouter } from "react-router-dom";
-import { getBillById } from "../../services/userServices";
+import { withRouter, useLocation } from "react-router-dom";
+import { getBillById, updateBill } from "../../services/userServices";
 import { connect } from "react-redux";
 import { getFullDate } from "../../ultils/getFullDate";
 import { Button, Form } from "react-bootstrap";
 import { getGender } from "../../ultils/gender";
 import { toast } from 'react-toastify';
-import { updateBill } from "../../services/userServices";
+import { createPayController } from "../../services/appServices";
+import VNPayLogo from '../../assets/image/VNPay-Logo.webp'
 let Pay = (props) => {
     let [bill, setBill] = useState({});
     let [user, setUser] = useState({});
-    let [typePay, setTypePay] = useState({
-        typePay: 1,
-        userId: user._id
-    })
-    let handleButton = async () => {
-        let history = props.history;
-        let data = await updateBill(props.match.params.id)
-        if (data && data.errCode === 0) {
-            console.log(data);
-            toast.success(data.value, { position: toast.POSITION.TOP_RIGHT });
-            history.replace('/Infor/User/1')
+    const location = useLocation();
+    let handleButton = async (type) => {
+        try {
+            if (type === "moneyPay") {
+                let history = props.history;
+                let data = await updateBill(props.match.params.id, "moneyPay", user._id)
+                if (data && data.errCode === 0) {
+                    toast.success(data.value, { position: toast.POSITION.TOP_RIGHT });
+                    history.replace('/Infor/User/1')
+                }
+                else {
+                    toast.error(data.value, { position: toast.POSITION.TOP_RIGHT });
+                }
+            }
+            if (type === "VNPay") {
+                let data = await createPayController(bill.sumBill, bill._id);
+                window.location = data;
+            }
+
+        } catch (error) {
+
         }
-        else {
-            toast.error(data.value, { position: toast.POSITION.TOP_RIGHT });
-        }
-    }
-    let changePay = (event) => {
-        let clonePay = { ...typePay };
-        clonePay.userId = user._id;
-        clonePay.typePay = event.target.value;
-        setTypePay(clonePay);
     }
     useEffect(() => {
         let getData = async () => {
@@ -48,7 +50,23 @@ let Pay = (props) => {
             setUser(props.userInfor)
         }
     }, [props.userInfor])
-    console.log(bill);
+    useEffect(() => {
+        const isSuccess = location.pathname.includes("success");
+        isSuccess && toast.success("Thanh toán thành công");
+        let getData = async () => {
+            if (props.match.params.id) {
+                let data = await getBillById(props.match.params.id);
+                if (data) {
+                    setBill(data?.resData[0]);
+                }
+            }
+            if (props.userInfor) {
+                setUser(props.userInfor)
+            }
+        }
+        getData();
+    }, [])
+
     return (
         <div className="container p-4">
             <div className="row bg-white m-4 rounded-4 shadow p-4">
@@ -85,7 +103,7 @@ let Pay = (props) => {
                                 </tr>
                                 <tr>
                                     <td className="px-4">Tiền thuê:</td>
-                                    <td className="px-4">{bill?.price.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ/tháng</td>
+                                    <td className="px-4">{bill?.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ/tháng</td>
                                 </tr>
                                 <tr>
                                     <td className="px-4">Tiền điện: {bill.valueE}x{bill.priceEW[0]?.priceE.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ</td>
@@ -97,17 +115,7 @@ let Pay = (props) => {
                                 </tr>
                                 <tr>
                                     <td className="px-4">Tổng tiền:</td>
-                                    <td className="px-4">{(Number(bill.price) + (bill.valueW * bill?.priceEW[0].priceW) + (bill.valueE * bill?.priceEW[0].priceE)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ/tháng</td>
-                                </tr>
-                                <tr>
-                                    <td className="px-4 text-center" colSpan={2} >{
-                                        bill.date_pay ?
-                                            <div></div>
-                                            :
-                                            <div>
-                                                {/* <Link to={`/Pay/${inforHire.bills[0]._id}`} className="w-100 btn main-button">Thanh Toán</Link> */}
-                                            </div>
-                                    }</td>
+                                    <td className="px-4">{bill.sumBill.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ/tháng</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -145,48 +153,21 @@ let Pay = (props) => {
                                     <td className="px-4">{user && user.phoneNumber}</td>
                                 </tr>
                                 <tr>
-                                    <td className="px-4">
-                                        Giới tính:
-                                    </td>
-                                    <td className="px-4">
-                                        <Form.Select name='type' onChange={(event) => { changePay(event) }}>
-                                            <option value="1">Đưa tiền trực tiếp</option>
-                                            <option value="2">Chuyển khoản</option>
-                                        </Form.Select>
+                                    <td colspan="2" className="p-2">
+                                        <Button className="w-100" onClick={() => { handleButton("moneyPay") }} > Thanh toán trực tiếp</Button>
                                     </td>
                                 </tr>
-                                {typePay.typePay == 2 ?
-                                    <>
-                                        <tr>
-                                            <td className="px-4">
-                                                <Form.Label htmlFor="number-bank">
-                                                    Số tài khoản:
-                                                </Form.Label>
-                                            </td>
-                                            <td className="px-4">
-                                                <Form.Control id='number-bank' type="number" placeholder="Số tài khoản"></Form.Control>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="2" className="p-2">
-                                                <Button className="w-100" onClick={() => { handleButton(1) }}>Thanh toán</Button>
-                                            </td>
-                                        </tr>
-                                    </>
-                                    :
-                                    <tr>
-                                        <td colspan="2" className="p-2">
-                                            <Button className="w-100" onClick={() => { handleButton(2) }}>Thanh toán trực tiếp</Button>
-                                        </td>
-                                    </tr>
-
-                                }
+                                <tr>
+                                    <td colspan="2" className="p-2">
+                                        <Button className="w-100 p-0" variant="warning" onClick={() => { handleButton("VNPay") }}> <img src={VNPayLogo} height="80px"></img></Button>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     }
                 </div>
             </div>
-        </div>
+        </div >
     )
 }
 const mapStateToProps = state => {

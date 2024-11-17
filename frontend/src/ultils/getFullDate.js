@@ -17,3 +17,13 @@ export const validDate = (time) => {
     let month = new Date(time).getMonth();
     return month > new Date().getMonth() || month === new Date().getMonth() && day > new Date().getDate();
 }
+export const getListYear = (time) => {
+    let i;
+    let now = new Date().getFullYear();
+
+    let listYear = [];
+    for (i = now; i >= time; i--) {
+        listYear = [...listYear, i];
+    }
+    return listYear
+}

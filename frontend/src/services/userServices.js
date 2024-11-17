@@ -35,8 +35,8 @@ let createBill = (bill) => {
 let getBillById = (id) => {
     return axios.get(`/pay/${id}`);
 }
-let updateBill = (id) => {
-    return axios.put(`/pay/${id}`);
+let updateBill = (id, type, userPayId) => {
+    return axios.put(`/pay/${id}`, { type, userPayId });
 }
 let updateMotel = (type, motel) => {
     return axios.put(`/user/motel/${type}/${motel._id}`, { motel });
@@ -49,6 +49,9 @@ let noneHire = (motel) => {
 }
 let deleteUser = (id) => {
     return axios.delete(`/user/${id}`);
+}
+let getBillAllMotel = (year) => {
+    return axios.get(`/bill/${year}`)
 }
 export {
     edit,
@@ -65,5 +68,6 @@ export {
     deleteMotel,
     noneHire,
     removeInforHire,
-    deleteUser
+    deleteUser,
+    getBillAllMotel
 }

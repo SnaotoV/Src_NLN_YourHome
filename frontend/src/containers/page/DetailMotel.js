@@ -50,7 +50,6 @@ let DetailMotel = (props) => {
                 setListImage(dataMotel.image);
                 setActiveImage(dataMotel.image[0]);
             } else {
-                console.log(dataMotel);
                 let cloneListImage = [dataMotel.image[checkImage], dataMotel.image[checkImage + 1], dataMotel.image[checkImage + 2]]
                 setListImage(cloneListImage);
                 setActiveImage(dataMotel.image[0]);
@@ -148,13 +147,12 @@ let DetailMotel = (props) => {
                                     <span>{dataMotel.name}</span>
                                 </div>
                                 <div className="motel-price px-4 py-2">
-                                    <span>{dataMotel && dataMotel.price && dataMotel.price.replace(/\B(?=(\d{3})+(?!\d))/g, '.')} VND/tháng</span>
+                                    <span>{dataMotel && dataMotel.price && dataMotel.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')} VND/tháng</span>
                                 </div>
                                 <div className="motel-price-ew">
                                     <span className="px-4">{dataMotel && dataMotel.priceEW && dataMotel.priceEW[0].priceE.replace(/\B(?=(\d{3})+(?!\d))/g, '.')} VND/tháng</span>
                                     <span>{dataMotel && dataMotel.priceEW && dataMotel.priceEW[0].priceW.replace(/\B(?=(\d{3})+(?!\d))/g, '.')} VND/tháng</span>
                                 </div>
-                                {console.log(dataMotel)}
                                 <div className="my-4">
                                     <div className="row">
                                         <div className="col-2">Phòng trống: </div>

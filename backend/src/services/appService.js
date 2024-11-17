@@ -27,6 +27,7 @@ let loginService = async (user) => {
     if (user) {
         let User = new UserModel(MongoDB.client);
         let UserData = await User.findByUsername(user);
+
         if (UserData.length > 0) {
             resData.errCode = 0;
             resData.value = 'Đăng nhập thành công';
@@ -46,7 +47,6 @@ let getAllPage = async (type, limit, filter) => {
     let quantityPage = 1;
     if (type == 'motel') {
         let Motel = new MotelModel(MongoDB.client);
-        // console.log(limit);
         let quantityMotel = await Motel.countAll(filter);
         quantityPage = Math.ceil(quantityMotel / limit);
     }
@@ -64,6 +64,12 @@ let getAllPage = async (type, limit, filter) => {
         let User = new UserModel(MongoDB.client);
         let quantityMotel = await User.countAll(filter);
         quantityPage = Math.ceil(quantityMotel / limit);
+    }
+    if (type == 'bill') {
+        let Room = new RoomModel(MongoDB.client);
+        let quantityBill = await Room.countAllBill(filter);
+        quantityPage = Math.ceil(quantityBill / limit);
+
     }
     return quantityPage
 }
@@ -90,6 +96,11 @@ let getDataInPage = async (type, page, limit, filter) => {
             delete element.password;
         });
         return quantityMotel;
+    }
+    if (type == 'bill') {
+        let Room = new RoomModel(MongoDB.client);
+        let quantityBill = await Room.findBillInPage(page, limit, filter);
+        return quantityBill;
     }
 }
 module.exports = {

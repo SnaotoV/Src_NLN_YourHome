@@ -22,17 +22,23 @@ class RoomModel {
     }
     fillDataBill(bill) {
         let billClone = {
+            motelId: ObjectId.isValid(bill.motelId) ? new ObjectId(bill.motelId) : null,
+            userPayId: ObjectId.isValid(bill.userPayId) ? new ObjectId(bill.userPayId) : null,
             valueE: bill.valueE,
             valueW: bill.valueW,
             priceEW: ObjectId.isValid(bill.priceEW) ? new ObjectId(bill.priceEW) : null,
             price: bill.price,
+            sumBill: bill.sumBill,
+            sumHire: bill.sumHire,
+            eBill: bill.eBill,
+            wBill: bill.wBill,
             hireId: ObjectId.isValid(bill.hireId) ? new ObjectId(bill.hireId) : null,
+            typePayment: bill.typePayment ? bill.typePayment : null,
             time_start: bill.time_start,
             time_end: bill.time_end,
             date_pay: bill.date_pay,
-            date_end: bill.date_end,
-            create_at: bill.create_at,
-            update_at: bill.update_at,
+            create_at: new Date(bill.create_at),
+            update_at: new Date(bill.update_at),
             statusCode: bill.statusCode
         }
         Object.keys(billClone).forEach(
@@ -102,6 +108,12 @@ class RoomModel {
                 motelId: ObjectId.isValid(filter.motelId) ? new ObjectId(filter.motelId) : null
             }
         }
+        if (filter && filter.userId) {
+            filterUser = {
+                userId: ObjectId.isValid(filter.userId) ? new ObjectId(filter.userId) : null
+            }
+        }
+
         const cursor = await this.inforRegisterHire.count(filterUser);
         return cursor
     }
@@ -281,7 +293,7 @@ class RoomModel {
                     pipeline: [
                         {
                             $match: {
-                                date_end: { $gte: time_at_pay }
+                                date_pay: null
 
                             }
                         },
@@ -324,17 +336,92 @@ class RoomModel {
         ]);
         return await cursor.toArray();
     }
-    async updateBill(id) {
+    async countAllBill(filter) {
+        let cursor = [];
+        const editFilter = {
+            userPayId: ObjectId.isValid(filter.userId) ? new ObjectId(filter.userId) : null,
+        };
+        cursor = await this.Bill.count(editFilter);
+        return cursor
+    }
+    async findBillInPage(page, quantityPage, filter) {
+        let start = (page - 1) * quantityPage;
+        let quantity = quantityPage
+        let cursor = [];
+        const editFilter = {
+            userPayId: ObjectId.isValid(filter.userId) ? new ObjectId(filter.userId) : null,
+        };
+        cursor = await this.Bill.aggregate([{ $match: editFilter }, {
+            $lookup:
+            {
+                from: 'motel',
+                localField: 'motelId',
+                foreignField: '_id',
+                as: 'motel',
+            }
+        },
+        {
+            $skip: start,
+        },
+        {
+            $limit: quantity,
+        },
+        {
+            $sort: { _id: -1 },
+        }])
+        return cursor.toArray();
+    }
+    async updateBill(id, type, userPayId) {
         const filter = {
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
         };
-        const cursor = await this.Bill.updateOne(filter, {
-            $set: {
-                statusCode: 6,
-                date_pay: new Date()
-            }
-        })
+        let cursor;
+        if (type === "moneyPay") {
+            cursor = await this.Bill.updateOne(filter, {
+                $set: {
+                    typePayment: "money",
+                    statusCode: 11,
+                }
+            })
+        }
+        if (type === "VNPay") {
+            cursor = await this.Bill.updateOne(filter, {
+                $set: {
+                    typePayment: "VNPay",
+                    statusCode: 6,
+                    date_pay: new Date(),
+                }
+            })
+        }
         return cursor
+    }
+    async getMonneyMonthInYear(filter) {
+        const year = filter.year; // Lấy năm từ filter
+        const data = Array(12).fill(0);
+        const rawData = await this.Bill.aggregate([
+            {
+                $match: {
+                    date_pay: {
+                        $gte: new Date(`${year}-01-01T00:00:00.000Z`),
+                        $lt: new Date(`${parseInt(year) + 1}-01-01T00:00:00.000Z`)
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: { month: { $month: "$create_at" } },
+                    totalSumBill: { $sum: "$sumBill" }
+                }
+            },
+            {
+                $sort: { "_id.month": 1 }
+            }
+        ])
+        await rawData.forEach(item => {
+            const monthIndex = item._id.month - 1; // MongoDB trả về tháng từ 1-12, cần trừ 1 để đúng chỉ mục mảng
+            data[monthIndex] = item.totalSumBill;
+        });
+        return data
     }
     async removeHire(filter) {
         const filterClone = this.fillDataHire(filter)
@@ -372,7 +459,7 @@ class RoomModel {
     }
     async removeHireByMotel(filter) {
         let cloneFilter = this.fillDataHire(filter);
-        const cursor = await this.inforHire.updateOne(cloneFilter, {
+        const cursor = await this.inforHire.updateMany(cloneFilter, {
             $set: {
                 statusCode: 0
             },

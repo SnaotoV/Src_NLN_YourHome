@@ -28,7 +28,7 @@ let Header = (props) => {
                 }
                 {/* <NavLink className='py-2 px-4 fs-5' activeClassName="active" to='/News' exact={true}>Tin tức</NavLink>
                 <NavLink className='py-2 px-4 fs-5' activeClassName="active" to='/Contact' exact={true}>Liên hệ</NavLink> */}
-                {props.isLoggedIn ?
+                {props.isLoggedIn && localStorage.getItem("accessToken") ?
                     props.userInfor.isAdmin === false &&
                     <NavLink className='py-4 px-4 fs-4 ' activeClassName="active" to='/Infor/User/1'>Cá nhân</NavLink>
                     :

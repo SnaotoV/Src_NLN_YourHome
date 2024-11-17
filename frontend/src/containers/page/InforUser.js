@@ -10,6 +10,7 @@ import NewsContent from "../../components/ContentInforUser/NewsContent";
 import AddMotelForm from "../../components/AddMotelForm/AddMotelForm";
 import * as actions from '../../stores/actions'
 import InforContent from "../../components/ContentInforUser/InforContent";
+import BillContent from "../../components/ContentInforUser/BillContent";
 let InforUser = (props) => {
     let [user, setUser] = useState({});
     let [handleEditInforModal, setHandleEditInforUser] = useState(false)
@@ -19,18 +20,25 @@ let InforUser = (props) => {
         setCheckGetData(!checkGetData);
     }
     let handleButton = (type) => {
-        if (type === 'edit') {
-            setHandleEditInforUser(!handleEditInforModal);
-        }
-        if (type === 'add-motel') {
-            setHandleAddMotelModel(!handleAddMotelModal);
-            checkFetchData();
-        }
-        if (type === 'logout') {
-            let history = props.history;
-            history.replace({ pathname: '/' });
-            props.processLogout();
+        if (localStorage.getItem("accessToken")) {
+            if (type === 'edit') {
+                setHandleEditInforUser(!handleEditInforModal);
+            }
+            if (type === 'add-motel') {
+                setHandleAddMotelModel(!handleAddMotelModal);
+                checkFetchData();
+            }
+            if (type === 'logout') {
+                let history = props.history;
+                history.replace({ pathname: '/' });
+                localStorage.removeItem('accessToken');
+                document.cookie = 'refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                props.processLogout();
 
+            }
+        }
+        else {
+            console.log("cần đăng nhập để thực hiện thao tác");
         }
     }
     useEffect(() => {
@@ -55,6 +63,7 @@ let InforUser = (props) => {
                     <div className="row">
                         <NavLink to='/Infor/User/1' activeClassName='active-infor' className="col-3 btn-infor text-center mx-1 fs-5">Người dùng</NavLink>
                         <NavLink to='/Infor/Motel/1' activeClassName='active-infor' className="col-3 btn-infor text-center mx-1 fs-5">Dãy trọ</NavLink>
+                        <NavLink to='/Infor/Bill/1' activeClassName='active-infor' className="col-3 btn-infor text-center mx-1 fs-5">Hoá đơn</NavLink>
                         {/* <NavLink to='/Infor/News/1' activeClassName='active-infor' className="col-3 btn-infor text-center mx-1">Bài viết</NavLink> */}
                     </div>
                     <div className="m-4 ">
@@ -62,6 +71,8 @@ let InforUser = (props) => {
                             <Route path={'/Infor/Motel/:page'}><MotelContent checkGetData={checkGetData} /></Route>
                             <Route path={'/Infor/News/:page'}><NewsContent /></Route>
                             <Route path={'/Infor/User/:page'}><InforContent /></Route>
+                            <Route path={'/Infor/Bill/:page'}><BillContent /></Route>
+
                         </Switch>
                     </div>
                 </div>

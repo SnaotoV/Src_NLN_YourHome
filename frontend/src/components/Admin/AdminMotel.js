@@ -79,7 +79,7 @@ let AdminMotel = (props) => {
             <div className="main-title fs-2 m-2 text-center rounded">Dãy trọ</div>
             <Table>
                 <thead>
-                    <tr>
+                    <tr className="text-center">
                         <th>STT</th>
                         <th>Tên dãy trọ</th>
                         <th>Số lượng phòng</th>
@@ -102,7 +102,7 @@ let AdminMotel = (props) => {
                                     <td>{item.quantity}</td>
                                     <td>{item.horizontal} m</td>
                                     <td>{item.vertical}m</td>
-                                    <td>{item.price.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}</td>
+                                    <td>{item.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ</td>
                                     <td>{item.address.address}</td>
                                     <td>{item.ward.type === 'phuong' ? item.ward.name_with_type : item.ward.name}</td>
                                     <td>{item.district.name}</td>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { withRouter, Link } from "react-router-dom";
-import { getQuantityPage, getDataInPage } from "../../services/appServices";
+import { getQuantityPage, getDataInPage, getNewToken } from "../../services/appServices";
 import { getGender } from "../../ultils/gender";
 import { Button, Table } from "react-bootstrap";
 import { toast } from 'react-toastify';
@@ -20,6 +20,7 @@ let InforContent = (props) => {
     let [handleRemoveHire, setHandleRemoveHire] = useState(false);
     let [activeSchedule, setActiceSchedule] = useState({})
     let [inforHire, setInforHire] = useState({});
+
     let handleModal = async (type, motel) => {
         if (type === 'success') {
             let resData = await updateSchedule(motel, type);
@@ -68,27 +69,37 @@ let InforContent = (props) => {
 
     }
     let refetchData = async () => {
-        let clonePage = page;
-        let filter = {
-            userId: user ? user._id : ''
-        }
-        if (user && user._id) {
-            let cloneListMotel = await getDataInPage('registerHire', clonePage, 10, filter);
-            let quantityPageFromBE = await getQuantityPage('registerHire', 10, filter);
-            setListRegisterHire(cloneListMotel.data);
-            setQuantityPage(quantityPageFromBE);
-        }
-        if (user && user._id) {
-            let data = await findInforHire(filter);
-            console.log(data);
-            if (data.resData.length > 0) {
-                let cloneData = data.resData ? data.resData[0] : {};
-                let date = data.resData ? data.resData[0]?.create_at : new Date();
-                cloneData.dataDate = await getFullDate(date)
-                setInforHire(cloneData);
+        try {
+            let clonePage = page;
+            let filter = {
+                userId: user ? user._id : ''
             }
-            else {
-                setInforHire([]);
+            if (user && user._id) {
+                let cloneListMotel = await getDataInPage('registerHire', clonePage, 10, filter);
+                let quantityPageFromBE = await getQuantityPage('registerHire', 10, filter);
+                setListRegisterHire(cloneListMotel.data);
+                setQuantityPage(quantityPageFromBE);
+            }
+            if (user && user._id) {
+                let data = await findInforHire(filter);
+                console.log(data);
+                if (data.resData.length > 0) {
+                    let cloneData = data.resData ? data.resData[0] : {};
+                    let date = data.resData ? data.resData[0]?.create_at : new Date();
+                    cloneData.dataDate = await getFullDate(date)
+                    setInforHire(cloneData);
+                }
+                else {
+                    setInforHire([]);
+                }
+            }
+
+        } catch (error) {
+            if (error.response.status === 400) {
+                let check = await getNewToken();
+                if (check) {
+                    refetchData();
+                }
             }
         }
     }
@@ -101,12 +112,21 @@ let InforContent = (props) => {
                 userId: user ? user._id : ''
             }
             if (user && user._id) {
-                let data = await findInforHire(filter);
-                if (data.resData.length > 0) {
-                    let cloneData = data.resData ? data.resData[0] : {};
-                    let date = data.resData ? data.resData[0]?.create_at : new Date();
-                    cloneData.dataDate = await getFullDate(date)
-                    setInforHire(cloneData);
+                try {
+                    let data = await findInforHire(filter);
+                    if (data.resData.length > 0) {
+                        let cloneData = data.resData ? data.resData[0] : {};
+                        let date = data.resData ? data.resData[0]?.create_at : new Date();
+                        cloneData.dataDate = await getFullDate(date)
+                        setInforHire(cloneData);
+                    }
+                } catch (error) {
+                    if (error.response.status === 400) {
+                        let check = await getNewToken();
+                        if (check) {
+                            getData();
+                        }
+                    }
                 }
             }
         }
@@ -118,6 +138,7 @@ let InforContent = (props) => {
             let filter = {
                 userId: user ? user._id : ''
             }
+
             if (user && user._id) {
                 let cloneListMotel = await getDataInPage('registerHire', clonePage, 10, filter);
                 let quantityPageFromBE = await getQuantityPage('registerHire', 10, filter);
@@ -126,13 +147,12 @@ let InforContent = (props) => {
             }
         }
         getData();
-    }, [props.match.params.page, user])
+    }, [page, user])
     useEffect(() => {
         let clonePage = props.match.params.page;
         setUser(props.userInfor);
         setPage(clonePage);
     }, [props.match.params.page, props.userInfor])
-    console.log(inforHire);
     return (
         <div>
             <div className="row">
@@ -176,7 +196,9 @@ let InforContent = (props) => {
                             <table className="fs-5 border infor-box ">
                                 <thead>
                                     <tr>
-                                        <td colSpan={2} className="text-center py-2 fs-3 main-title">Thông tin thuê phòng</td>
+                                        <td colSpan={2} className="text-center py-2 fs-3 main-title">
+                                            Thông tin thuê phòng <i class="far fa-eye"></i></td>
+
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -188,7 +210,7 @@ let InforContent = (props) => {
                                             </tr>
                                             <tr>
                                                 <td className="px-4">Giá:</td>
-                                                <td className="px-4">{inforHire?.motel && inforHire?.motel[0].price.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ</td>
+                                                <td className="px-4">{inforHire?.motel && inforHire?.motel[0].price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ</td>
                                             </tr>
                                             <tr>
                                                 <td className="px-4">Giá điện:</td>
@@ -235,39 +257,39 @@ let InforContent = (props) => {
 
                                     <tr>
                                         <td className="px-4">Ngày lập hóa đơn:</td>
-                                        <td className="px-4">{getFullDate(inforHire.bills[0].create_at)}</td>
+                                        <td className="px-4 text-end">{getFullDate(inforHire.bills[0].create_at)}</td>
                                     </tr>
                                     <tr>
                                         <td className="px-4">Ngày bắt đầu:</td>
-                                        <td className="px-4">{getFullDate(inforHire.bills[0].time_start)}</td>
+                                        <td className="px-4 text-end">{getFullDate(inforHire.bills[0].time_start)}</td>
                                     </tr>
                                     <tr>
                                         <td className="px-4">Ngày kết thúc:</td>
-                                        <td className="px-4">{getFullDate(inforHire.bills[0].time_end)}</td>
+                                        <td className="px-4 text-end">{getFullDate(inforHire.bills[0].time_end)}</td>
                                     </tr>
                                     <tr>
                                         <td className="px-4">Số kg điện:</td>
-                                        <td className="px-4">{inforHire.bills[0].valueE} kgW</td>
+                                        <td className="px-4 text-end">{inforHire.bills[0].valueE} kgW</td>
                                     </tr>
                                     <tr>
                                         <td className="px-4">Số khối nước:</td>
-                                        <td className="px-4">{inforHire.bills[0].valueW} khối</td>
+                                        <td className="px-4 text-end">{inforHire.bills[0].valueW} khối</td>
                                     </tr>
                                     <tr>
                                         <td className="px-4">Tiền thuê:</td>
-                                        <td className="px-4">{inforHire.bills[0].price.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ/tháng</td>
+                                        <td className="px-4 text-end">{inforHire.bills[0].price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ/tháng</td>
                                     </tr>
                                     <tr>
                                         <td className="px-4">Tiền điện: {inforHire.bills[0].valueE}x{inforHire.motel[0].priceEW[0].priceE.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ</td>
-                                        <td className="px-4">{(inforHire.bills[0].valueE * inforHire.motel[0].priceEW[0].priceE).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ/tháng</td>
+                                        <td className="px-4 text-end">{(inforHire.bills[0].valueE * inforHire.motel[0].priceEW[0].priceE).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ</td>
                                     </tr>
                                     <tr>
                                         <td className="px-4">Tiền nước: {inforHire.bills[0].valueW}x{inforHire.motel[0].priceEW[0].priceW.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ</td>
-                                        <td className="px-4">{(inforHire.bills[0].valueW * inforHire.motel[0].priceEW[0].priceW).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ/tháng</td>
+                                        <td className="px-4 text-end">{(inforHire.bills[0].valueW * inforHire.motel[0].priceEW[0].priceW).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ</td>
                                     </tr>
                                     <tr>
                                         <td className="px-4">Tổng tiền:</td>
-                                        <td className="px-4">{(Number(inforHire.bills[0].price) + (inforHire.bills[0].valueW * inforHire.motel[0].priceEW[0].priceW) + (inforHire.bills[0].valueE * inforHire.motel[0].priceEW[0].priceE)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ/tháng</td>
+                                        <td className="px-4 text-end">{inforHire.bills[0].sumBill.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ</td>
                                     </tr>
                                     <tr>
                                         <td className="px-4 text-center" colSpan={2} >

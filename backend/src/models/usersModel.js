@@ -52,7 +52,8 @@ class UserModel {
             password: user.password,
             statusCode: 4,
         });
-        return await cursor.toArray();
+
+        return cursor.toArray();
     }
     async findByID(id) {
         const filter = {
