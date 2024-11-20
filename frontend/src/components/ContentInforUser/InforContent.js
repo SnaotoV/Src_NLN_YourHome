@@ -82,7 +82,6 @@ let InforContent = (props) => {
             }
             if (user && user._id) {
                 let data = await findInforHire(filter);
-                console.log(data);
                 if (data.resData.length > 0) {
                     let cloneData = data.resData ? data.resData[0] : {};
                     let date = data.resData ? data.resData[0]?.create_at : new Date();
@@ -197,7 +196,9 @@ let InforContent = (props) => {
                                 <thead>
                                     <tr>
                                         <td colSpan={2} className="text-center py-2 fs-3 main-title">
-                                            Thông tin thuê phòng <i class="far fa-eye"></i></td>
+                                            Thông tin thuê phòng
+                                            <Link className="mx-3 text-white" to={`/User/Room/${inforHire?._id}/1`}><i class="far fa-eye"></i></Link>
+                                        </td>
 
                                     </tr>
                                 </thead>
@@ -219,14 +220,6 @@ let InforContent = (props) => {
                                             <tr>
                                                 <td className="px-4">Giá nước:</td>
                                                 <td className="px-4">{inforHire?.motel && inforHire?.motel[0].priceEW.length > 0 && inforHire?.motel[0].priceEW[0].priceW.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}</td>
-                                            </tr>
-                                            <tr>
-                                                {
-                                                    inforHire?.bills && inforHire?.bills.length > 0 && inforHire?.bills[0].statusCode == 6 ?
-                                                        <td className="px-4 text-center text-success" colSpan={2}>Đã thanh toán tiền tháng này</td>
-                                                        :
-                                                        <td className="px-4 text-center text-danger" colSpan={2}>Chưa thanh toán tiền tháng này</td>
-                                                }
                                             </tr>
                                             <tr>
                                                 <td className="px-4" colSpan={2}><Button variant="danger" className="w-100" onClick={() => { handleModal('remove-hire') }}>Đăng ký ngưng thuê</Button></td>

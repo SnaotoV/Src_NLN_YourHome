@@ -54,6 +54,17 @@ let findOneRoom = async (req, res) => {
         new ApiError(500, "An error orrcured while retrieving the contacts")
     }
 }
+let findAllDataRoom = async (req, res) => {
+    try {
+        let id = req.params.id;
+        let resData = await roomService.findDataRoom(id);
+        return res.status(200).json({
+            resData
+        })
+    } catch (error) {
+        new ApiError(500, "An error orrcured while retrieving the contacts")
+    }
+}
 let addBill = async (req, res) => {
     try {
         let bill = req.body.bill;
@@ -118,8 +129,14 @@ let deleteHire = async (req, res) => {
 }
 let getBillInYear = async (req, res) => {
     try {
-        let year = req.params.year;
-        let resData = await roomService.getAllCheck(year);
+        let id = req.params.id;
+        let filter = req.body.filter;
+        let editFilter = {
+            motelId: id,
+            ...filter
+        }
+
+        let resData = await roomService.getAllCheck(editFilter);
         return res.status(200).json({
             errCode: resData.errCode,
             value: resData.value
@@ -140,5 +157,6 @@ module.exports = {
     updateBill,
     deleteRegister,
     deleteHire,
-    getBillInYear
+    getBillInYear,
+    findAllDataRoom
 }

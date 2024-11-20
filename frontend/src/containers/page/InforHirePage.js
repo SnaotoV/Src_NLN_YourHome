@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { withRouter } from "react-router-dom";
+import { withRouter, Link } from "react-router-dom";
 import { Button, Form, Table } from "react-bootstrap";
 import { getFullDate, validDate, getListYear } from "../../ultils/getFullDate";
 import { getMotel, getBillAllMotel } from '../../services/userServices';
@@ -14,7 +14,6 @@ let InforHirePage = (props) => {
     let [index, setIndex] = useState({});
     let [year, setYear] = useState(new Date().getFullYear());
     let [listYear, setListYear] = useState([])
-
     let [dataAllMotel, setDataAllMotel] = useState({
         labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
         datasets: [
@@ -86,9 +85,12 @@ let InforHirePage = (props) => {
                 let data = await getMotel(props.match.params.id, 'admin');
                 if (data) {
                     setMotel(data.data);
-                    setListYear(getListYear(new Date(data.data.create_at).getFullYear()));
-
-                    let dataBillAllMotel = await getBillAllMotel(year);
+                    setListYear(getListYear(new Date(data.data?.create_at).getFullYear()));
+                    let filter = {
+                        motelId: props.match.params.id,
+                        year: year
+                    }
+                    let dataBillAllMotel = await getBillAllMotel(filter);
 
                     // Tạo đối tượng mới cho dataAllMotel
                     setDataAllMotel({
@@ -121,26 +123,13 @@ let InforHirePage = (props) => {
             },
         },
     };
-    const optionsRoom = {
-        responsive: true,
-        plugins: {
-            legend: {
-                position: 'top',
-            },
-            title: {
-                display: true,
-                text: `Doanh thu phòng theo tháng trong năm ${year}`,
-            },
-        },
-    };
-
     return (
         <div className="bg-white m-4 rounded-4 shadow p-4">
             {motel && motel._id &&
                 <>
                     <div className="row">
                         <Form className="col-2">
-                            <Form.Select id="disabledSelect" >
+                            <Form.Select id="disabledSelect" onChange={(event) => { setYear(event.target.value) }}>
                                 {listYear.length > 0 && listYear.map((item, index) => {
                                     return (
                                         <option key={index} value={item}>{item}</option>
@@ -151,7 +140,6 @@ let InforHirePage = (props) => {
                     </div>
                     <div className="row justify-content-center">
                         <div className="col-8 ">
-                            {console.log(dataAllMotel)}
                             <Bar data={dataAllMotel} options={optionsAllMotel} />;
                         </div>
                         {/* <div className="col-6">
@@ -172,7 +160,7 @@ let InforHirePage = (props) => {
                                         <th>Tên người dùng</th>
                                         <th>Số điện thoại</th>
                                         <th>Thời gian bắt đầu thuê</th>
-                                        <th>Ngày thanh toán</th>
+                                        <th>Tạo phiếu</th>
                                         {/* <th>Tổng tiền</th>
                                         <th>Phiếu thu</th> */}
                                         <th>Thao tác</th>
@@ -188,15 +176,10 @@ let InforHirePage = (props) => {
                                                     <td>{item.inforHire[0].user[0].phoneNumber}</td>
                                                     <td>{getFullDate(item.inforHire[0].create_at)}</td>
                                                     <td>
-                                                        {item.inforHire[0].bills.length > 0 &&
-                                                            item.inforHire[0].bills[0].statusCode === 7 ?
-                                                            <Button variant="success">Đã thanh toán trực tiếp</Button>
-                                                            :
-                                                            <Button onClick={() => handleButton(item.inforHire[0], index)}>Tạo phiếu thu</Button>
-                                                        }
+                                                        <Button onClick={() => handleButton(item.inforHire[0], index)}>Tạo phiếu thu</Button>
                                                     </td>
                                                     <td>
-                                                        <Button variant="primary"><i class="far fa-eye"></i></Button>
+                                                        <Link className="btn btn-primary" to={`/User/AllData/Room/${item._id}/1`}><i class="far fa-eye"></i></Link>
                                                     </td>
                                                 </tr>
                                                 :

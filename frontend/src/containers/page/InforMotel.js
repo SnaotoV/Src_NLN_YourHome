@@ -87,7 +87,6 @@ let InforMotel = (props) => {
             motelId: dataMotel?._id
         }
         if (user && user._id) {
-            console.log('hello');
             let cloneListMotel = await getDataInPage('registerHire', clonePage, 10, filter);
             let quantityPageFromBE = await getQuantityPage('registerHire', 10, filter);
             setListRegisterHire(cloneListMotel.data);
@@ -100,7 +99,7 @@ let InforMotel = (props) => {
                 setListImage(dataMotel.image);
                 setActiveImage(dataMotel.image[0]);
             } else {
-                console.log(dataMotel);
+                ;
                 let cloneListImage = [dataMotel.image[checkImage], dataMotel.image[checkImage + 1], dataMotel.image[checkImage + 2]]
                 setListImage(cloneListImage);
                 setActiveImage(dataMotel.image[0]);
@@ -160,7 +159,6 @@ let InforMotel = (props) => {
             getData();
         }
     }, [page, dataMotel, user]);
-    console.log(listRegisterHire);
     return (
         <div className="container bg-white px-3 my-4 rounded-4 shadow-lg">
             {dataMotel && user && dataMotel._id && dataMotel.userId === user._id ?

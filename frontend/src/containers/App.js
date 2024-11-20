@@ -11,9 +11,11 @@ import News from './page/News';
 import InforMotel from './page/InforMotel';
 import InforHirePage from './page/InforHirePage';
 import Contact from './page/Contact';
+import AllDataRoom from './page/AllDataRoom';
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
 import Admin from './admin/Admin';
+import InforRoom from './page/InforRoom';
 function App(props) {
   return (
     <BrowserRouter>
@@ -33,7 +35,10 @@ function App(props) {
               <Route path={'/User/Motel/:id/:page'} component={(InforMotel)} />
               <Route path={'/Pay/:id'} component={(Pay)} />
               <Route path={'/User/Hire/Motel/:id'} component={(InforHirePage)} />
+              <Route path={'/User/Room/:id/:page'} component={(InforRoom)} />
+              <Route path={'/User/AllData/Room/:id/:page'} component={(AllDataRoom)} />
             </Switch>
+
           }
 
         </div>

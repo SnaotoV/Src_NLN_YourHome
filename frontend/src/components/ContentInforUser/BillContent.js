@@ -62,7 +62,7 @@ let BillContent = (props) => {
 
     return (
         <div>
-            <div>Danh sách nhà trọ</div>
+            <div className="h3 main-title">Danh sách hóa đơn</div>
             <div className="contentBox">
                 <Table>
                     <thead>

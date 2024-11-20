@@ -23,6 +23,7 @@ class RoomModel {
     fillDataBill(bill) {
         let billClone = {
             motelId: ObjectId.isValid(bill.motelId) ? new ObjectId(bill.motelId) : null,
+            roomId: ObjectId.isValid(bill.roomId) ? new ObjectId(bill.roomId) : null,
             userPayId: ObjectId.isValid(bill.userPayId) ? new ObjectId(bill.userPayId) : null,
             valueE: bill.valueE,
             valueW: bill.valueW,
@@ -233,11 +234,100 @@ class RoomModel {
         }
         return resData;
     }
+    async findInforHirebyId(filter) {
+        let filterUser = {};
+
+        if (filter) {
+            filterUser._id = ObjectId.isValid(filter._id) ? new ObjectId(filter._id) : null
+
+        }
+
+        // let month = new Date().getMonth() + 1;
+        // let year = new Date().getFullYear();
+        // let date = new Date().getUTCDate();
+        // let formatNumber = Intl.NumberFormat("es-Us", { minimumIntegerDigits: 2 })
+        // let time_at_pay = `${year}-${formatNumber.format(month)}-${formatNumber.format(date)}T00:00:00.000Z`;
+        // let time_late_pay = `${year}-${formatNumber.format(month - 1)}-${formatNumber.format(date)}T00:00:00.000Z`;
+        const cursor = await this.inforHire.aggregate([
+            {
+                $match: filterUser
+            },
+            {
+                $lookup:
+                {
+                    from: 'motel',
+                    localField: 'motelId',
+                    foreignField: '_id',
+                    pipeline: [
+                        {
+                            $lookup:
+                            {
+                                from: 'priceEW',
+                                localField: '_id',
+                                foreignField: 'IdMotel',
+                                pipeline: [
+                                    {
+                                        $match: {
+                                            statusCode: 4
+                                        }
+                                    },
+                                ],
+                                as: 'priceEW',
+                            }
+                        },
+
+                        {
+                            $lookup:
+                            {
+                                from: 'user',
+                                localField: 'userId',
+                                foreignField: '_id',
+                                as: 'user'
+                            }
+                        },
+                    ],
+                    as: 'motel'
+                },
+            },
+            {
+                $lookup:
+                {
+                    from: 'user',
+                    localField: 'userId',
+                    foreignField: '_id',
+                    as: 'user'
+                }
+            },
+            {
+                $lookup:
+                {
+                    from: 'bills',
+                    localField: '_id',
+                    foreignField: 'hireId',
+                    pipeline: [
+                        {
+                            $match: {
+                                date_pay: null
+
+                            }
+                        },
+                        {
+                            $sort: { _id: -1 }
+                        }
+                    ],
+                    as: 'bills'
+                }
+            },
+        ]);
+        return cursor.toArray();
+    }
     async findInforHire(filter) {
         let filterUser = {};
+
         if (filter) {
             filterUser = this.fillDataHire(filter);
         }
+
         let month = new Date().getMonth() + 1;
         let year = new Date().getFullYear();
         let date = new Date().getUTCDate();
@@ -304,7 +394,18 @@ class RoomModel {
                     as: 'bills'
                 }
             },
+            {
+                $lookup:
+                {
+                    from: 'user',
+                    localField: 'userId',
+                    foreignField: '_id',
+                    as: 'userHire'
+                }
+            },
         ]);
+
+
         return cursor.toArray();
     }
     async createBill(bill) {
@@ -338,9 +439,13 @@ class RoomModel {
     }
     async countAllBill(filter) {
         let cursor = [];
-        const editFilter = {
-            userPayId: ObjectId.isValid(filter.userId) ? new ObjectId(filter.userId) : null,
-        };
+        const editFilter = {};
+        if (filter.hireId) {
+            editFilter.hireId = new ObjectId(filter.hireId)
+        }
+        if (filter.userId) {
+            editFilter.userPayId = new ObjectId(filter.userId)
+        }
         cursor = await this.Bill.count(editFilter);
         return cursor
     }
@@ -348,9 +453,20 @@ class RoomModel {
         let start = (page - 1) * quantityPage;
         let quantity = quantityPage
         let cursor = [];
-        const editFilter = {
-            userPayId: ObjectId.isValid(filter.userId) ? new ObjectId(filter.userId) : null,
-        };
+
+        const editFilter = {};
+        if (filter.hireId) {
+            editFilter.hireId = new ObjectId(filter.hireId)
+        }
+        if (filter.userId) {
+            editFilter.userPayId = new ObjectId(filter.userId)
+        }
+        if (filter.roomId) {
+            editFilter.roomId = new ObjectId(filter.roomId)
+        }
+
+
+
         cursor = await this.Bill.aggregate([{ $match: editFilter }, {
             $lookup:
             {
@@ -369,6 +485,7 @@ class RoomModel {
         {
             $sort: { _id: -1 },
         }])
+
         return cursor.toArray();
     }
     async updateBill(id, type, userPayId) {
@@ -381,6 +498,15 @@ class RoomModel {
                 $set: {
                     typePayment: "money",
                     statusCode: 11,
+                }
+            })
+        }
+        if (type === "livePay") {
+            cursor = await this.Bill.updateOne(filter, {
+                $set: {
+                    typePayment: "money",
+                    statusCode: 6,
+                    date_pay: new Date(),
                 }
             })
         }
@@ -398,14 +524,20 @@ class RoomModel {
     async getMonneyMonthInYear(filter) {
         const year = filter.year; // Lấy năm từ filter
         const data = Array(12).fill(0);
+        const editFilter = {}
+        editFilter.date_pay = {
+            $gte: new Date(`${year}-01-01T00:00:00.000Z`),
+            $lt: new Date(`${parseInt(year) + 1}-01-01T00:00:00.000Z`)
+        }
+        if (filter.motelId) {
+            editFilter.motelId = ObjectId.isValid(filter.motelId) ? new ObjectId(filter.motelId) : null;
+        }
+        if (filter.roomId) {
+            editFilter.roomId = ObjectId.isValid(filter.roomId) ? new ObjectId(filter.roomId) : null;
+        }
         const rawData = await this.Bill.aggregate([
             {
-                $match: {
-                    date_pay: {
-                        $gte: new Date(`${year}-01-01T00:00:00.000Z`),
-                        $lt: new Date(`${parseInt(year) + 1}-01-01T00:00:00.000Z`)
-                    }
-                }
+                $match: editFilter
             },
             {
                 $group: {
@@ -421,6 +553,8 @@ class RoomModel {
             const monthIndex = item._id.month - 1; // MongoDB trả về tháng từ 1-12, cần trừ 1 để đúng chỉ mục mảng
             data[monthIndex] = item.totalSumBill;
         });
+
+
         return data
     }
     async removeHire(filter) {
@@ -456,6 +590,22 @@ class RoomModel {
             })
         }
         return cursor;
+    }
+    async findOneRoomById(id) {
+
+        let filter = { _id: ObjectId.isValid(id) ? new ObjectId(id) : null };
+        let cursor = this.Room.aggregate([{ $match: filter },
+        {
+            $lookup:
+            {
+                from: 'motel',
+                localField: 'idMotel',
+                foreignField: '_id',
+                as: 'motel'
+            },
+        },
+        ])
+        return cursor.toArray()
     }
     async removeHireByMotel(filter) {
         let cloneFilter = this.fillDataHire(filter);

@@ -50,9 +50,14 @@ let noneHire = (motel) => {
 let deleteUser = (id) => {
     return axios.delete(`/user/${id}`);
 }
-let getBillAllMotel = (year) => {
-    return axios.get(`/bill/${year}`)
+let getBillAllMotel = (filter) => {
+    return axios.put(`/bill/get-bar`, { filter })
 }
+let findAllDataRoom = (filter) => {
+
+    return axios.get(`/user/room/${filter.id}`)
+}
+
 export {
     edit,
     addMotel,
@@ -69,5 +74,6 @@ export {
     noneHire,
     removeInforHire,
     deleteUser,
-    getBillAllMotel
+    getBillAllMotel,
+    findAllDataRoom
 }

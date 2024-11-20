@@ -86,8 +86,22 @@ let findInforHire = async (filter) => {
     let resData = {}
     let Room = new RoomModel(MongoDB.client);
     if (filter) {
-        resData = await Room.findInforHire(filter);
+        if (filter._id) {
+            resData = await Room.findInforHirebyId(filter);
+        }
+        else {
+
+            resData = await Room.findInforHire(filter);
+
+        }
     }
+    return resData;
+}
+let findDataRoom = async (id) => {
+    let resData = {}
+
+    let Room = new RoomModel(MongoDB.client);
+    resData = await Room.findOneRoomById(id)
     return resData;
 }
 let createBill = async (bill) => {
@@ -176,14 +190,10 @@ let deleteHire = async (id) => {
     }
     return resData
 }
-let getAllCheck = async (year) => {
+let getAllCheck = async (filter) => {
     let resData = {}
     let Room = new RoomModel(MongoDB.client);
-
-    if (year) {
-        let filter = {
-            year: year
-        }
+    if (filter) {
         let listBiillMonth = await Room.getMonneyMonthInYear(filter);
         if (listBiillMonth) {
             resData.errCode = 0;
@@ -202,5 +212,6 @@ module.exports = {
     updateBill,
     deleteRegister,
     deleteHire,
-    getAllCheck
+    getAllCheck,
+    findDataRoom
 }

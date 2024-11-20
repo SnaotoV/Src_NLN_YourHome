@@ -15,12 +15,14 @@ let ModalAddBill = (props) => {
         setBill({});
         props.handleClickClose();
     }
+
     let handleClickChanges = async () => {
         try {
             let check = await checkValidForm();
             if (check.isValid) {
                 let cloneBill = {
                     motelId: motel._id,
+                    roomId: room.roomId,
                     userPayId: room.user[0]._id,
                     valueE: bill.valueE,
                     valueW: bill.valueW,
