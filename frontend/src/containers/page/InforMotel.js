@@ -161,7 +161,7 @@ let InforMotel = (props) => {
     }, [page, dataMotel, user]);
     return (
         <div className="container bg-white px-3 my-4 rounded-4 shadow-lg">
-            {dataMotel && user && dataMotel._id && dataMotel.userId === user._id ?
+            {dataMotel && user && dataMotel._id && dataMotel.userId === user._id || dataMotel && dataMotel._id && user && user.isAdmin === true ?
                 <>
                     <div className="row  p-4">
                         <div className="col-4 p-2">

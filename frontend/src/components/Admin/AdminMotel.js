@@ -107,7 +107,7 @@ let AdminMotel = (props) => {
                                     <td>{item.ward.type === 'phuong' ? item.ward.name_with_type : item.ward.name}</td>
                                     <td>{item.district.name}</td>
                                     <td>{item.province.name}</td>
-                                    <td><Button>Sửa</Button></td>
+                                    <td><Link className="btn btn-primary" to={`/Admin/InforMotel/${item._id}/1`}>Xem chi tiết</Link></td>
                                     <td><Button variant="danger" onClick={() => { handleButton('delete-motel', item) }}>Xóa</Button></td>
                                 </tr>
                             )

@@ -150,9 +150,7 @@ let InforHirePage = (props) => {
                         <p className="fs-3 text_center">
                             Danh sách thuê phòng.
                         </p>
-                        {motel.listRoom && motel.listRoom.filter((item) => {
-                            return item.statusCode === 2;
-                        }).length > 0 ?
+                        {motel.listRoom &&
                             < Table >
                                 <thead>
                                     <tr className="text-center">
@@ -192,19 +190,14 @@ let InforHirePage = (props) => {
 
                                                     </td>
                                                     <td>
-                                                        <Button variant="primary"><i class="far fa-eye"></i></Button>
+                                                        <Link className="btn btn-primary" to={`/User/AllData/Room/${item._id}/1`}><i class="far fa-eye"></i></Link>
                                                     </td>
                                                 </tr>
                                         )
                                     })}
                                 </tbody>
                             </Table>
-                            :
-                            <div className="fs-4 text-center">
-                                <i>
-                                    Hiện chưa có người thuê phòng
-                                </i>
-                            </div>
+
                         }
                     </div>
                     <ModalAddBill

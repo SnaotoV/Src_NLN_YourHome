@@ -178,14 +178,22 @@ let deleteHire = async (id) => {
             _id: id,
             statusCode: 0,
         }
-        let data = await Room.removeHire(cloneHire);
-        if (data) {
-            resData.errCode = 0;
-            resData.value = 'Xác nhận hủy hợp đồng thành công'
+        let filterBill = { statusCode: { $ne: 6 } }
+        let dataBill = await Room.findBillByFilter(filterBill)
+        if (dataBill.length <= 0) {
+            let data = await Room.removeHire(cloneHire);
+            if (data) {
+                resData.errCode = 0;
+                resData.value = 'Xác nhận hủy hợp đồng thành công'
+            }
+            else {
+                resData.errCode = 1;
+                resData.value = 'Có lỗi xảy ra!'
+            }
         }
         else {
             resData.errCode = 1;
-            resData.value = 'Có lỗi xảy ra!'
+            resData.value = 'Có hóa đơn chưa thanh toán'
         }
     }
     return resData

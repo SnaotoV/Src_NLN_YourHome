@@ -86,12 +86,15 @@ let ModalAddBill = (props) => {
     useEffect(() => {
         if (bill.dateBegin && bill.dateEnd || bill.valueE || bill.valueW) {
             let cloneBill = { ...bill };
+
             if (bill.dateBegin && bill.dateEnd) {
                 let dateBeginClone = new Date(cloneBill.dateBegin);
                 let dateEndClone = new Date(cloneBill.dateEnd);
                 let dateHire = (dateEndClone - dateBeginClone) / (1000 * 60 * 60 * 24);
                 let datePrice = motel.price / 30;
-                cloneBill.sumHire = dateHire * datePrice;
+                let sumHire = dateHire * datePrice
+                cloneBill.sumHire = Math.round(sumHire);
+
             }
 
             if (bill.valueE) {

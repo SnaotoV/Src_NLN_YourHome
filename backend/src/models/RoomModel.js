@@ -55,7 +55,7 @@ class RoomModel {
             indexRoom: hire.indexRoom,
             create_at: hire.create_at,
             update_at: hire.update_at,
-            statusCode: hire.statusCode ? hire.statusCod : 4
+            statusCode: hire.statusCode ? hire.statusCode : 4
         }
         Object.keys(hireClone).forEach(
             (key) => (hireClone[key] === undefined || hireClone[key] === null) && delete hireClone[key]
@@ -327,7 +327,9 @@ class RoomModel {
         if (filter) {
             filterUser = this.fillDataHire(filter);
         }
-
+        if (filterUser.statusCode === "all") {
+            delete filterUser.statusCode;
+        }
         let month = new Date().getMonth() + 1;
         let year = new Date().getFullYear();
         let date = new Date().getUTCDate();
@@ -423,6 +425,28 @@ class RoomModel {
         const cursor = await this.Bill.aggregate([
             {
                 $match: filter
+            },
+            {
+
+                $lookup:
+                {
+                    from: 'priceEW',
+                    localField: 'priceEW',
+                    foreignField: '_id',
+                    as: 'priceEW',
+                }
+            },
+        ]);
+        return await cursor.toArray();
+    }
+    async findBillByFilter(filter) {
+
+        let editFilter = {};
+        editFilter = filter;
+
+        const cursor = await this.Bill.aggregate([
+            {
+                $match: editFilter
             },
             {
 
@@ -576,15 +600,6 @@ class RoomModel {
             const dataRoom = await this.Room.updateOne(filterRoom, {
                 $set: {
                     statusCode: 1,
-                    update_at: new Date()
-                }
-            })
-            let filterBill = {
-                hireId: ObjectId.isValid(HireData[0]._id) ? new ObjectId(HireData[0]._id) : null,
-            }
-            const dataBill = await this.Bill.updateOne(filterBill, {
-                $set: {
-                    statusCode: 0,
                     update_at: new Date()
                 }
             })

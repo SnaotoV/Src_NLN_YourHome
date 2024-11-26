@@ -9,6 +9,7 @@ let HireRoom = (props) => {
 
         props.handleClickClose('remove-hire')
     }
+
     let handleClickChanges = async () => {
         if (hire) {
             let data = await removeInforHire(hire);

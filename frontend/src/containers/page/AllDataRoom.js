@@ -39,7 +39,6 @@ let AllDataRoom = (props) => {
     let handleBtn = async (id) => {
         try {
             let data = await updateBill(id, "livePay");
-            console.log(data);
 
             if (data && data.errCode === 0) {
                 toast.success(data.value);
@@ -51,7 +50,8 @@ let AllDataRoom = (props) => {
     }
     let getData = async () => {
         let filter = {
-            roomId: props.match.params.id
+            roomId: props.match.params.id,
+            statusCode: "all"
         }
         let filterRoom = {
             id: props.match.params.id
@@ -97,10 +97,12 @@ let AllDataRoom = (props) => {
         }
     }
     useEffect(() => {
+        console.log("user ", props.userInfor?.isAdmin);
 
         let getData = async () => {
             let filter = {
-                roomId: props.match.params.id
+                roomId: props.match.params.id,
+                statusCode: "all"
             }
             let filterRoom = {
                 id: props.match.params.id
@@ -108,7 +110,7 @@ let AllDataRoom = (props) => {
             let clonePage = page
             let dataRoom = await findAllDataRoom(filterRoom);
 
-            if (dataRoom.resData[0].motel[0].userId === props.userInfor?._id) {
+            if (dataRoom.resData[0].motel[0].userId === props.userInfor?._id || props.userInfor?.isAdmin === true) {
                 setListYear(getListYear(new Date(dataRoom.resData[0].motel[0].create_at).getFullYear()));
                 let filterBar = {
                     roomId: props.match.params.id,
@@ -207,7 +209,7 @@ let AllDataRoom = (props) => {
                             <div className="contentBox">
                                 <Table>
                                     <thead>
-                                        <tr>
+                                        <tr className="text-center">
                                             <th>STT</th>
                                             <th>tên dãy trọ</th>
                                             <th>Ngày bắt đầu</th>
@@ -236,12 +238,12 @@ let AllDataRoom = (props) => {
                                                         <td>{item.eBill}đ</td>
                                                         <td>{item.wBill}đ</td>
                                                         <td>{item.sumBill}đ</td>
-                                                        <td>{item.statusCode === 6 ? <p className="text-success">Đã thanh toán - {item.typePayment === "VNPay" ? "VNPay" : "Tiền mặt"}</p> : <p className="text-danger">Chưa thanh toán</p>}</td>
-                                                        <td>{item.date_pay !== null ? getFullDate(item.time_end) : <p className="text-danger">"Chưa thanh toán"</p>}</td>
+                                                        <td>{item.statusCode === 6 ? <p className="text-success">Đã thanh toán - {item.typePayment === "VNPay" ? "VNPay" : "Tiền mặt"}</p> : item.statusCode === 11 ? <p className="text-primary">Người dùng muốn thanh toán trực tiếp</p> : <p className="text-danger">Chưa thanh toán</p>}</td>
+                                                        <td>{item.date_pay !== null ? getFullDate(item.time_end) : <p className="text-danger">Chưa thanh toán</p>}</td>
                                                         {
                                                             // Room.motel?.length > 0 && Room.motel[0].userId === props.userInfor._id &&
                                                             // <td>{item.statusCode === 7 || item.statusCode === 11 ? <Button variant="success" onClick={() => { handleBtn(item._id) }}>Đã thanh toán trực</Button> : ""}</td>
-                                                            <td>{item.statusCode === 6 ? <p className="text-success">Đã thanh toán - {item.typePayment === "VNPay" ? "VNPay" : "Tiền mặt"}</p> : <Link to={`/Pay/${item._id}`} className="w-100 btn main-button">Thanh Toán</Link>}</td>
+                                                            <td>{item.statusCode === 6 ? <p className="text-success">Đã thanh toán - {item.typePayment === "VNPay" ? "VNPay" : "Tiền mặt"}</p> : <button className="w-100 btn main-button" onClick={() => { handleBtn(item._id) }}>Đã thanh toán trực tiếp</button>}</td>
 
                                                         }
                                                     </tr>
@@ -298,13 +300,12 @@ let AllDataRoom = (props) => {
                                         </Table>
                                     </div>
                                     :
-                                    <div>Hiện chưa từng có ai thuê phòng này</div>
+                                    <div className="h4 p-4 text-center">Hiện chưa từng có ai thuê phòng này</div>
                             }
                         </div>
                     </div>
                 </div>
             }
-            hello
         </div >
     )
 }

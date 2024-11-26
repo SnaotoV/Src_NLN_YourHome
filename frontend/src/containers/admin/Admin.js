@@ -2,8 +2,11 @@ import { withRouter, Switch, Route, Link } from "react-router-dom";
 import AdminMotel from "../../components/Admin/AdminMotel";
 import { connect } from "react-redux";
 import AdminUser from "../../components/Admin/AdminUser";
-import * as actions from '../../stores/actions'
+import * as actions from '../../stores/actions';
 import AdminImage from "../../components/Admin/AdminImage";
+import InforMotel from "../page/InforMotel";
+import InforHirePage from "../page/InforHirePage";
+import AllDataRoom from "../page/AllDataRoom";
 let Admin = (props) => {
     let handleButton = () => {
         let history = props.history;
@@ -27,6 +30,9 @@ let Admin = (props) => {
                         <Route path={'/Admin/User/:page'}><AdminUser /></Route>
                         <Route path={'/Admin/Motel/:page'}><AdminMotel /></Route>
                         <Route path={'/Admin/Image'}><AdminImage /></Route>
+                        <Route path={'/Admin/InforMotel/:id/:page'}><InforMotel /></Route>
+                        <Route path={'/User/Hire/Motel/:id'}><InforHirePage /></Route>
+                        <Route path={'/User/AllData/Room/:id/:page'}><AllDataRoom /></Route>
                     </Switch>
                 </div>
             </div>

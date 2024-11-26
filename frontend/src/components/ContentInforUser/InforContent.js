@@ -60,6 +60,7 @@ let InforContent = (props) => {
             setHandleRemoveHire(!handleRemoveHire);
         }
     }
+    console.log(inforHire);
     let handleButton = async (type, motel) => {
         setActiceSchedule(motel);
         handleModal(type, motel);

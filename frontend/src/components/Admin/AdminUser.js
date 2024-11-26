@@ -100,7 +100,7 @@ let AdminUser = (props) => {
                                         <td>{item.address}</td>
                                         <td>{item.username}</td>
                                         <td>
-                                            <Button className='mx-2'>Sửa</Button>
+                                            {/* <Button className='mx-2'>Sửa</Button> */}
                                             <Button className='mx-2' variant="danger" onClick={() => { handleButton('delete-user', item) }}>Xóa</Button>
                                         </td>
                                     </tr>
