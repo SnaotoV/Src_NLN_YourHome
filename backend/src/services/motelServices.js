@@ -67,4 +67,5 @@ let removeMotel = async (id) => {
     return resData;
 }
 
+
 module.exports = { createMotel, findOneMotel, updateMotel, removeMotel }

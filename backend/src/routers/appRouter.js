@@ -24,6 +24,8 @@ router.route('/user/motel')
     .get(auth.verifyToken, motel.findAll)
     .post(auth.verifyToken, motel.create)
 
+router.route('/Admin/Count/Motel')
+    .post(auth.verifyToken, app.getStatistical)
 router.route('/user/motel/:type/:id')
     .get(motel.findOneFromUser)
     .put(auth.verifyToken, motel.update)

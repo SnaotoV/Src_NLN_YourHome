@@ -4,20 +4,27 @@ import { connect } from "react-redux";
 import AdminUser from "../../components/Admin/AdminUser";
 import * as actions from '../../stores/actions';
 import AdminImage from "../../components/Admin/AdminImage";
+import AdminStatistical from "../../components/Admin/AdminStatistical";
 import InforMotel from "../page/InforMotel";
 import InforHirePage from "../page/InforHirePage";
 import AllDataRoom from "../page/AllDataRoom";
+import { useEffect } from "react";
 let Admin = (props) => {
     let handleButton = () => {
         let history = props.history;
         history.replace({ pathname: '/' });
         props.processLogout();
     }
+    // useEffect(() => {
+    //     let history = props.history;
+    //     history.replace({ pathname: '/Admin/User/1' });
+    // }, [])
     return (
         <div className="bg-white m-4 rounded-4 shadow">
             <div className="row p-2">
                 <div className="col-2 p-4">
                     <div className="row">
+                        <Link to='/Admin/Statistical' className="m-2 btn-infor text-center fs-5">Thống kê</Link>
                         <Link to='/Admin/User/1' className="m-2 btn-infor text-center fs-5">Người dùng</Link>
                         <Link to='/Admin/Motel/1' className="m-2 btn-infor text-center fs-5">Dãy trọ</Link>
                         {/* <Link to='/Admin/Image' className="m-2 btn-infor text-center fs-5">Hình ảnh</Link> */}
@@ -27,6 +34,9 @@ let Admin = (props) => {
                 </div>
                 <div className="col-10 p-4">
                     <Switch>
+                        <Route path={'/'} exact><AdminStatistical /></Route>
+                        <Route path={'/Admin'} exact><AdminStatistical /></Route>
+                        <Route path={'/Admin/Statistical'}><AdminStatistical /></Route>
                         <Route path={'/Admin/User/:page'}><AdminUser /></Route>
                         <Route path={'/Admin/Motel/:page'}><AdminMotel /></Route>
                         <Route path={'/Admin/Image'}><AdminImage /></Route>

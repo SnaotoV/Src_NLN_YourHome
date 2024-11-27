@@ -19,7 +19,7 @@ class MotelModel {
             ward: payload.ward,
             district: payload.district,
             province: payload.province,
-            price: Number(payload.price),
+            price: payload.price && Number(payload.price),
             horizontal: payload.horizontal,
             vertical: payload.vertical,
             statusCode: payload.statusCode ? payload.statusCode : 4,
@@ -107,6 +107,11 @@ class MotelModel {
                 userId: ObjectId.isValid(filter.userId) ? new ObjectId(filter.userId) : null
             }
         }
+        if (filter && filter.statusCode) {
+            filterUser = {
+                statusCode: filter.statusCode ? filter.statusCode : 4
+            }
+        }
 
         const cursor = await this.Motel.count(filterUser);
         return cursor
@@ -178,6 +183,7 @@ class MotelModel {
         const filter = {
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
         };
+
         let cursor = {}
         if (type === 'admin') {
             cursor = await this.Motel.aggregate([{
@@ -189,6 +195,15 @@ class MotelModel {
                     localField: '_id',
                     foreignField: 'IdParent',
                     as: 'image'
+                }
+            },
+            {
+                $lookup:
+                {
+                    from: 'user',
+                    localField: 'userId',
+                    foreignField: '_id',
+                    as: 'user'
                 }
             },
             {
@@ -298,6 +313,15 @@ class MotelModel {
                 }
             },
             {
+                $lookup:
+                {
+                    from: 'user',
+                    localField: 'userId',
+                    foreignField: '_id',
+                    as: 'user'
+                }
+            },
+            {
 
                 $lookup:
                 {
@@ -331,7 +355,10 @@ class MotelModel {
         return cursor;
     }
     async deleteByUser(filter) {
+
         const motel = this.tranformMotelData(filter);
+        console.log(motel);
+
         const ListMotel = await this.Motel.find(motel);
         const cursor = await this.Motel.updateMany(motel, {
             $set: {

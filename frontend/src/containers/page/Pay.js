@@ -66,6 +66,7 @@ let Pay = (props) => {
         }
         getData();
     }, [])
+    console.log(bill);
 
     return (
         <div className="container p-4">
@@ -152,16 +153,24 @@ let Pay = (props) => {
                                     <td className="px-4">Số điện thoại:</td>
                                     <td className="px-4">{user && user.phoneNumber}</td>
                                 </tr>
-                                <tr>
-                                    <td colspan="2" className="p-2">
-                                        <Button className="w-100" onClick={() => { handleButton("moneyPay") }} > Thanh toán trực tiếp</Button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2" className="p-2">
-                                        <Button className="w-100 p-0" variant="warning" onClick={() => { handleButton("VNPay") }}> <img src={VNPayLogo} height="80px"></img></Button>
-                                    </td>
-                                </tr>
+                                {bill?.date_pay === null ?
+                                    <>
+                                        <tr>
+                                            <td colspan="2" className="p-2">
+                                                <Button className="w-100" onClick={() => { handleButton("moneyPay") }} > Thanh toán trực tiếp</Button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" className="p-2">
+                                                <Button className="w-100 p-0" variant="warning" onClick={() => { handleButton("VNPay") }}> <img src={VNPayLogo} height="80px"></img></Button>
+                                            </td>
+                                        </tr>
+                                    </>
+                                    :
+                                    <tr className="text-center p-2 text-success w-100" >
+                                        <td colspan="2">Đã thanh toán</td>
+                                    </tr>
+                                }
                             </tbody>
                         </table>
                     }

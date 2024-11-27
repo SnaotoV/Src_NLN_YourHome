@@ -27,11 +27,16 @@ let getNewToken = async () => {
 let createPayController = async (amount, orderDescription) => {
     return axios.post('/create_payment_url', { amount, orderDescription });
 }
+let getCountMotel = (filter) => {
+    return axios.post(`/Admin/Count/Motel`, { filter });
+}
 export {
     register,
     login,
     getQuantityPage,
     getDataInPage,
     getNewToken,
-    createPayController
+    createPayController,
+    getCountMotel
+
 }

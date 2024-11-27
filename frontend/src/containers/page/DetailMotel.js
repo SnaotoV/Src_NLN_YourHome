@@ -116,6 +116,8 @@ let DetailMotel = (props) => {
             getData();
         }
     }, [props.userInfor, props.match.params.id])
+    console.log(dataMotel);
+
     return (
         <div className="container bg-white px-3 my-4 rounded-4 shadow-lg">
             {dataMotel && dataMotel._id &&
@@ -169,6 +171,10 @@ let DetailMotel = (props) => {
                                     <div className="row">
                                         <div className="col-2">Địa chỉ: </div>
                                         <div className="col">{dataMotel.address} {dataMotel.ward.path_with_type} </div>
+                                    </div>
+                                    <div className="row">
+                                        <div className="col-2">SDT liên hệ: </div>
+                                        <div className="col">{dataMotel.user.length > 0 && dataMotel.user[0].phoneNumber} </div>
                                     </div>
                                 </div>
                             </div>

@@ -546,19 +546,23 @@ class RoomModel {
         return cursor
     }
     async getMonneyMonthInYear(filter) {
-        const year = filter.year; // Lấy năm từ filter
+        const editFilter = { statusCode: 6 };
         const data = Array(12).fill(0);
-        const editFilter = {}
-        editFilter.date_pay = {
-            $gte: new Date(`${year}-01-01T00:00:00.000Z`),
-            $lt: new Date(`${parseInt(year) + 1}-01-01T00:00:00.000Z`)
+
+        if (filter && filter.year) {
+            const year = filter.year; // Lấy năm từ filter
+            editFilter.date_pay = {
+                $gte: new Date(`${year}-01-01T00:00:00.000Z`),
+                $lt: new Date(`${parseInt(year) + 1}-01-01T00:00:00.000Z`)
+            }
+            if (filter.motelId) {
+                editFilter.motelId = ObjectId.isValid(filter.motelId) ? new ObjectId(filter.motelId) : null;
+            }
+            if (filter.roomId) {
+                editFilter.roomId = ObjectId.isValid(filter.roomId) ? new ObjectId(filter.roomId) : null;
+            }
         }
-        if (filter.motelId) {
-            editFilter.motelId = ObjectId.isValid(filter.motelId) ? new ObjectId(filter.motelId) : null;
-        }
-        if (filter.roomId) {
-            editFilter.roomId = ObjectId.isValid(filter.roomId) ? new ObjectId(filter.roomId) : null;
-        }
+
         const rawData = await this.Bill.aggregate([
             {
                 $match: editFilter

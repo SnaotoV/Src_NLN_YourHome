@@ -94,10 +94,24 @@ let getNewKey = async (req, res) => {
 
 
 }
+let getStatistical = async (req, res) => {
+    try {
+        let filter = req.body.filter;
+
+        let resFromServices = await appService.getStatisticalFromAdmin(filter);
+        return res.status(200).json({
+            errCode: resFromServices.errCode,
+            value: resFromServices.value
+        })
+    } catch (error) {
+        new ApiError(500, "An error orrcured while retrieving the contacts")
+    }
+}
 module.exports = {
     register,
     login,
     allpage,
     dataInPage,
-    getNewKey
+    getNewKey,
+    getStatistical
 }

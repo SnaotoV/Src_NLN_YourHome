@@ -75,5 +75,5 @@ export {
     removeInforHire,
     deleteUser,
     getBillAllMotel,
-    findAllDataRoom
+    findAllDataRoom,
 }

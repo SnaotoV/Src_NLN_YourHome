@@ -103,9 +103,28 @@ let getDataInPage = async (type, page, limit, filter) => {
         return quantityBill;
     }
 }
+let getStatisticalFromAdmin = async (filter) => {
+
+    let resData = {};
+    let value = {};
+    let User = new UserModel(MongoDB.client);
+    let Motel = new MotelModel(MongoDB.client);
+    let Room = new RoomModel(MongoDB.client);
+    let quantityUserNow = await User.countAll({ statusCode: 4 });
+    let quantityUserDelete = await User.countAll({ statusCode: 0 });
+    let quantityMotelNow = await Motel.countAll({ statusCode: 4 });
+    let quantityMotelDelete = await Motel.countAll({ statusCode: 0 });
+    value.PieMotel = [quantityMotelDelete, quantityMotelNow];
+    value.PieUser = [quantityUserDelete, quantityUserNow];
+    value.BarAllMotel = await Room.getMonneyMonthInYear(filter);
+    resData.value = value;
+
+    return resData;
+}
 module.exports = {
     registerService,
     loginService,
     getAllPage,
-    getDataInPage
+    getDataInPage,
+    getStatisticalFromAdmin
 }

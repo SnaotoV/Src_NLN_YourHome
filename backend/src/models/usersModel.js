@@ -97,9 +97,9 @@ class UserModel {
         })
         return result
     }
-    async countAll() {
-        const cursor = await this.User.count();
-        return cursor
+    async countAll(filter) {
+        const cursor = await this.User.count(filter);
+        return cursor - 1;
     }
     async findInPage(page, quantityPage) {
         let start = (page - 1) * quantityPage;

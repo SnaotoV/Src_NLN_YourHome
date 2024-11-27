@@ -19,7 +19,6 @@ let LoginForm = (props) => {
         let arrErr = await checkValidForm();
         if (arrErr.isValid === true) {
             let data = await login(user);
-            console.log(data);
             if (data.errCode === 0) {
                 toast.success(data.value, { position: toast.POSITION.TOP_RIGHT });
                 setUser({});

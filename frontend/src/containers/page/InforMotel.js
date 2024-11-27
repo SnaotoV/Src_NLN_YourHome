@@ -215,6 +215,10 @@ let InforMotel = (props) => {
                                         <div className="col-2">Địa chỉ: </div>
                                         <div className="col">{dataMotel.address} {dataMotel.ward.path_with_type} </div>
                                     </div>
+                                    <div className="row">
+                                        <div className="col-2">SDT liên hệ: </div>
+                                        <div className="col">{dataMotel.user.length > 0 && dataMotel.user[0].phoneNumber} </div>
+                                    </div>
                                 </div>
                             </div>
 
