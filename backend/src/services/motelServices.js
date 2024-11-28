@@ -17,6 +17,26 @@ let createMotel = async (data) => {
     }
     return resData;
 }
+let acceptMotel = async (id) => {
+    let resData = {}
+    if (id) {
+        let data = {
+            _id: id
+        }
+
+        let Motel = new MotelModel(MongoDB.client);
+        let motelData = await Motel.agreeMotel(data);
+        if (motelData) {
+            resData.errCode = 0;
+            resData.message = "Đã duyệt dãy trọ!";
+        }
+        else {
+            resData.errCode = 1;
+            resData.message = "Không tìm thấy dãy trọ!";
+        }
+    }
+    return resData;
+}
 let findOneMotel = async (id, type) => {
     let motel = {}
     if (id) {
@@ -68,4 +88,4 @@ let removeMotel = async (id) => {
 }
 
 
-module.exports = { createMotel, findOneMotel, updateMotel, removeMotel }
+module.exports = { createMotel, findOneMotel, updateMotel, removeMotel, acceptMotel }

@@ -30,6 +30,19 @@ let create = async (req, res) => {
     }
 }
 
+let acceptMotelFromAdmin = async (req, res) => {
+    try {
+        let id = req.body.id;
+        let resFromServices = await motelService.acceptMotel(id);
+        return res.status(200).json({
+            errCode: resFromServices.errCode,
+            value: resFromServices.value
+        })
+    } catch (error) {
+        new ApiError(500, "An error orrcured while retrieving the contacts")
+    }
+}
+
 
 let update = async (req, res) => {
     try {
@@ -64,4 +77,5 @@ module.exports = {
     create,
     update,
     deleteMotel,
+    acceptMotelFromAdmin
 }

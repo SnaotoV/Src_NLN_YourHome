@@ -35,9 +35,9 @@ class RoomModel {
             wBill: bill.wBill,
             hireId: ObjectId.isValid(bill.hireId) ? new ObjectId(bill.hireId) : null,
             typePayment: bill.typePayment ? bill.typePayment : null,
-            time_start: bill.time_start,
-            time_end: bill.time_end,
-            date_pay: bill.date_pay,
+            time_start: new Date(bill.time_start),
+            time_end: new Date(bill.time_end),
+            date_pay: bill.date_pay && new Date(bill.date_pay),
             create_at: new Date(bill.create_at),
             update_at: new Date(bill.update_at),
             statusCode: bill.statusCode
@@ -339,7 +339,11 @@ class RoomModel {
         const cursor = await this.inforHire.aggregate([
             {
                 $match: filterUser
-            }, {
+            },
+            {
+                $sort: { _id: -1 }
+            },
+            {
                 $lookup:
                 {
                     from: 'motel',
@@ -389,9 +393,7 @@ class RoomModel {
 
                             }
                         },
-                        {
-                            $sort: { _id: -1 }
-                        }
+
                     ],
                     as: 'bills'
                 }
@@ -442,8 +444,18 @@ class RoomModel {
     async findBillByFilter(filter) {
 
         let editFilter = {};
-        editFilter = filter;
-
+        editFilter = { ...filter };
+        if (filter.hireId) {
+            editFilter.hireId = new ObjectId(filter.hireId);
+        }
+        if (filter.time_start && filter.time_end) {
+            editFilter.$or = [
+                { time_start: { $gte: new Date(filter.time_start), $lte: new Date(filter.time_end) } },
+                { time_end: { $gte: new Date(filter.time_start), $lte: new Date(filter.time_end) } }
+            ];
+            delete editFilter.time_start;
+            delete editFilter.time_end;
+        }
         const cursor = await this.Bill.aggregate([
             {
                 $match: editFilter
@@ -464,11 +476,15 @@ class RoomModel {
     async countAllBill(filter) {
         let cursor = [];
         const editFilter = {};
+
         if (filter.hireId) {
             editFilter.hireId = new ObjectId(filter.hireId)
         }
         if (filter.userId) {
             editFilter.userPayId = new ObjectId(filter.userId)
+        }
+        if (filter.roomId) {
+            editFilter.roomId = new ObjectId(filter.roomId)
         }
         cursor = await this.Bill.count(editFilter);
         return cursor
@@ -491,7 +507,11 @@ class RoomModel {
 
 
 
-        cursor = await this.Bill.aggregate([{ $match: editFilter }, {
+        cursor = await this.Bill.aggregate([{ $match: editFilter },
+        {
+            $sort: { _id: -1 },
+        },
+        {
             $lookup:
             {
                 from: 'motel',
@@ -506,9 +526,8 @@ class RoomModel {
         {
             $limit: quantity,
         },
-        {
-            $sort: { _id: -1 },
-        }])
+
+        ])
 
         return cursor.toArray();
     }

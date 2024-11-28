@@ -40,13 +40,19 @@ let ModalAddBill = (props) => {
                     update_at: null,
                     statusCode: 7,
                 }
-                let data = await createBill(cloneBill);
-                if (data.errCode === 0) {
-                    toast.success(data.value, { position: toast.POSITION.TOP_RIGHT });
-                    props.handleClickClose('remove-hire-success');
+                if (cloneBill.sumHire > 0) {
+                    let data = await createBill(cloneBill);
+                    if (data.errCode === 0) {
+                        toast.success(data.value, { position: toast.POSITION.TOP_RIGHT });
+                        props.handleClickClose('remove-hire-success');
+                    }
+                    else {
+                        toast.error(data.value, { position: toast.POSITION.TOP_RIGHT });
+                    }
                 }
                 else {
-                    toast.error(data.value, { position: toast.POSITION.TOP_RIGHT });
+                    toast.error("Ngày kết thức không thể trước ngày bắt đầu!", { position: toast.POSITION.TOP_RIGHT });
+
                 }
             }
 

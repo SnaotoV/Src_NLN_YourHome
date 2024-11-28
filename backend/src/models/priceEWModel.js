@@ -21,6 +21,7 @@ class PriceEWModel {
     async create(idParent, payload) {
         const item = this.tranformPriceEWData(idParent, payload);
         item.create_at = new Date();
+        item.statusCode = 4;
         const resPriceEW = await this.PriceEW.insertOne(
             item
         );

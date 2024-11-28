@@ -32,6 +32,7 @@ class MotelModel {
         return motel
     }
     async create(payload) {
+        payload.statusCode = 9;
         const motel = this.tranformMotelData(payload);
         motel.create_at = new Date();
 
@@ -53,6 +54,20 @@ class MotelModel {
 
         return resMotel;
     };
+    async agreeMotel(payload) {
+
+        const filter = {
+            _id: ObjectId.isValid(payload._id) ? new ObjectId(payload._id) : null,
+        };
+
+        const cursor = await this.Motel.updateOne(filter, {
+            $set: {
+                statusCode: 4
+            }
+        })
+        return cursor;
+
+    }
     async updateMotel(payload) {
         const motel = this.tranformMotelData(payload);
 
@@ -117,9 +132,11 @@ class MotelModel {
         return cursor
     }
     async findInPage(page, quantityPage, filter) {
+
         let start = (page - 1) * quantityPage;
         let quantity = quantityPage
         let cursor = [];
+
         if (filter) {
             let filterClone = filter;
             if (filter.name) {
@@ -128,7 +145,8 @@ class MotelModel {
             if (filter.userId) {
                 filter.userId = ObjectId.isValid(filterClone.userId) ? new ObjectId(filterClone.userId) : null;
             }
-            filter.statusCode = 4;
+            filter.statusCode = filter.statusCode ? filter.statusCode : 4;
+
             cursor = await this.Motel.aggregate([{
                 $match: filter
             }, {
@@ -155,7 +173,7 @@ class MotelModel {
             cursor = await this.Motel.aggregate([
                 {
                     $match: {
-                        statusCode: 4
+                        statusCode: { $in: [4, 9] }
                     }
                 },
                 {
@@ -223,7 +241,7 @@ class MotelModel {
                                 pipeline: [
                                     {
                                         $match: {
-                                            statusCode: 4
+                                            statusCode: { $in: [4, 9] }
                                         }
                                     },
                                     {
@@ -282,7 +300,7 @@ class MotelModel {
                     pipeline: [
                         {
                             $match: {
-                                statusCode: 4
+                                statusCode: { $in: [4, 9] }
                             }
                         }
                     ],
@@ -357,7 +375,6 @@ class MotelModel {
     async deleteByUser(filter) {
 
         const motel = this.tranformMotelData(filter);
-        console.log(motel);
 
         const ListMotel = await this.Motel.find(motel);
         const cursor = await this.Motel.updateMany(motel, {

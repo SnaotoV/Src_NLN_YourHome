@@ -87,9 +87,16 @@ let Motel = (props) => {
     }, [props.match.params.page])
     useEffect(() => {
         if (props.filter !== null) {
-            console.log(props.filter);
             setFilter(props.filter);
             let getData = async () => {
+                if (filter.province) {
+                    let data = await classHuyenQuan.getQuanHuyen(filter.province)
+                    setQuanHuyen(data);
+                }
+                if (filter.district) {
+                    let data = await classPhuongXa.getXaPhuong(filter.district)
+                    setXaPhuong(data)
+                }
                 let clonePage = page;
                 let cloneFilter = props.filter;
                 let cloneListMotel = await getDataInPage('motel', clonePage, 12, cloneFilter);
@@ -99,8 +106,10 @@ let Motel = (props) => {
                 if (cloneListMotel) {
                     props.userFilter(null);
                 }
+                console.log(props.filter);
+
             }
-            getData()
+            getData();
         } else {
             let getData = async () => {
                 let clonePage = page

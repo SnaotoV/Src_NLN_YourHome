@@ -107,15 +107,28 @@ let findDataRoom = async (id) => {
 let createBill = async (bill) => {
     let resData = {};
     let Room = new RoomModel(MongoDB.client);
+
     if (bill) {
-        let data = await Room.createBill(bill);
-        if (data) {
-            resData.errCode = 0;
-            resData.value = 'Thêm phiếu thu tiền thành công!';
+        let filter = {
+            hireId: bill.hireId,
+            time_start: bill.time_start,
+            time_end: bill.time_end
+        };
+        let checkExist = await Room.findBillByFilter(filter);
+        if (checkExist.length > 0) {
+            resData.errCode = 2;
+            resData.value = 'Chu kỳ thu tiền đã tồn tại!';
         }
         else {
-            resData.errCode = 1;
-            resData.value = 'Thêm phiếu thu tiền không thành công!';
+            let data = await Room.createBill(bill);
+            if (data) {
+                resData.errCode = 0;
+                resData.value = 'Thêm phiếu thu tiền thành công!';
+            }
+            else {
+                resData.errCode = 1;
+                resData.value = 'Thêm phiếu thu tiền không thành công!';
+            }
         }
     }
     else {

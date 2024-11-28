@@ -6,7 +6,7 @@ import { Button, Table } from "react-bootstrap";
 import AddMotelForm from '../AddMotelForm/AddMotelForm';
 import { toast } from 'react-toastify';
 import Pagenated from '../Pagenated/Pagenated';
-import { deleteMotel } from '../../services/userServices';
+import { deleteMotel, acceptMotelFromAdmin } from '../../services/userServices';
 let AdminMotel = (props) => {
     let [listMotel, setListMotel] = useState([]);
     let [page, setPage] = useState(1);
@@ -17,6 +17,13 @@ let AdminMotel = (props) => {
     let handleButton = async (type, motel) => {
         if (type === 'edit') {
             setHandleEditMotelModel(!handleEditMotelModel);
+        }
+        if (type === 'accept-motel') {
+            let data = await acceptMotelFromAdmin(motel._id);
+            if (data.errCode === 0) {
+                toast.success("Duyệt nhà trọ thành công!");
+                await reFetchData();
+            }
         }
         if (type === 'add-motel') {
             setHandleAddMotelModel(!handleAddMotelModal);
@@ -90,6 +97,7 @@ let AdminMotel = (props) => {
                         <th>Phường/Xã</th>
                         <th>Quận/Huyện</th>
                         <th>Tỉnh/Thành Phố</th>
+                        <th>Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -103,10 +111,11 @@ let AdminMotel = (props) => {
                                     <td>{item.horizontal} m</td>
                                     <td>{item.vertical}m</td>
                                     <td>{item.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ</td>
-                                    <td>{item.address.address}</td>
+                                    <td>{item.address}</td>
                                     <td>{item.ward.type === 'phuong' ? item.ward.name_with_type : item.ward.name}</td>
                                     <td>{item.district.name}</td>
                                     <td>{item.province.name}</td>
+                                    <td>{item.statusCode === 9 && <Button onClick={() => { handleButton("accept-motel", item) }}>Duyệt</Button>}</td>
                                     <td><Link className="btn btn-primary" to={`/Admin/InforMotel/${item._id}/1`}>Xem chi tiết</Link></td>
                                     <td><Button variant="danger" onClick={() => { handleButton('delete-motel', item) }}>Xóa</Button></td>
                                 </tr>

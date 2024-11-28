@@ -7,13 +7,17 @@ import { getMotel, getBillAllMotel } from '../../services/userServices';
 import ModalAddBill from "../../components/ModalAddBill/ModalAddBill";
 import Chart from 'chart.js/auto';
 import { Bar, Line } from 'react-chartjs-2';
+import RemoveHire from "../../components/HireRoom/RemoveHire";
+
 let InforHirePage = (props) => {
     let [motel, setMotel] = useState({});
     let [activeRoom, setActiveRoom] = useState({})
     let [handleModalAddBill, setHandleModalAddBill] = useState(false);
+    let [handleRemoveHire, setHandleRemoveHire] = useState(false);
     let [index, setIndex] = useState({});
     let [year, setYear] = useState(new Date().getFullYear());
     let [listYear, setListYear] = useState([])
+    let [activeHire, setActiveHire] = useState({})
     let [dataAllMotel, setDataAllMotel] = useState({
         labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
         datasets: [
@@ -46,13 +50,15 @@ let InforHirePage = (props) => {
         setIndex(index)
         setHandleModalAddBill(!handleModalAddBill)
     }
-    let handleButtonPay = () => {
-
+    let handleButtonModal = (data) => {
+        setHandleRemoveHire(!handleRemoveHire);
+        setActiveHire(data);
     }
     let setRoom = async (data) => {
         let cloneMotel = { ...motel };
         cloneMotel.listRoom[index].inforHire[0] = data;
         setMotel(cloneMotel);
+        getData();
     }
     let SumBill = () => {
         let sum = {
@@ -78,7 +84,34 @@ let InforHirePage = (props) => {
     // useEffect(() => {
     //     setHandleModalAddBill(!handleModalAddBill)
     // }, [activeRoom])
+    let getData = async () => {
+        if (props.match.params.id) {
+            let data = await getMotel(props.match.params.id, 'admin');
+            if (data) {
+                setMotel(data.data);
+                setListYear(getListYear(new Date(data.data?.create_at).getFullYear()));
+                let filter = {
+                    motelId: props.match.params.id,
+                    year: year
+                }
+                let dataBillAllMotel = await getBillAllMotel(filter);
 
+                // Tạo đối tượng mới cho dataAllMotel
+                setDataAllMotel({
+                    labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
+                    datasets: [
+                        {
+                            label: 'Doanh thu',
+                            data: dataBillAllMotel.value,
+                            backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1,
+                        },
+                    ],
+                });
+            }
+        }
+    };
     useEffect(() => {
         let getData = async () => {
             if (props.match.params.id) {
@@ -179,6 +212,7 @@ let InforHirePage = (props) => {
                                                     <td>
                                                         <Link className="btn btn-primary" to={`/User/AllData/Room/${item._id}/1`}><i class="far fa-eye"></i></Link>
                                                     </td>
+                                                    <td><Button variant="danger" onClick={() => { handleButtonModal(item.inforHire[0]) }}>Kết thúc hợp đồng</Button></td>
                                                 </tr>
                                                 :
                                                 <tr className="text-center" key={index}>
@@ -210,7 +244,16 @@ let InforHirePage = (props) => {
                         handleClickClose={handleButton}
                         modalChanges={'Lưu'}
                         modalClose={'Hủy'} />
+                    <RemoveHire
+                        hire={activeHire?._id}
+                        modalName={"Hủy hợp đồng"}
+                        show={handleRemoveHire}
+                        handleClickChanges={handleButtonModal}
+                        handleClickClose={handleButtonModal}
+                        modalChanges={'Xác nhận'}
+                        modalClose={'Hủy'} />
                 </>
+
             }
         </div>
     )

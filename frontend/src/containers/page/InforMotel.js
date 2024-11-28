@@ -114,6 +114,8 @@ let InforMotel = (props) => {
         if (idUser) {
             let getData = async () => {
                 let data = await getMotel(idMotel, 'admin')
+                console.log(data);
+
                 setDataMotel(data?.data);
                 if (data && data.data?.image) {
                     if (data.data?.image.length <= 3) {
@@ -195,8 +197,8 @@ let InforMotel = (props) => {
                                     <span>{dataMotel && dataMotel.price && dataMotel.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')} VND/tháng</span>
                                 </div>
                                 <div className="motel-price-ew">
-                                    <span className="px-4">{dataMotel && dataMotel.priceEW && dataMotel.priceEW[0].priceE.replace(/\B(?=(\d{3})+(?!\d))/g, '.')} VND/tháng</span>
-                                    <span>{dataMotel && dataMotel.priceEW && dataMotel.priceEW[0].priceW.replace(/\B(?=(\d{3})+(?!\d))/g, '.')} VND/tháng</span>
+                                    <span className="px-4">{dataMotel && dataMotel.priceEW && dataMotel.priceEW[0]?.priceE.replace(/\B(?=(\d{3})+(?!\d))/g, '.')} VND/tháng</span>
+                                    <span>{dataMotel && dataMotel.priceEW && dataMotel.priceEW[0]?.priceW.replace(/\B(?=(\d{3})+(?!\d))/g, '.')} VND/tháng</span>
                                 </div>
                                 <div className="my-4">
                                     <div className="row">
@@ -233,47 +235,6 @@ let InforMotel = (props) => {
                                     )
                                 })}
                             </div>
-                        </div>
-                        <div className="row my-2">
-                            <p className="fs-3 text_center">
-                                Danh sách thuê phòng.
-                            </p>
-                            {dataMotel.listRoom && dataMotel.listRoom.filter((item) => {
-                                return item.statusCode === 2;
-                            }).length > 0 ?
-                                < Table >
-                                    <thead>
-                                        <tr className="text-center">
-                                            <th>STT</th>
-                                            <th>Tên người dùng</th>
-                                            <th>Số điện thoại</th>
-                                            <th>Thời gian bắt đầu thuê</th>
-                                            <th>Thao tác</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {dataMotel.listRoom.filter((item) => {
-                                            return item.statusCode === 2;
-                                        }).map((item, index) => {
-                                            return (
-                                                <tr className="text-center" key={index}>
-                                                    <td>{index + 1}</td>
-                                                    <td>{item.inforHire[0].user[0].fullName}</td>
-                                                    <td>{item.inforHire[0].user[0].phoneNumber}</td>
-                                                    <td>{getFullDate(item.inforHire[0].create_at)}</td>
-                                                    <td><Button variant="danger" onClick={() => { handleButtonModal('remove-hire', item.inforHire[0]) }}>Kết thúc hợp đồng</Button></td>
-                                                </tr>
-                                            )
-                                        })}
-                                    </tbody>
-                                </Table>
-                                :
-                                <div className="fs-4 text-center">
-                                    <i>
-                                        Hiện chưa có lịch hẹn xem phòng
-                                    </i>
-                                </div>
-                            }
                         </div>
                         <div className='row my-4'>
                             <p className="fs-3 text_center">
@@ -366,14 +327,7 @@ let InforMotel = (props) => {
                 handleClickClose={handleButtonModal}
                 modalChanges={'Lưu'}
                 modalClose={'Hủy'} />
-            <RemoveHire
-                hire={activeHire?._id}
-                modalName={"Hủy hợp đồng"}
-                show={handleRemoveHire}
-                handleClickChanges={handleButtonModal}
-                handleClickClose={handleButtonModal}
-                modalChanges={'Xác nhận'}
-                modalClose={'Hủy'} />
+
 
         </div >
     )

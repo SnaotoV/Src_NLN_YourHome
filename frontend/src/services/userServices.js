@@ -57,7 +57,10 @@ let findAllDataRoom = (filter) => {
 
     return axios.get(`/user/room/${filter.id}`)
 }
+let acceptMotelFromAdmin = (id) => {
 
+    return axios.post('/Admin/motel/accept', { id });
+}
 export {
     edit,
     addMotel,
@@ -76,4 +79,5 @@ export {
     deleteUser,
     getBillAllMotel,
     findAllDataRoom,
+    acceptMotelFromAdmin
 }

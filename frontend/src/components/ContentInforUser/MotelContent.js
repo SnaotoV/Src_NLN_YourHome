@@ -35,7 +35,8 @@ let MotelContent = (props) => {
         let getData = async () => {
             let clonePage = page;
             let filter = {
-                userId: user ? user._id : ''
+                userId: user ? user._id : '',
+                statusCode: { $in: [4, 9] }
             }
             if (user && user._id) {
                 let cloneListMotel = await getDataInPage('motel', clonePage, 10, filter);
@@ -52,7 +53,8 @@ let MotelContent = (props) => {
 
                 let clonePage = page
                 let filter = {
-                    userId: user ? user._id : ''
+                    userId: user ? user._id : '',
+                    statusCode: { $in: [4, 9] }
                 }
                 if (user && user._id) {
                     let cloneListMotel = await getDataInPage('motel', clonePage, 10, filter);
@@ -84,7 +86,7 @@ let MotelContent = (props) => {
             <div className="contentBox">
                 <Table>
                     <thead>
-                        <tr>
+                        <tr className="text-center">
                             <th>STT</th>
                             <th>Tên dãy trọ</th>
                             <th>Số lượng phòng</th>
@@ -95,6 +97,7 @@ let MotelContent = (props) => {
                             <th>Phường/Xã</th>
                             <th>Quận/Huyện</th>
                             <th>Tỉnh/Thành Phố</th>
+                            <th>Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -107,13 +110,20 @@ let MotelContent = (props) => {
                                         <td>{item.quantity}</td>
                                         <td>{item.horizontal} m</td>
                                         <td>{item.vertical}m</td>
-                                        <td>{item.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}</td>
-                                        <td>{item.address.address}</td>
+                                        <td>{item.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}đ</td>
+                                        <td>{item.address}</td>
                                         <td>{item.ward.type === 'phuong' ? item.ward.name_with_type : item.ward.name}</td>
                                         <td>{item.district.name}</td>
                                         <td>{item.province.name}</td>
-                                        <td><Link to={`/User/Motel/${item._id}/1`} className="btn btn-primary text-white ">Xem</Link></td>
-                                        <td><Button variant="danger" onClick={() => { handleButton('delete-motel', item, index) }}>Xóa</Button></td>
+                                        {
+                                            item.statusCode === 9 ?
+                                                <td className="text-danger">Vui lòng đợi admin duyệt phòng trọ</td>
+                                                :
+                                                <>
+                                                    <td><Link to={`/User/Motel/${item._id}/1`} className="btn btn-primary text-white ">Xem</Link></td>
+                                                    <td><Button variant="danger" onClick={() => { handleButton('delete-motel', item, index) }}>Xóa</Button></td>
+                                                </>
+                                        }
                                     </tr>
                                 )
                             })}

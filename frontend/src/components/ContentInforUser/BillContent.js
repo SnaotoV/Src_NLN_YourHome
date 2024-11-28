@@ -68,7 +68,7 @@ let BillContent = (props) => {
                     <thead>
                         <tr>
                             <th>STT</th>
-                            <th>tên dãy trọ</th>
+                            <th>Tên dãy trọ</th>
                             <th>Ngày bắt đầu</th>
                             <th>Ngày kết thúc</th>
                             <th>Chỉ số điện</th>

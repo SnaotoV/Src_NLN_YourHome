@@ -56,6 +56,7 @@ let getAllPage = async (type, limit, filter) => {
         quantityPage = Math.ceil(quantityMotel / limit);
     }
     if (type == 'motel-home') {
+
         let Room = new RoomModel(MongoDB.client);
         let quantityMotel = await Room.countAllRegisterHire(filter);
         quantityPage = Math.ceil(quantityMotel / limit);

@@ -23,7 +23,8 @@ router.route('/user/:id')
 router.route('/user/motel')
     .get(auth.verifyToken, motel.findAll)
     .post(auth.verifyToken, motel.create)
-
+router.route("/Admin/motel/accept")
+    .post(auth.verifyToken, motel.acceptMotelFromAdmin);
 router.route('/Admin/Count/Motel')
     .post(auth.verifyToken, app.getStatistical)
 router.route('/user/motel/:type/:id')

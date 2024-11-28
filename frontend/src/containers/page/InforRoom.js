@@ -146,7 +146,7 @@ let InforRoom = (props) => {
                                                         <td>{item.wBill}đ</td>
                                                         <td>{item.sumBill}đ</td>
                                                         <td>{item.statusCode === 6 ? <p className="text-success">Đã thanh toán - {item.typePayment === "VNPay" ? "VNPay" : "Tiền mặt"}</p> : <p className="text-danger">Chưa thanh toán</p>}</td>
-                                                        <td>{item.date_pay !== null ? getFullDate(item.time_end) : <p className="text-danger">"Chưa thanh toán"</p>}</td>
+                                                        <td>{item.date_pay !== null ? getFullDate(item.date_pay) : <p className="text-danger">"Chưa thanh toán"</p>}</td>
                                                         {
                                                             // Room.motel?.length > 0 && Room.motel[0].userId === props.userInfor._id &&
                                                             // <td>{item.statusCode === 7 || item.statusCode === 11 ? <Button variant="success" onClick={() => { handleBtn(item._id) }}>Đã thanh toán trực</Button> : ""}</td>

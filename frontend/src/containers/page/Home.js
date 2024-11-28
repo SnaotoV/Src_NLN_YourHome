@@ -15,7 +15,8 @@ import { getDataInPage } from '../../services/appServices';
 import * as actions from '../../stores/actions'
 import { withRouter } from 'react-router-dom';
 let Home = (props) => {
-    let [motels, setMotels] = useState({});
+    let [motels, setMotels] = useState([]);
+    let [page, setPage] = useState(1);
     let [user, setUser] = useState({});
     let [QuanHuyen, setQuanHuyen] = useState([]);
     let [XaPhuong, setXaPhuong] = useState([]);
@@ -60,13 +61,14 @@ let Home = (props) => {
     }
     useEffect(() => {
         let getData = async () => {
-            let data = await getDataInPage('motel-home', 1)
+            let data = await getDataInPage('motel', page, 4, { statusCode: 4 })
             if (data) {
                 setMotels(data.data)
             }
         }
         getData()
     }, [])
+
     useEffect(() => {
         setUser(props.userInfor)
     }, [props.userInfor])
@@ -154,7 +156,7 @@ let Home = (props) => {
                     </div>
                 </Form >
             </div>
-            <div className='h2 text-center m-4'>Phòng trống nổi bật</div>
+            <div className='h2 text-center m-4'>Một số dãy trọ trong hệ thống</div>
             <div className='cart-box mx-3 row'>
                 {motels && motels.length > 0 && motels.map((item, index) => {
 

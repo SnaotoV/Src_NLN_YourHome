@@ -1,17 +1,25 @@
 import { useEffect, useState } from "react";
 import { getCountMotel } from "../../services/appServices";
-import { Pie, Bar } from 'react-chartjs-2';
+import { Pie, Bar, Line } from 'react-chartjs-2';
 import { Form } from "react-bootstrap";
 let AdminStatistical = (props) => {
     let [year, setYear] = useState(new Date().getFullYear());
+
     let [barSale, setBarSale] = useState({
         labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
         datasets: [
             {
-                label: 'Doanh thu',
+                label: 'Doanh thu người dùng toàn hệ thống',
                 data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 backgroundColor: 'rgba(75, 192, 192, 0.5)',
                 borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1,
+            },
+            {
+                label: 'Doanh thu',
+                data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                backgroundColor: 'rgb(255, 99, 132, 0.5)',
+                borderColor: 'rgb(255, 99, 132, 1)',
                 borderWidth: 1,
             },
         ],
@@ -59,14 +67,25 @@ let AdminStatistical = (props) => {
             let data = await getCountMotel(filter);
 
             if (data.value.BarAllMotel) {
+                let dataBarAll = new Array(12).fill(0);
+                data.value.BarAllMotel.forEach((item, index) => {
+                    dataBarAll[index] = item * 0.1;
+                });
                 setBarSale({
                     labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
                     datasets: [
                         {
-                            label: 'Doanh thu',
+                            label: 'Doanh thu người dùng toàn hệ thống',
                             data: data.value.BarAllMotel,
                             backgroundColor: 'rgba(75, 192, 192, 0.5)',
                             borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1,
+                        },
+                        {
+                            label: 'Doanh thu 10% doanh thu người dùng',
+                            data: dataBarAll,
+                            backgroundColor: 'rgb(255, 99, 132, 0.5)',
+                            borderColor: 'rgb(255, 99, 132, 1)',
                             borderWidth: 1,
                         },
                     ],
@@ -75,6 +94,7 @@ let AdminStatistical = (props) => {
                         maintainAspectRatio: false
                     }
                 });
+
             }
             if (data.value.PieMotel) {
                 setPieMotel({
@@ -99,7 +119,7 @@ let AdminStatistical = (props) => {
                     labels: ["Người dùng ngưng hoạt động", "Người dùng hoạt động"],
                     datasets: [
                         {
-                            label: 'Doanh thu',
+                            label: 'Người dùng',
                             data: data.value.PieUser,
                             backgroundColor: ['rgb(255, 99, 132)', 'rgb(54, 162, 235)'],
                             borderColor: 'rgba(75, 192, 192, 1)',
@@ -117,18 +137,30 @@ let AdminStatistical = (props) => {
     }, [year])
 
     useState(() => {
-
         let getData = async () => {
-            let data = await getCountMotel();
-            console.log(data.value);
+            let filter = {
+                year: year
+            }
+            let data = await getCountMotel(filter);
 
             if (data.value.BarAllMotel) {
+                let dataBarAll = new Array(12).fill(0);
+                data.value.BarAllMotel.forEach((item, index) => {
+                    dataBarAll[index] = item * 0.1;
+                });
                 setBarSale({
                     labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
                     datasets: [
                         {
-                            label: 'Doanh thu',
+                            label: 'Doanh thu người dùng toàn hệ thống',
                             data: data.value.BarAllMotel,
+                            backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1,
+                        },
+                        {
+                            label: 'Doanh thu 10% doanh thu người dùng',
+                            data: dataBarAll,
                             backgroundColor: 'rgba(75, 192, 192, 0.5)',
                             borderColor: 'rgba(75, 192, 192, 1)',
                             borderWidth: 1,
@@ -139,6 +171,7 @@ let AdminStatistical = (props) => {
                         maintainAspectRatio: false
                     }
                 });
+
             }
             if (data.value.PieMotel) {
                 setPieMotel({
@@ -163,7 +196,7 @@ let AdminStatistical = (props) => {
                     labels: ["Người dùng ngưng hoạt động", "Người dùng hoạt động"],
                     datasets: [
                         {
-                            label: 'Doanh thu',
+                            label: 'Doanh thu 10% doanh thu người dùng',
                             data: data.value.PieUser,
                             backgroundColor: ['rgb(255, 99, 132)', 'rgb(54, 162, 235)'],
                             borderColor: 'rgba(75, 192, 192, 1)',
@@ -200,7 +233,7 @@ let AdminStatistical = (props) => {
                         <option value={2021}>2021</option>
                     </Form.Select>
                 </Form>
-                <Bar data={barSale}></Bar>
+                <Line data={barSale}></Line >
             </div>
         </div>
     )
